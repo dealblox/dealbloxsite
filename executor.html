@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Executores — Deal Blox</title>
+  <link rel="icon" href="/images/logo-dealblox.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* === PAGE HEADER === */
+    .exec-page-header {
+      margin-bottom: 28px;
+    }
+    .exec-page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px;
+    }
+    .exec-page-title::before {
+      content: '';
+      width: 4px;
+      height: 26px;
+      background: linear-gradient(180deg, var(--blue3), var(--cyan));
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .exec-page-subtitle {
+      font-size: 13px;
+      color: var(--text2);
+      margin-left: 16px;
+    }
+
+    /* === EXECUTOR CARD === */
+    .exec-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r3);
+      padding: 28px;
+      margin-bottom: 20px;
+      transition: all .3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .exec-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--grad-btn);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .exec-card:hover {
+      border-color: var(--border2);
+      box-shadow: 0 8px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(6,182,212,.15);
+      transform: translateY(-2px);
+    }
+    .exec-card:hover::before { opacity: 1; }
+    .exec-card.offline {
+      opacity: .55;
+      pointer-events: none;
+    }
+    .exec-card.offline:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .exec-card.offline::before { display: none; }
+
+    /* header row */
+    .exec-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .exec-card-name {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .exec-card-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .exec-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .exec-status.ok {
+      background: rgba(16,185,129,.12);
+      color: var(--green);
+      border: 1px solid rgba(16,185,129,.3);
+    }
+    .exec-status.ok::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    .exec-status.offline {
+      background: rgba(239,68,68,.12);
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,.3);
+    }
+    .exec-status.offline::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+    }
+    .exec-date {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text2);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 10px;
+    }
+    .exec-platform-badge {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .exec-platform-badge.pc-only {
+      background: rgba(245,158,11,.12);
+      color: var(--yellow);
+      border: 1px solid rgba(245,158,11,.3);
+    }
+
+    /* description */
+    .exec-card-desc {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .exec-card-desc.offline-msg {
+      color: var(--red);
+      background: rgba(239,68,68,.07);
+      border: 1px solid rgba(239,68,68,.2);
+      border-radius: var(--r);
+      padding: 10px 14px;
+      font-weight: 600;
+    }
+
+    /* buttons row */
+    .exec-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .exec-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: var(--r2);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all .2s ease;
+      font-family: var(--font);
+      white-space: nowrap;
+    }
+    .exec-btn:hover { transform: translateY(-2px); }
+    .exec-btn.android {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(56,239,125,.3);
+    }
+    .exec-btn.android:hover { box-shadow: 0 8px 28px rgba(56,239,125,.45); }
+    .exec-btn.ios {
+      background: var(--grad-btn);
+      color: #fff;
+      box-shadow: var(--glow-b);
+    }
+    .exec-btn.ios:hover { box-shadow: var(--glow-c); }
+    .exec-btn.pc {
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(139,92,246,.3);
+    }
+    .exec-btn.pc:hover { box-shadow: 0 8px 28px rgba(139,92,246,.45); }
+    .exec-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* scripts link banner */
+    .scripts-link-banner {
+      background: linear-gradient(135deg, #0f1535, #1a2650);
+      border: 1px solid rgba(99,179,237,.2);
+      border-radius: var(--r3);
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .scripts-link-banner-text h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .scripts-link-banner-text p {
+      font-size: 13px;
+      color: var(--text2);
+    }
+    .btn-scripts-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--grad-btn);
+      color: #fff;
+      border-radius: var(--r2);
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: var(--glow-b);
+      transition: all .2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-scripts-link:hover { box-shadow: var(--glow-c); transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div id="topbar-root"></div>
+  <div id="header-root"></div>
+  <div id="mobile-nav-root"></div>
+  <div id="auth-modal-root"></div>
+
+  <div class="page-layout">
+    <div id="sidebar-root"></div>
+
+    <main class="main-content">
+
+      <!-- PAGE HEADER -->
+      <div class="exec-page-header">
+        <div class="exec-page-title">💻 Executores</div>
+        <p class="exec-page-subtitle">Acesso direto aos melhores executores para Blox Fruits · Sempre atualizados</p>
+      </div>
+
+      <!-- DELTA EXECUTOR -->
+      <div class="exec-card">
+        <div class="exec-card-header">
+          <div class="exec-card-name">🔷 Executor Delta</div>
+          <div class="exec-card-badges">
+            <span class="exec-status ok">Atualizado</span>
+            <span class="exec-date">📅 02/02/2026</span>
+          </div>
+        </div>
+        <p class="exec-card-desc">O executor mais poderoso e estável do mercado. Suporte completo para Android e iOS com atualizações constantes.</p>
+        <div class="exec-btns">
+          <a href="https://deltaexploits.gg/delta-executor-android" target="_blank" class="exec-btn android">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-11.046 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm11.84-7.4.87-1.6a.5.5 0 0 0-.88-.48l-.88 1.62A9.6 9.6 0 0 0 12 6.72a9.6 9.6 0 0 0-5.43 1.76l-.88-1.62a.5.5 0 0 0-.88.48l.87 1.6A9.7 9.7 0 0 0 2.33 14.5h19.34a9.7 9.7 0 0 0-3.35-6.56z"/></svg>
+            Delta Android
+          </a>
+          <a href="https://deltaexploits.gg/delta-executor-ios" target="_blank" class="exec-btn ios">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Delta iOS
+          </a>
+        </div>
+      </div>
+
+      <!-- KRLN EXECUTOR (offline) -->
+      <div class="exec-card offline">
+        <div class="exec-card-header">
+          <div class="exec-card-name">⚠️ Executor KRLN</div>
+          <div class="exec-card-badges">
+            <span class="exec-status offline">Offline</span>
+          </div>
+        </div>
+        <p class="exec-card-desc offline-msg">⛔ Desativado permanentemente — Este executor foi descontinuado pelos desenvolvedores oficiais.</p>
+        <div class="exec-btns">
+          <button class="exec-btn android" disabled>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-11.046 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm11.84-7.4.87-1.6a.5.5 0 0 0-.88-.48l-.88 1.62A9.6 9.6 0 0 0 12 6.72a9.6 9.6 0 0 0-5.43 1.76l-.88-1.62a.5.5 0 0 0-.88.48l.87 1.6A9.7 9.7 0 0 0 2.33 14.5h19.34a9.7 9.7 0 0 0-3.35-6.56z"/></svg>
+            Krln Android (Offline)
+          </button>
+          <button class="exec-btn ios" disabled>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Krln iOS (Offline)
+          </button>
+        </div>
+      </div>
+
+      <!-- XENO EXECUTOR -->
+      <div class="exec-card">
+        <div class="exec-card-header">
+          <div class="exec-card-name">🖥️ Executor Xeno</div>
+          <div class="exec-card-badges">
+            <span class="exec-status ok">Atualizado</span>
+            <span class="exec-date">📅 02/02/2026</span>
+            <span class="exec-platform-badge pc-only">⚠️ Apenas PC</span>
+          </div>
+        </div>
+        <p class="exec-card-desc">Executor premium com interface profissional e melhor performance. Disponível exclusivamente para PC.</p>
+        <div class="exec-btns">
+          <a href="https://xeno.onl/40a25bcf88299d7d251541579671ca47/a92f0e88/5729899ebcd696a9?hash=GjtuNZFbyUnRsktXAJKRck33uc2dfLkjdxmqM2EfmuW8qLL8plu8lh9KPWRsFe7d" target="_blank" class="exec-btn pc">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            Baixar Xeno PC
+          </a>
+        </div>
+      </div>
+
+      <!-- LINK PARA SCRIPTS -->
+      <div class="scripts-link-banner">
+        <div class="scripts-link-banner-text">
+          <h3>📜 Scripts Gratuitos</h3>
+          <p>Acesse nossa coleção de scripts otimizados para usar com esses executores.</p>
+        </div>
+        <a href="/scripts.html" class="btn-scripts-link">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Ver Scripts →
+        </a>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+  if (typeof Auth === 'undefined') {
+    window.Auth = { STORAGE_KEY:"lagteck_user", getUser(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||null}catch{return null}}, setUser(u){localStorage.setItem(this.STORAGE_KEY,JSON.stringify(u))}, logout(){localStorage.removeItem(this.STORAGE_KEY);window.location.href="/"}, isLoggedIn(){return!!this.getUser()} };
+  }
+  if (typeof Cart === 'undefined') {
+    window.Cart = { STORAGE_KEY:"lagteck_cart", getItems(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||[]}catch{return[]}}, getCount(){return this.getItems().reduce((a,i)=>a+(i.qty||1),0)} };
+  }
+  if (typeof renderTopbar === 'undefined') {
+    window.renderTopbar=()=>`<div class="topbar"><span class="topbar-dot"></span>⚡ Entrega <strong>rápida e segura</strong> via Discord &nbsp;·&nbsp; <a href="https://discord.gg/rPFN7BMC5k" target="_blank">Entrar no servidor ✨</a> &nbsp;·&nbsp; <span style="opacity:.7">🔒 Pagamento pelo Mercado Pago</span></div>`;
+    window.renderHeader=()=>{const user=Auth.getUser();const cc=Cart.getCount();return`<header class="site-header"><div class="header-inner"><button class="mobile-menu-btn" id="mobile-menu-btn"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:32px;height:32px;border-radius:8px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><nav class="header-nav"><a href="/contas.html">Contas</a><a href="/frutas.html">Frutas</a><a href="/gamepass.html">Gamepass</a><a href="/executor.html">Executor</a><a href="/scripts.html">Scripts</a></nav><div class="header-search"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="header-search-input" placeholder="Buscar produtos..." autocomplete="off"></div><div class="header-actions"><a href="/carrinho.html" class="header-btn" style="position:relative"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="cart-badge" style="display:${cc>0?'flex':'none'}">${cc}</span></a>${user?`<a href="/perfil.html" class="header-btn" style="padding:3px"><div class="sidebar-avatar" style="width:28px;height:28px;font-size:12px;border-radius:6px">${(user.full_name?.[0]||'U').toUpperCase()}</div></a>`:`<button class="btn-login" onclick="showAuthModal('login')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Entrar</button>`}</div></div></header>`};
+    window.renderSidebar=(active='')=>`<aside class="sidebar"><span class="sidebar-section-label">Loja</span><a href="/" class="sidebar-item ${active==='inicio'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início</a><a href="/contas.html" class="sidebar-item ${active==='contas'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Contas Blox</a><a href="/frutas.html" class="sidebar-item ${active==='frutas'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Frutas</a><a href="/gamepass.html" class="sidebar-item ${active==='gamepass'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Gamepass<span class="sidebar-badge-em-breve">EM BREVE</span></a><a href="/executor.html" class="sidebar-item ${active==='executor'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Executor</a><a href="/scripts.html" class="sidebar-item ${active==='scripts'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Scripts</a></aside>`;
+    window.renderMobileNav=(active='')=>`<div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileNav()"></div><div class="mobile-nav" id="mobile-nav"><div class="mobile-nav-header"><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text" style="font-size:17px">Deal Blox</span></a><button class="mobile-nav-close" onclick="closeMobileNav()">✕</button></div><span class="mobile-nav-section-label">Loja</span><a href="/" class="mobile-nav-item ${active==='inicio'?'active':''}">🏠 Início</a><a href="/contas.html" class="mobile-nav-item ${active==='contas'?'active':''}">👤 Contas Blox</a><a href="/frutas.html" class="mobile-nav-item ${active==='frutas'?'active':''}">🛡️ Frutas</a><a href="/gamepass.html" class="mobile-nav-item">⭐ Gamepass <span class="sidebar-badge-em-breve">EM BREVE</span></a><a href="/executor.html" class="mobile-nav-item ${active==='executor'?'active':''}">💻 Executor</a><a href="/scripts.html" class="mobile-nav-item ${active==='scripts'?'active':''}">📄 Scripts</a><div class="mobile-nav-btns"><button onclick="showAuthModal('login');closeMobileNav()" class="btn-mobile-login">🔑 Entrar na conta</button><button onclick="showAuthModal('register');closeMobileNav()" class="btn-mobile-register">✨ Criar conta</button></div></div>`;
+    window.renderFooter=()=>`<footer class="site-footer"><div class="footer-inner"><div class="footer-grid"><div class="footer-brand"><a href="/" class="logo" style="display:inline-flex;margin-bottom:14px"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><p>Loja digital de Blox Fruits com entrega rápida e suporte via Discord.</p><div class="footer-social"><a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="footer-social-btn">💬</a></div></div><div class="footer-col"><h4>Produtos</h4><ul><li><a href="/contas.html">Contas Blox Fruits</a></li><li><a href="/frutas.html">Frutas</a></li><li><a href="/gamepass.html">Gamepass</a></li></ul></div><div class="footer-col"><h4>Ferramentas</h4><ul><li><a href="/executor.html">Executores</a></li><li><a href="/scripts.html">Scripts</a></li></ul></div><div class="footer-col"><h4>Legal</h4><ul><li><a href="/termos.html">Termos de Uso</a></li><li><a href="/privacidade.html">Privacidade</a></li></ul></div></div><div class="footer-bottom"><p class="footer-copy">© 2026 Deal Blox. Todos os direitos reservados.</p><div class="footer-payments"><span class="payment-icon">PIX</span><span class="payment-icon">Cartão</span><span class="payment-icon">MP</span></div></div></div></footer>`;
+    window.renderAuthModal=()=>`<div class="modal-overlay" id="auth-modal" style="display:none"><div class="modal-box"><button class="modal-close" onclick="closeAuthModal()">✕</button><div class="auth-modal-logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:10px;object-fit:cover"><span>Deal Blox</span></div><p style="font-size:13px;color:var(--text2);margin-bottom:20px">Sua loja de Blox Fruits</p><div class="auth-tabs"><button class="auth-tab active" onclick="switchAuthTab('login')">Entrar</button><button class="auth-tab" onclick="switchAuthTab('register')">Criar conta</button></div><div id="auth-panel-login"><form onsubmit="handleLogin(event)"><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="login-password" placeholder="••••••••" required></div><button type="submit" class="btn-auth-submit">Acessar minha conta</button></form></div><div id="auth-panel-register" style="display:none"><form onsubmit="handleRegister(event)"><div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="reg-name" placeholder="Seu nome" required></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reg-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6"></div><button type="submit" class="btn-auth-submit">Criar conta</button></form></div></div></div>`;
+    window.showAuthModal=(tab='login')=>{const m=document.getElementById('auth-modal');if(m){m.style.display='flex';document.body.style.overflow='hidden'}};
+    window.closeAuthModal=()=>{const m=document.getElementById('auth-modal');if(m){m.style.display='none';document.body.style.overflow=''}};
+    window.initMobileMenu=()=>{document.getElementById('mobile-menu-btn')?.addEventListener('click',()=>{document.getElementById('mobile-nav')?.classList.add('open');document.getElementById('mobile-nav-overlay')?.classList.add('open')})};
+    window.closeMobileNav=()=>{document.getElementById('mobile-nav')?.classList.remove('open');document.getElementById('mobile-nav-overlay')?.classList.remove('open')};
+    window.initHeaderSearch=()=>{const i=document.getElementById('header-search-input');if(!i)return;i.addEventListener('keydown',e=>{if(e.key==='Enter'&&i.value.trim())window.location.href=`/contas.html?q=${encodeURIComponent(i.value.trim())}`})};
+    window.highlightActiveNav=()=>{const path=window.location.pathname;document.querySelectorAll('.header-nav a,.sidebar-item,.mobile-nav-item').forEach(l=>{const href=l.getAttribute('href');if(!href)return;if((path==='/'||path==='/index.html')&&(href==='/'||href==='/index.html'))l.classList.add('active');else if(path.endsWith(href)&&href!=='/')l.classList.add('active')})};
+    window.switchAuthTab=(tab)=>{['login','register'].forEach(t=>{const p=document.getElementById(`auth-panel-${t}`);if(p)p.style.display=t===tab?'':'none'})};
+    window.handleLogin=async(e)=>{e.preventDefault();};
+    window.handleRegister=async(e)=>{e.preventDefault();};
+  }
+  </script>
+  <script>
+    document.getElementById('topbar-root').innerHTML = renderTopbar();
+    document.getElementById('header-root').innerHTML = renderHeader();
+    document.getElementById('sidebar-root').innerHTML = renderSidebar('executor');
+    document.getElementById('mobile-nav-root').innerHTML = renderMobileNav('executor');
+    document.getElementById('auth-modal-root').innerHTML = renderAuthModal();
+    document.getElementById('footer-root').innerHTML = renderFooter();
+    initMobileMenu();
+    initHeaderSearch();
+    highlightActiveNav();
+  </script>
+</body>
+</html>

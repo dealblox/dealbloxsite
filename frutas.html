@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frutas Blox Fruits — Deal Blox</title>
+  <meta name="description" content="Compre frutas raras de Blox Fruits com segurança. Entrega rápida via Discord.">
+  <link rel="icon" href="/images/logo-dealblox.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <div id="topbar-root"></div>
+  <div id="header-root"></div>
+  <div id="mobile-nav-root"></div>
+  <div id="auth-modal-root"></div>
+
+  <div class="page-layout">
+    <div id="sidebar-root"></div>
+
+    <main class="main-content">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <h1>🛡️ Frutas Blox Fruits</h1>
+        <p>Frutas raras e míticas com entrega imediata via Discord</p>
+        <div class="page-header-badges">
+          <span class="payment-badge">✓ PIX</span>
+          <span class="payment-badge">✓ Cartão</span>
+          <span class="payment-badge">✓ Mercado Pago</span>
+          <span class="payment-badge">✓ Entrega via Discord</span>
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="setFilter('all', this)">Todos</button>
+        <button class="filter-btn" onclick="setFilter('instock', this)">Em estoque</button>
+        <button class="filter-btn" onclick="setFilter('sale', this)">Em promoção</button>
+
+        <div class="filter-search">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" id="search-input" placeholder="Buscar fruta..." autocomplete="off">
+        </div>
+
+        <select class="sort-select" id="sort-select">
+          <option value="">Ordenar por</option>
+          <option value="price-asc">Menor preço</option>
+          <option value="price-desc">Maior preço</option>
+          <option value="stock-desc">Mais em estoque</option>
+        </select>
+
+        <span class="product-count" id="product-count"><strong>0</strong> produto(s)</span>
+      </div>
+
+      <!-- GRID -->
+      <div class="products-grid" id="products-grid">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- PAGINATION -->
+      <div id="pagination" class="pagination"></div>
+
+    </main>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+  if (typeof LAGTECK_CONFIG === 'undefined') {
+    window.LAGTECK_CONFIG = {MP_PUBLIC_KEY:"",EMAILJS_SERVICE_ID:"service_mzmityx",EMAILJS_TEMPLATE_ID:"template_6ztpr7k",EMAILJS_PUBLIC_KEY:"7SAN7fAAsYLc7e-6W",GOOGLE_CLIENT_ID:"",DISCORD_CLIENT_ID:"",DISCORD_REDIRECT_URI:window.location.origin+"/auth-callback.html",ADMIN_PASSWORD:"lagteck@admin2026",DISCORD_SERVER:"https://discord.gg/rPFN7BMC5k",SITE_NAME:"Deal Blox",SITE_URL:"https://lagteck.vercel.app",SUPPORT_EMAIL:"lagteck@gmail.com",SITE_DESCRIPTION:"Loja digital de contas e itens de Blox Fruits."};
+  }
+  if (typeof Auth === 'undefined') {
+    window.Auth = { STORAGE_KEY:"lagteck_user", getUser(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||null}catch{return null}}, setUser(u){localStorage.setItem(this.STORAGE_KEY,JSON.stringify(u));window.dispatchEvent(new CustomEvent("lagteck:auth",{detail:u}))}, logout(){localStorage.removeItem(this.STORAGE_KEY);window.location.href="/"}, isLoggedIn(){return!!this.getUser()}, async hashPassword(p){const e=new TextEncoder(),d=e.encode(p+"lagteck_salt_2026"),h=await crypto.subtle.digest("SHA-256",d),a=Array.from(new Uint8Array(h));return a.map(b=>b.toString(16).padStart(2,"0")).join("")}, generateCode(){return Math.floor(100000+Math.random()*900000).toString()}, generateId(){return Date.now().toString(36)+Math.random().toString(36).substr(2)} };
+  }
+  if (typeof Cart === 'undefined') {
+    window.Cart = { STORAGE_KEY:"lagteck_cart", getItems(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||[]}catch{return[]}}, getCount(){return this.getItems().reduce((a,i)=>a+(i.qty||1),0)}, addItem(p){const items=this.getItems();const ex=items.find(i=>i.id===p.id);if(ex)ex.qty=(ex.qty||1)+1;else items.push({...p,qty:1});localStorage.setItem(this.STORAGE_KEY,JSON.stringify(items));return items}, removeItem(id){const items=this.getItems().filter(i=>i.id!==id);localStorage.setItem(this.STORAGE_KEY,JSON.stringify(items));return items}, clear(){localStorage.removeItem(this.STORAGE_KEY)}, getTotal(){return this.getItems().reduce((a,i)=>a+(i.price*(i.qty||1)),0)} };
+  }
+  if (typeof API === 'undefined') {
+    window.API = { async get(t,p={}){const qs=new URLSearchParams(p).toString();const res=await fetch(`tables/${t}${qs?"?"+qs:""}`);return res.json()}, async getOne(t,id){const res=await fetch(`tables/${t}/${id}`);if(!res.ok)return null;return res.json()}, async post(t,d){const res=await fetch(`tables/${t}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return res.json()}, async put(t,id,d){const res=await fetch(`tables/${t}/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return res.json()}, async patch(t,id,d){const res=await fetch(`tables/${t}/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return res.json()}, async delete(t,id){await fetch(`tables/${t}/${id}`,{method:"DELETE"})}, async findUserByEmail(email){const res=await this.get("users",{search:email,limit:10});return res.data?.find(u=>u.email===email)||null} };
+  }
+  if (typeof formatPrice === 'undefined') {
+    window.formatPrice = (v) => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);
+  }
+  if (typeof showToast === 'undefined') {
+    window.showToast = (msg,type='success',dur=3500) => {let c=document.getElementById('toast-container');if(!c){c=document.createElement('div');c.id='toast-container';c.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px';document.body.appendChild(c)}const t=document.createElement('div');const bc={success:'#10b981',error:'#ef4444',info:'#3b82f6',warning:'#f59e0b'};t.style.cssText=`background:#0f1320;color:#c8d8f0;padding:14px 18px;border-radius:12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;min-width:260px;max-width:380px;border:1px solid rgba(99,179,237,.15);border-left:4px solid ${bc[type]||bc.info};box-shadow:0 8px 40px rgba(0,0,0,.6)`;t.innerHTML=`<span>${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#4a5568;font-size:16px;margin-left:auto">×</button>`;c.appendChild(t);setTimeout(()=>t.remove(),dur)};
+  }
+  if (typeof showAuthModal === 'undefined') {
+    window.showAuthModal = (tab='login') => {const m=document.getElementById('auth-modal');if(m){m.style.display='flex';document.body.style.overflow='hidden'}};
+    window.closeAuthModal = () => {const m=document.getElementById('auth-modal');if(m){m.style.display='none';document.body.style.overflow=''}};
+  }
+  if (typeof renderTopbar === 'undefined') {
+    window.renderTopbar=()=>`<div class="topbar"><span class="topbar-dot"></span>⚡ Entrega <strong>rápida e segura</strong> via Discord &nbsp;·&nbsp; <a href="https://discord.gg/rPFN7BMC5k" target="_blank">Entrar no servidor ✨</a> &nbsp;·&nbsp; <span style="opacity:.7">🔒 Pagamento pelo Mercado Pago</span></div>`;
+    window.renderHeader=()=>{const user=Auth.getUser();const cc=Cart.getCount();return`<header class="site-header"><div class="header-inner"><button class="mobile-menu-btn" id="mobile-menu-btn"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:32px;height:32px;border-radius:8px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><nav class="header-nav"><a href="/contas.html">Contas</a><a href="/frutas.html">Frutas</a><a href="/gamepass.html">Gamepass</a><a href="/executor.html">Executor</a><a href="/scripts.html">Scripts</a></nav><div class="header-search"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="header-search-input" placeholder="Buscar produtos..." autocomplete="off"></div><div class="header-actions"><a href="/carrinho.html" class="header-btn" style="position:relative"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="cart-badge" style="display:${cc>0?'flex':'none'}">${cc}</span></a>${user?`<a href="/perfil.html" class="header-btn" style="padding:3px"><div class="sidebar-avatar" style="width:28px;height:28px;font-size:12px;border-radius:6px">${(user.full_name?.[0]||'U').toUpperCase()}</div></a>`:`<button class="btn-login" onclick="showAuthModal('login')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Entrar</button>`}</div></div></header>`};
+    window.renderSidebar=(active='')=>`<aside class="sidebar"><span class="sidebar-section-label">Loja</span><a href="/" class="sidebar-item ${active==='inicio'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início</a><a href="/contas.html" class="sidebar-item ${active==='contas'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Contas Blox</a><a href="/frutas.html" class="sidebar-item ${active==='frutas'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Frutas</a><a href="/gamepass.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Gamepass<span class="sidebar-badge-em-breve">EM BREVE</span></a><a href="/executor.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Executor</a><a href="/scripts.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Scripts</a><span class="sidebar-section-label">Outros</span><a href="/jornalzinho.html" class="sidebar-item ${active==='jornalzinho'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>Jornalzinho</a></aside>`;
+    window.renderMobileNav=(active='')=>`<div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileNav()"></div><div class="mobile-nav" id="mobile-nav"><div class="mobile-nav-header"><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text" style="font-size:17px">Deal Blox</span></a><button class="mobile-nav-close" onclick="closeMobileNav()">✕</button></div><span class="mobile-nav-section-label">Loja</span><a href="/" class="mobile-nav-item ${active==='inicio'?'active':''}">🏠 Início</a><a href="/contas.html" class="mobile-nav-item ${active==='contas'?'active':''}">👤 Contas Blox</a><a href="/frutas.html" class="mobile-nav-item ${active==='frutas'?'active':''}">🛡️ Frutas</a><a href="/gamepass.html" class="mobile-nav-item">⭐ Gamepass <span class="sidebar-badge-em-breve">EM BREVE</span></a><a href="/executor.html" class="mobile-nav-item">💻 Executor</a><a href="/scripts.html" class="mobile-nav-item">📄 Scripts</a><span class="mobile-nav-section-label">Outros</span><a href="/jornalzinho.html" class="mobile-nav-item ${active==='jornalzinho'?'active':''}">📰 Jornalzinho</a><div class="mobile-nav-btns"><button onclick="showAuthModal('login');closeMobileNav()" class="btn-mobile-login">🔑 Entrar na conta</button><button onclick="showAuthModal('register');closeMobileNav()" class="btn-mobile-register">✨ Criar conta</button></div></div>`;
+    window.renderFooter=()=>`<footer class="site-footer"><div class="footer-inner"><div class="footer-grid"><div class="footer-brand"><a href="/" class="logo" style="display:inline-flex;margin-bottom:14px"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><p>Loja digital de Blox Fruits com entrega rápida e suporte via Discord.</p><div class="footer-social"><a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="footer-social-btn">💬</a></div></div><div class="footer-col"><h4>Produtos</h4><ul><li><a href="/contas.html">Contas Blox Fruits</a></li><li><a href="/frutas.html">Frutas</a></li><li><a href="/gamepass.html">Gamepass</a></li></ul></div><div class="footer-col"><h4>Suporte</h4><ul><li><a href="/faq.html">FAQ</a></li><li><a href="https://discord.gg/rPFN7BMC5k" target="_blank">Discord</a></li></ul></div><div class="footer-col"><h4>Legal</h4><ul><li><a href="/termos.html">Termos de Uso</a></li><li><a href="/privacidade.html">Privacidade</a></li></ul></div></div><div class="footer-bottom"><p class="footer-copy">© 2026 Deal Blox. Todos os direitos reservados.</p><div class="footer-payments"><span class="payment-icon">PIX</span><span class="payment-icon">Cartão</span><span class="payment-icon">MP</span></div></div></div></footer>`;
+    window.renderAuthModal=()=>`<div class="modal-overlay" id="auth-modal" style="display:none"><div class="modal-box"><button class="modal-close" onclick="closeAuthModal()">✕</button><div class="auth-modal-logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:10px;object-fit:cover"><span>Deal Blox</span></div><p style="font-size:13px;color:var(--text2);margin-bottom:20px">Sua loja de Blox Fruits</p><div class="auth-tabs"><button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Entrar</button><button class="auth-tab" id="auth-tab-register" onclick="switchAuthTab('register')">Criar conta</button></div><div id="auth-panel-login"><form onsubmit="handleLogin(event)"><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="login-password" placeholder="••••••••" required></div><button type="submit" class="btn-auth-submit" id="btn-login-submit">Acessar minha conta</button></form></div><div id="auth-panel-register" style="display:none"><form onsubmit="handleRegister(event)"><div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="reg-name" placeholder="Seu nome" required></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reg-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6"></div><button type="submit" class="btn-auth-submit" id="btn-reg-submit">Criar conta</button></form></div></div></div>`;
+    window.initMobileMenu=()=>{document.getElementById('mobile-menu-btn')?.addEventListener('click',()=>{document.getElementById('mobile-nav')?.classList.add('open');document.getElementById('mobile-nav-overlay')?.classList.add('open')})};
+    window.closeMobileNav=()=>{document.getElementById('mobile-nav')?.classList.remove('open');document.getElementById('mobile-nav-overlay')?.classList.remove('open')};
+    window.initHeaderSearch=()=>{const i=document.getElementById('header-search-input');if(!i)return;i.addEventListener('keydown',e=>{if(e.key==='Enter'&&i.value.trim())window.location.href=`/contas.html?q=${encodeURIComponent(i.value.trim())}`})};
+    window.highlightActiveNav=()=>{const path=window.location.pathname;document.querySelectorAll('.header-nav a,.sidebar-item,.mobile-nav-item').forEach(l=>{const href=l.getAttribute('href');if(!href)return;if((path==='/'||path==='/index.html')&&(href==='/'||href==='/index.html'))l.classList.add('active');else if(path.endsWith(href)&&href!=='/')l.classList.add('active')})};
+    window.switchAuthTab=(tab)=>{['login','register'].forEach(t=>{const p=document.getElementById(`auth-panel-${t}`);if(p)p.style.display=t===tab?'':'none';const b=document.getElementById(`auth-tab-${t}`);if(b)b.classList.toggle('active',t===tab)})};
+    window.handleLogin=async(e)=>{e.preventDefault();showToast('Login indisponível no modo offline','warning')};
+    window.handleRegister=async(e)=>{e.preventDefault();showToast('Registro indisponível no modo offline','warning')};
+  }
+  </script>
+  <script>
+    document.getElementById('topbar-root').innerHTML = renderTopbar();
+    document.getElementById('header-root').innerHTML = renderHeader();
+    document.getElementById('sidebar-root').innerHTML = renderSidebar('frutas');
+    document.getElementById('mobile-nav-root').innerHTML = renderMobileNav('frutas');
+    document.getElementById('auth-modal-root').innerHTML = renderAuthModal();
+    document.getElementById('footer-root').innerHTML = renderFooter();
+    initMobileMenu();
+    initHeaderSearch();
+    highlightActiveNav();
+
+    const ICONS = ['🍎','🍊','🍇','🫐','🍋','🍓','🍑','🥝','🛡️','🌟','🔥','💎'];
+    function getIcon() { return ICONS[Math.floor(Math.random()*ICONS.length)]; }
+
+    function rarityColor(rarity = '') {
+      const r = rarity.toLowerCase();
+      if (r.includes('mítica') || r.includes('mitica')) return { bg: 'rgba(239,68,68,.15)', color: '#ef4444', border: 'rgba(239,68,68,.3)' };
+      if (r.includes('lendár') || r.includes('lendari')) return { bg: 'rgba(245,158,11,.15)', color: '#f59e0b', border: 'rgba(245,158,11,.3)' };
+      if (r.includes('épica') || r.includes('epica')) return { bg: 'rgba(139,92,246,.15)', color: '#8b5cf6', border: 'rgba(139,92,246,.3)' };
+      if (r.includes('rara')) return { bg: 'rgba(59,130,246,.15)', color: '#3b82f6', border: 'rgba(59,130,246,.3)' };
+      return { bg: 'rgba(100,116,139,.15)', color: '#64748b', border: 'rgba(100,116,139,.3)' };
+    }
+
+    function createCard(p) {
+      const favs = JSON.parse(localStorage.getItem('lt_favs') || '[]');
+      const isFav = favs.includes(p.id);
+      const hasDiscount = p.original_price && p.original_price > p.price;
+      const pctOff = hasDiscount ? Math.round((1 - p.price / p.original_price) * 100) : 0;
+      const inStock = (p.stock ?? 1) > 0;
+      const stockLow = inStock && p.stock <= 3;
+      const rc = rarityColor(p.rarity || '');
+      const icon = getIcon();
+      return `
+      <div class="product-card" onclick="window.location='/produto.html?id=${p.id}'">
+        <div class="product-card-img">
+          ${p.image_url
+            ? `<img class="product-card-img-inner" src="${p.image_url}" alt="${p.name}" onerror="this.parentElement.innerHTML='<div class=\\'product-card-placeholder\\'><span class=\\'placeholder-icon\\'>${icon}</span></div>'">`
+            : `<div class="product-card-placeholder"><span class="placeholder-icon">${icon}</span></div>`
+          }
+          <div class="product-card-img-overlay"></div>
+          ${hasDiscount ? `<span class="badge-sale">-${pctOff}%</span>` : ''}
+          ${p.is_new ? `<span class="badge-new">NOVO</span>` : ''}
+          <button class="btn-fav ${isFav?'active':''}" onclick="toggleFav(event,'${p.id}')" title="Favoritar">
+            <svg width="14" height="14" fill="${isFav?'currentColor':'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+        <div class="product-card-body">
+          <div class="product-card-name">${p.name}</div>
+          <div class="product-card-meta">
+            ${p.rarity ? `<span class="rarity-badge" style="background:${rc.bg};color:${rc.color};border:1px solid ${rc.border}">${p.rarity}</span>` : ''}
+          </div>
+          <div class="product-card-stock ${inStock?(stockLow?'stock-low':'stock-in'):'stock-out'}">
+            ${inStock?(stockLow?`Restam ${p.stock}`:'Em estoque'):'Sem estoque'}
+          </div>
+          <div class="product-card-price">
+            <span class="price-current">${formatPrice(p.price)}</span>
+            ${hasDiscount?`<span class="price-original">${formatPrice(p.original_price)}</span>`:''}
+            ${p.pix_discount?`<span class="price-pix">PIX -${p.pix_discount}%</span>`:''}
+          </div>
+          <button class="btn-view-details" onclick="window.location='/produto.html?id=${p.id}';event.stopPropagation()">Ver Detalhes →</button>
+        </div>
+      </div>`;
+    }
+
+    async function toggleFav(e, id) {
+      e.stopPropagation();
+      let favs = JSON.parse(localStorage.getItem('lt_favs') || '[]');
+      const idx = favs.indexOf(id);
+      if (idx >= 0) favs.splice(idx, 1); else favs.push(id);
+      localStorage.setItem('lt_favs', JSON.stringify(favs));
+      e.currentTarget.classList.toggle('active', idx < 0);
+      const svg = e.currentTarget.querySelector('svg');
+      if (svg) svg.setAttribute('fill', idx < 0 ? 'currentColor' : 'none');
+      try {
+        const user = Auth.getUser();
+        if (user && user.id) await API.patch('users', user.id, { favorites: favs });
+      } catch(err) { console.warn('Fav sync:', err); }
+    }
+
+    let allProducts = [];
+    let currentFilter = 'all';
+
+    function setFilter(f, btn) {
+      currentFilter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderFiltered();
+    }
+
+    function renderFiltered() {
+      const query = document.getElementById('search-input')?.value.toLowerCase() || '';
+      const sort = document.getElementById('sort-select')?.value || '';
+      let list = [...allProducts];
+      if (currentFilter === 'instock') list = list.filter(p => (p.stock ?? 1) > 0);
+      if (currentFilter === 'sale') list = list.filter(p => p.original_price && p.original_price > p.price);
+      if (query) list = list.filter(p => p.name?.toLowerCase().includes(query));
+      if (sort === 'price-asc') list.sort((a,b) => a.price - b.price);
+      if (sort === 'price-desc') list.sort((a,b) => b.price - a.price);
+      if (sort === 'stock-desc') list.sort((a,b) => (b.stock||0) - (a.stock||0));
+
+      const grid = document.getElementById('products-grid');
+      const count = document.getElementById('product-count');
+      if (count) count.innerHTML = `<strong>${list.length}</strong> produto(s)`;
+
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>Nenhum resultado</h3><p>Tente outro filtro ou busca.</p></div>`;
+        return;
+      }
+      grid.innerHTML = list.map(createCard).join('');
+    }
+
+    const SUPABASE_URL = "https://piqnqegawcdhykatpflj.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_mGMkvi5A0S3iVySpI_ek_Q_IFekBWjH";
+
+    async function loadProducts() {
+      const grid = document.getElementById('products-grid');
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get('q') || '';
+        if (q) { const si = document.getElementById('search-input'); if(si) si.value = q; }
+
+        grid.innerHTML = '<div class="spinner"></div>';
+
+        let produtos = [];
+
+        // 1ª tentativa: Supabase (fonte principal)
+        // CORRIGIDO: tabela "produtos", coluna "categoria", campos em português
+        try {
+          let res = await fetch(
+            `${SUPABASE_URL}/rest/v1/products?select=*&category=eq.frutas`,
+            {
+              headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${SUPABASE_KEY}`
+              }
+            }
+          );
+          if (res.ok) {
+            const sbData = await res.json();
+            console.log('[frutas] Supabase retornou:', sbData.length, 'produtos');
+            if (Array.isArray(sbData) && sbData.length > 0) {
+              // Normaliza campos do Supabase (português) para o formato interno (inglês)
+              produtos = sbData.map(p => ({
+                ...p,
+                name:           p.nome          ?? p.name,
+                price:          p.preco         ?? p.price,
+                original_price: p.preco_original ?? p.original_price,
+                stock:          p.estoque       ?? p.stock ?? 1,
+                category:       p.categoria     ?? p.category,
+                active:         p.active !== false,
+              }));
+            }
+          } else {
+            console.warn('[frutas] Supabase retornou HTTP', res.status);
+          }
+        } catch(sbErr) {
+          console.warn('[frutas] Supabase indisponível:', sbErr.message);
+        }
+
+        // 2ª tentativa: API interna (fallback)
+        if (produtos.length === 0) {
+          let res = await fetch('tables/products?limit=200&sort=created_at');
+          if (!res.ok) throw new Error(`API interna HTTP ${res.status}`);
+          const data = await res.json();
+          produtos = (data.data || []).filter(p => {
+            const cat = (p.category || p.categoria || '').toLowerCase();
+            return (cat === 'fruits' || cat === 'frutas' || cat === 'fruit');
+          });
+        }
+
+        // Filtra apenas ativos
+        allProducts = produtos.filter(p => p.active !== false && p.status !== 'inactive');
+        console.log('[frutas] Total após filtro:', allProducts.length, 'frutas');
+
+        // Sincroniza favoritos do banco
+        try {
+          const user = Auth.getUser();
+          if (user && user.id) {
+            const dbUser = await API.getOne('users', user.id);
+            if (dbUser && Array.isArray(dbUser.favorites) && dbUser.favorites.length > 0) {
+              localStorage.setItem('lt_favs', JSON.stringify(dbUser.favorites));
+            }
+          }
+        } catch(e) {}
+
+        renderFiltered();
+
+      } catch(err) {
+        console.error('[frutas] Erro ao carregar produtos:', err);
+        grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Erro ao carregar</h3><p>Tente recarregar a página.<br><small style="color:#4a5568">${err.message}</small></p><button onclick="loadProducts()" style="margin-top:16px;background:var(--grad-btn);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)">Tentar novamente</button></div>`;
+      }
+    }
+
+    document.getElementById('search-input')?.addEventListener('input', renderFiltered);
+    document.getElementById('sort-select')?.addEventListener('change', renderFiltered);
+
+    loadProducts();
+  </script>
+</body>
+</html>

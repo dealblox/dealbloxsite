@@ -1,0 +1,45 @@
+{
+  "version": 2,
+
+  "functions": {
+    "api/auth/google.js":  { "memory": 256, "maxDuration": 10 },
+    "api/auth/discord.js": { "memory": 256, "maxDuration": 10 }
+  },
+
+  "rewrites": [
+    { "source": "/api/auth/google",  "destination": "/api/auth/google.js"  },
+    { "source": "/api/auth/discord", "destination": "/api/auth/discord.js" }
+  ],
+
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control",                "value": "no-store, no-cache, must-revalidate" },
+        { "key": "Access-Control-Allow-Origin",  "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+      ]
+    },
+    {
+      "source": "/css/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff"                        },
+        { "key": "X-Frame-Options",         "value": "SAMEORIGIN"                    },
+        { "key": "Referrer-Policy",         "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}

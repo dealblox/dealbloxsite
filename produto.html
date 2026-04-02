@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produto — Deal Blox</title>
+  <link rel="icon" href="/images/logo-dealblox.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Mercado Pago SDK -->
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <style>
+    /* ── Checkout steps ── */
+    .payment-step { display:none; }
+    .payment-step.active { display:block; }
+
+    /* ── PIX timer ── */
+    .pix-timer { font-size:32px;font-weight:800;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin:16px 0; }
+    .timer-bar { height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:16px; }
+    .timer-fill { height:100%;background:var(--grad-btn);border-radius:3px;transition:width 1s linear; }
+
+    /* ── Sucesso ── */
+    .order-success { text-align:center;padding:32px 20px; }
+    .order-success .checkmark { width:72px;height:72px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;margin:0 auto 16px;box-shadow:0 0 24px rgba(16,185,129,.45); }
+    .order-id-box { background:var(--bg3);border:2px solid var(--border2);border-radius:var(--r);padding:16px;margin:16px 0;font-family:monospace;font-size:20px;font-weight:900;letter-spacing:4px;color:var(--cyan2);text-align:center; }
+
+    /* ── Formulário checkout ── */
+    .checkout-field { margin-bottom:14px; }
+    .checkout-field label { display:block;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px; }
+    .checkout-field input { width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;color:var(--white);font-size:13px;font-family:var(--font);outline:none;transition:border-color .2s; }
+    .checkout-field input:focus { border-color:var(--cyan); }
+    .checkout-field input::placeholder { color:var(--text3); }
+    .checkout-field .field-hint { font-size:11px;color:var(--text3);margin-top:4px; }
+    .field-required { color:var(--red);margin-left:3px; }
+
+    /* ── Método de pagamento ── */
+    .payment-method-btn { width:100%;display:flex;align-items:center;gap:14px;background:var(--bg3);border:2px solid var(--border2);border-radius:var(--r2);padding:14px 16px;cursor:pointer;transition:all .2s;margin-bottom:10px;font-family:var(--font); }
+    .payment-method-btn:hover { border-color:var(--border3); }
+    .payment-method-btn.selected { border-color:var(--cyan);background:rgba(6,182,212,.08); }
+    .payment-method-icon { font-size:24px;flex-shrink:0; }
+    .payment-method-info strong { color:var(--white);display:block;font-size:14px;font-weight:700; }
+    .payment-method-info span { color:var(--text2);font-size:12px; }
+    .badge-recommended { background:#d1fae5;color:#065f46;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;margin-left:auto;flex-shrink:0; }
+
+    /* ── Resumo checkout ── */
+    .checkout-summary-box { background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:18px; }
+    .checkout-summary-box .product-name { font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px; }
+    .checkout-summary-box .product-cat { font-size:12px;color:var(--text2);margin-bottom:8px; }
+    .checkout-summary-box .product-price { font-size:22px;font-weight:900;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+
+    /* ── PIX QR ── */
+    .pix-box { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:20px;text-align:center;margin-bottom:12px; }
+    .pix-code-text { font-family:monospace;font-size:11px;color:var(--cyan2);word-break:break-all;cursor:pointer;padding:10px;background:var(--bg4);border-radius:var(--r);border:1px solid var(--border);margin:8px 0;line-height:1.5; }
+    .btn-copy-pix { width:100%;background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.3);color:var(--cyan2);border-radius:var(--r);padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s; }
+    .btn-copy-pix:hover { background:rgba(6,182,212,.2); }
+
+    /* ── Discord tutorial modal ── */
+    .discord-tutorial { background:rgba(88,101,242,.08);border:1px solid rgba(88,101,242,.25);border-radius:var(--r2);padding:16px;margin-top:8px;font-size:12px;color:#7289da;line-height:1.7;display:none; }
+    .discord-tutorial.show { display:block; }
+    .discord-tutorial strong { color:#99aab5; }
+
+    /* ── Botão principal ── */
+    .btn-proceed { width:100%;background:var(--grad-btn);color:#fff;border:none;border-radius:var(--r);padding:13px;font-size:15px;font-weight:800;box-shadow:var(--glow-b);cursor:pointer;font-family:var(--font);transition:all .2s;margin-top:8px; }
+    .btn-proceed:hover:not(:disabled) { transform:translateY(-1px);box-shadow:var(--glow-c); }
+    .btn-proceed:disabled { opacity:.45;cursor:not-allowed;transform:none; }
+    .btn-back-step { background:none;border:none;color:var(--cyan2);font-size:12px;cursor:pointer;font-family:var(--font);margin-top:12px;display:block;width:100%;text-align:center; }
+
+    /* ── Separador ── */
+    .step-divider { border:none;border-top:1px solid var(--border);margin:16px 0; }
+
+    /* ── Pix status ── */
+    .pix-status-text { text-align:center;font-size:12px;color:var(--text2);margin-top:8px; }
+
+    /* ── Discord join obrigatório ── */
+    .discord-join-box { background:rgba(88,101,242,.1);border:2px solid rgba(88,101,242,.35);border-radius:var(--r2);padding:20px;margin-bottom:16px;text-align:center; }
+    .discord-join-box p { font-size:13px;color:var(--text);margin-bottom:12px; }
+    .btn-discord-join { display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#5865F2,#7289da);color:#fff;border:none;border-radius:var(--r2);padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div id="topbar-root"></div>
+  <div id="header-root"></div>
+  <div id="mobile-nav-root"></div>
+  <div id="auth-modal-root"></div>
+
+  <!-- ══ CHECKOUT MODAL ══════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="checkout-modal" style="display:none">
+    <div class="modal-box" style="max-width:500px;max-height:92vh;overflow-y:auto;position:relative">
+      <button class="modal-close" id="checkout-close-btn" onclick="closeCheckout()" style="position:absolute;top:16px;right:16px;z-index:10">✕</button>
+
+      <!-- STEP 1: DADOS DO CLIENTE -->
+      <div class="payment-step active" id="step-info">
+        <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px">📋 Dados do Pedido</h2>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Preencha seus dados para finalizar a compra</p>
+
+        <div class="checkout-summary-box" id="info-summary"></div>
+
+        <div class="checkout-field">
+          <label>Nome Completo <span class="field-required">*</span></label>
+          <input type="text" id="buyer-name" placeholder="Seu nome completo" autocomplete="name">
+        </div>
+
+        <div class="checkout-field">
+          <label>CPF <span style="color:var(--text3);font-size:10px">(opcional)</span></label>
+          <input type="text" id="buyer-cpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)">
+        </div>
+
+        <div class="checkout-field">
+          <label>ID do Discord <span class="field-required">*</span></label>
+          <input type="text" id="buyer-discord" placeholder="Ex: seuuser#1234 ou @seuuser">
+          <div class="field-hint">
+            É pelo Discord que você receberá seu produto.
+            <button type="button" onclick="toggleDiscordTutorial()" style="background:none;border:none;color:var(--cyan2);font-size:11px;font-weight:700;cursor:pointer;padding:0 4px">Não tenho conta →</button>
+          </div>
+        </div>
+
+        <div class="discord-tutorial" id="discord-tutorial">
+          <strong>📱 Como criar uma conta no Discord:</strong><br>
+          1. Acesse <a href="https://discord.com" target="_blank" style="color:var(--cyan2)">discord.com</a> ou baixe o app<br>
+          2. Clique em "Registrar" e crie sua conta<br>
+          3. Após criar, seu ID aparece como <strong>@seuusuário</strong><br>
+          4. Entre no nosso servidor: <a href="https://discord.gg/rPFN7BMC5k" target="_blank" style="color:#7289da">discord.gg/rPFN7BMC5k</a><br>
+          5. Volte aqui e preencha seu ID no campo acima!
+        </div>
+
+        <hr class="step-divider">
+
+        <button class="btn-proceed" onclick="goToPayment()">
+          Continuar para pagamento →
+        </button>
+        <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">
+          🔒 Pagamento processado pelo Mercado Pago. 100% seguro.
+        </p>
+      </div>
+
+      <!-- STEP 2: ESCOLHA DE PAGAMENTO -->
+      <div class="payment-step" id="step-method">
+        <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px">💳 Forma de Pagamento</h2>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Escolha como deseja pagar</p>
+
+        <div class="checkout-summary-box" id="method-summary"></div>
+
+        <button class="payment-method-btn" id="pix-btn" onclick="selectPaymentMethod('pix')">
+          <span class="payment-method-icon">💰</span>
+          <div class="payment-method-info">
+            <strong>PIX</strong>
+            <span>Aprovação imediata · Mais rápido</span>
+          </div>
+          <div class="badge-recommended">RECOMENDADO</div>
+        </button>
+
+        <button class="payment-method-btn" id="card-btn" onclick="selectPaymentMethod('card')">
+          <span class="payment-method-icon">💳</span>
+          <div class="payment-method-info">
+            <strong>Cartão de Crédito / Débito</strong>
+            <span>Todas as bandeiras · Parcelamento disponível</span>
+          </div>
+        </button>
+
+        <button class="btn-proceed" id="btn-proceed-payment" onclick="proceedPayment()" disabled>
+          Ir para pagamento →
+        </button>
+        <button class="btn-back-step" onclick="showStep('info')">← Voltar aos dados</button>
+      </div>
+
+      <!-- STEP 3A: PIX -->
+      <div class="payment-step" id="step-pix">
+        <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px">💰 Pagar com PIX</h2>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Escaneie o QR Code ou copie o código</p>
+
+        <div class="pix-box" id="pix-box">
+          <div id="pix-qr-container">
+            <div class="spinner" style="margin:0 auto 8px"></div>
+            <p style="font-size:12px;color:var(--text2)">Gerando pagamento PIX...</p>
+          </div>
+        </div>
+
+        <div class="timer-bar">
+          <div class="timer-fill" id="pix-timer-fill" style="width:100%"></div>
+        </div>
+        <p class="pix-status-text">Aguardando pagamento · <strong id="pix-timer-text" style="color:var(--cyan2)">15:00</strong></p>
+        <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:4px">Após pagar, seu pedido será confirmado automaticamente</p>
+
+        <button class="btn-back-step" onclick="showStep('method')">← Mudar forma de pagamento</button>
+      </div>
+
+      <!-- STEP 3B: CARTÃO -->
+      <div class="payment-step" id="step-card">
+        <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:4px">💳 Pagar com Cartão</h2>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Dados protegidos pelo Mercado Pago</p>
+        <div id="card-form-container">
+          <div class="spinner" style="margin:0 auto 8px"></div>
+          <p style="font-size:12px;color:var(--text2);text-align:center">Carregando formulário seguro...</p>
+        </div>
+        <button class="btn-back-step" onclick="showStep('method')">← Mudar forma de pagamento</button>
+      </div>
+
+      <!-- STEP 4: ENTRAR NO DISCORD (obrigatório) -->
+      <div class="payment-step" id="step-discord-join">
+        <div style="text-align:center;padding:16px 0">
+          <div style="font-size:56px;margin-bottom:12px">💬</div>
+          <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:8px">Entre no nosso Discord!</h2>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:20px">
+            Para receber seu produto, é <strong style="color:var(--white)">obrigatório</strong> estar no nosso servidor do Discord.
+          </p>
+          <div class="discord-join-box">
+            <p>Clique abaixo para entrar no servidor e depois confirme que entrou:</p>
+            <a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="btn-discord-join">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+              Entrar no Servidor
+            </a>
+          </div>
+          <button class="btn-proceed" onclick="confirmDiscordJoin()">
+            ✅ Já entrei no Discord!
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 5: SUCESSO -->
+      <div class="payment-step" id="step-success">
+        <div class="order-success">
+          <div class="checkmark">✓</div>
+          <h2 style="font-size:1.2rem;font-weight:800;color:var(--white)">Pagamento Confirmado! 🎉</h2>
+          <p style="font-size:13px;color:var(--text2);margin-top:8px">Seu pedido foi registrado com sucesso!</p>
+
+          <div class="order-id-box" id="order-id-display">—</div>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:4px">⚠️ Guarde este ID — você precisará dele para retirar o produto no Discord.</p>
+          <p style="font-size:12px;color:var(--text3);margin-bottom:20px">📧 Uma confirmação foi enviada para seu email.</p>
+
+          <a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="btn-proceed" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;margin-bottom:10px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            Retirar produto no Discord
+          </a>
+          <button onclick="closeCheckout();window.location.href='/perfil.html'" style="width:100%;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:var(--r);padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)">
+            Ver meus pedidos →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+
+  <div class="page-layout">
+    <div id="sidebar-root"></div>
+    <main class="main-content" id="product-detail">
+      <div class="spinner"></div>
+    </main>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    // ── Fallback inline (caso layout.js não carregue no preview) ──────────
+    if (typeof LAGTECK_CONFIG === 'undefined') {
+      window.LAGTECK_CONFIG = {
+        MP_PUBLIC_KEY:"",EMAILJS_SERVICE_ID:"service_mzmityx",EMAILJS_TEMPLATE_ID:"template_6ztpr7k",EMAILJS_PUBLIC_KEY:"7SAN7fAAsYLc7e-6W",
+        GOOGLE_CLIENT_ID:"",DISCORD_CLIENT_ID:"",DISCORD_REDIRECT_URI:window.location.origin+"/auth-callback.html",
+        ADMIN_PASSWORD:"lagteck@admin2026",DISCORD_SERVER:"https://discord.gg/rPFN7BMC5k",
+        SITE_NAME:"Deal Blox",SITE_URL:"https://lagteck.vercel.app",SUPPORT_EMAIL:"lagteck@gmail.com",
+        SITE_DESCRIPTION:"Loja digital de contas e itens de Blox Fruits."
+      };
+    }
+    if (typeof Auth === 'undefined') {
+      window.Auth = { STORAGE_KEY:"lagteck_user", getUser(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||null}catch{return null}}, setUser(u){localStorage.setItem(this.STORAGE_KEY,JSON.stringify(u));window.dispatchEvent(new CustomEvent("lagteck:auth",{detail:u}))}, logout(){localStorage.removeItem(this.STORAGE_KEY);window.location.href="/"}, isLoggedIn(){return!!this.getUser()}, async hashPassword(p){const e=new TextEncoder(),d=e.encode(p+"lagteck_salt_2026"),h=await crypto.subtle.digest("SHA-256",d),a=Array.from(new Uint8Array(h));return a.map(b=>b.toString(16).padStart(2,"0")).join("")}, generateCode(){return Math.floor(100000+Math.random()*900000).toString()}, generateId(){return Date.now().toString(36)+Math.random().toString(36).substr(2)} };
+    }
+    if (typeof Cart === 'undefined') {
+      window.Cart = { STORAGE_KEY:"lagteck_cart", getItems(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||[]}catch{return[]}}, getCount(){return this.getItems().reduce((a,i)=>a+(i.qty||1),0)}, addItem(p){const items=this.getItems();const ex=items.find(i=>i.id===p.id);if(ex)ex.qty=(ex.qty||1)+1;else items.push({...p,qty:1});localStorage.setItem(this.STORAGE_KEY,JSON.stringify(items));return items}, removeItem(id){const items=this.getItems().filter(i=>i.id!==id);localStorage.setItem(this.STORAGE_KEY,JSON.stringify(items));return items}, clear(){localStorage.removeItem(this.STORAGE_KEY)}, getTotal(){return this.getItems().reduce((a,i)=>a+(i.price*(i.qty||1)),0)} };
+    }
+    if (typeof API === 'undefined') {
+      window.API = { async get(t,p={}){const qs=new URLSearchParams(p).toString();const res=await fetch(`tables/${t}${qs?"?"+qs:""}`);return res.json()}, async getOne(t,id){const res=await fetch(`tables/${t}/${id}`);if(!res.ok)return null;return res.json()}, async post(t,d){const res=await fetch(`tables/${t}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return res.json()}, async put(t,id,d){const res=await fetch(`tables/${t}/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return res.json()}, async patch(t,id,d){const res=await fetch(`tables/${t}/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return res.json()}, async delete(t,id){await fetch(`tables/${t}/${id}`,{method:"DELETE"})}, async findUserByEmail(email){const res=await this.get("users",{search:email,limit:10});return res.data?.find(u=>u.email===email)||null} };
+    }
+    if (typeof formatPrice === 'undefined') {
+      window.formatPrice = (v) => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);
+    }
+    if (typeof showToast === 'undefined') {
+      window.showToast = (msg,type='success',dur=3500) => {
+        let c=document.getElementById('toast-container');
+        if(!c){c=document.createElement('div');c.id='toast-container';c.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px';document.body.appendChild(c)}
+        const t=document.createElement('div');
+        const bc={success:'#10b981',error:'#ef4444',info:'#3b82f6',warning:'#f59e0b'};
+        t.style.cssText=`background:#0f1320;color:#c8d8f0;padding:14px 18px;border-radius:12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;min-width:260px;max-width:380px;border:1px solid rgba(99,179,237,.15);border-left:4px solid ${bc[type]||bc.info};box-shadow:0 8px 40px rgba(0,0,0,.6)`;
+        t.innerHTML=`<span>${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#4a5568;font-size:16px;margin-left:auto">×</button>`;
+        c.appendChild(t);setTimeout(()=>t.remove(),dur);
+      };
+    }
+    if (typeof showAuthModal === 'undefined') {
+      window.showAuthModal = (tab='login') => { const m=document.getElementById('auth-modal');if(m){m.style.display='flex';document.body.style.overflow='hidden'} };
+      window.closeAuthModal = () => { const m=document.getElementById('auth-modal');if(m){m.style.display='none';document.body.style.overflow=''} };
+    }
+    if (typeof updateCartBadge === 'undefined') {
+      window.updateCartBadge = () => { const c=Cart.getCount();document.querySelectorAll('.cart-badge').forEach(e=>{e.textContent=c;e.style.display=c>0?'flex':'none'}) };
+    }
+    if (typeof renderTopbar === 'undefined') {
+      window.renderTopbar=()=>`<div class="topbar"><span class="topbar-dot"></span>⚡ Entrega <strong>rápida e segura</strong> via Discord &nbsp;·&nbsp; <a href="https://discord.gg/rPFN7BMC5k" target="_blank">Entrar no servidor ✨</a> &nbsp;·&nbsp; <span style="opacity:.7">🔒 Pagamento pelo Mercado Pago</span></div>`;
+      window.renderHeader=()=>{const user=Auth.getUser();const cc=Cart.getCount();return`<header class="site-header"><div class="header-inner"><button class="mobile-menu-btn" id="mobile-menu-btn"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:32px;height:32px;border-radius:8px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><nav class="header-nav"><a href="/contas.html">Contas</a><a href="/frutas.html">Frutas</a><a href="/gamepass.html">Gamepass</a><a href="/executor.html">Executor</a><a href="/scripts.html">Scripts</a></nav><div class="header-search"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="header-search-input" placeholder="Buscar produtos..." autocomplete="off"></div><div class="header-actions"><a href="/carrinho.html" class="header-btn" style="position:relative"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="cart-badge" style="display:${cc>0?'flex':'none'}">${cc}</span></a>${user?`<a href="/perfil.html" class="header-btn" style="padding:3px"><div class="sidebar-avatar" style="width:28px;height:28px;font-size:12px;border-radius:6px">${(user.full_name?.[0]||'U').toUpperCase()}</div></a>`:`<button class="btn-login" onclick="showAuthModal('login')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Entrar</button>`}</div></div></header>`};
+      window.renderSidebar=(active='')=>`<aside class="sidebar"><span class="sidebar-section-label">Loja</span><a href="/" class="sidebar-item ${active==='inicio'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início</a><a href="/contas.html" class="sidebar-item ${active==='contas'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Contas Blox</a><a href="/frutas.html" class="sidebar-item ${active==='frutas'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Frutas</a><a href="/gamepass.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Gamepass<span class="sidebar-badge-em-breve">EM BREVE</span></a><a href="/executor.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Executor</a><a href="/scripts.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Scripts</a></aside>`;
+      window.renderMobileNav=(active='')=>`<div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileNav()"></div><div class="mobile-nav" id="mobile-nav"><div class="mobile-nav-header"><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text" style="font-size:17px">Deal Blox</span></a><button class="mobile-nav-close" onclick="closeMobileNav()">✕</button></div><a href="/" class="mobile-nav-item">🏠 Início</a><a href="/contas.html" class="mobile-nav-item">👤 Contas Blox</a><a href="/frutas.html" class="mobile-nav-item">🛡️ Frutas</a><a href="/gamepass.html" class="mobile-nav-item">⭐ Gamepass</a><div class="mobile-nav-btns"><button onclick="showAuthModal('login');closeMobileNav()" class="btn-mobile-login">🔑 Entrar na conta</button><button onclick="showAuthModal('register');closeMobileNav()" class="btn-mobile-register">✨ Criar conta</button></div></div>`;
+      window.renderFooter=()=>`<footer class="site-footer"><div class="footer-inner"><div class="footer-grid"><div class="footer-brand"><a href="/" class="logo" style="display:inline-flex;margin-bottom:14px"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><p>Loja digital de Blox Fruits.</p></div><div class="footer-col"><h4>Produtos</h4><ul><li><a href="/contas.html">Contas Blox Fruits</a></li><li><a href="/frutas.html">Frutas</a></li></ul></div><div class="footer-col"><h4>Suporte</h4><ul><li><a href="/faq.html">FAQ</a></li><li><a href="https://discord.gg/rPFN7BMC5k" target="_blank">Discord</a></li></ul></div></div><div class="footer-bottom"><p>© 2026 Deal Blox. Todos os direitos reservados.</p></div></div></footer>`;
+      window.renderAuthModal=()=>`<div class="modal-overlay" id="auth-modal" style="display:none"><div class="modal-box"><button class="modal-close" onclick="closeAuthModal()">✕</button><div class="auth-modal-logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:10px;object-fit:cover"><span>Deal Blox</span></div><p style="font-size:13px;color:var(--text2);margin-bottom:20px">Sua loja de Blox Fruits</p><div class="auth-tabs"><button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Entrar</button><button class="auth-tab" id="auth-tab-register" onclick="switchAuthTab('register')">Criar conta</button></div><div id="auth-panel-login"><form onsubmit="handleLogin(event)"><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="login-password" placeholder="••••••••" required autocomplete="current-password"></div><button type="submit" class="btn-auth-submit" id="btn-login-submit">Acessar minha conta</button></form></div><div id="auth-panel-register" style="display:none"><form onsubmit="handleRegister(event)"><div class="form-group"><label class="form-label">Nome Completo</label><input type="text" class="form-input" id="reg-name" placeholder="Seu nome completo" required></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reg-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password"></div><button type="submit" class="btn-auth-submit" id="btn-reg-step1">Criar conta</button></form></div></div>`;
+      window.initMobileMenu=()=>{document.getElementById('mobile-menu-btn')?.addEventListener('click',()=>{document.getElementById('mobile-nav')?.classList.add('open');document.getElementById('mobile-nav-overlay')?.classList.add('open')})};
+      window.closeMobileNav=()=>{document.getElementById('mobile-nav')?.classList.remove('open');document.getElementById('mobile-nav-overlay')?.classList.remove('open')};
+      window.initHeaderSearch=()=>{const i=document.getElementById('header-search-input');if(!i)return;i.addEventListener('keydown',e=>{if(e.key==='Enter'&&i.value.trim())window.location.href=`/contas.html?q=${encodeURIComponent(i.value.trim())}` })};
+      window.highlightActiveNav=()=>{const path=window.location.pathname;document.querySelectorAll('.header-nav a,.sidebar-item,.mobile-nav-item').forEach(l=>{const href=l.getAttribute('href');if(!href)return;if((path==='/'||path==='/index.html')&&(href==='/'||href==='/index.html'))l.classList.add('active');else if(path.endsWith(href)&&href!=='/')l.classList.add('active')})};
+      window.switchAuthTab=(tab)=>{['login','register','forgot'].forEach(t=>{const p=document.getElementById(`auth-panel-${t}`);if(p)p.style.display=t===tab?'':'none';const b=document.getElementById(`auth-tab-${t}`);if(b)b.classList.toggle('active',t===tab)})};
+      window.handleLogin=async(e)=>{e.preventDefault();const btn=document.getElementById('btn-login-submit');btn.disabled=true;btn.textContent='Verificando...';try{const email=document.getElementById('login-email').value.trim();const pwd=document.getElementById('login-password').value;const hash=await Auth.hashPassword(pwd);const user=await API.findUserByEmail(email);if(!user||user.password_hash!==hash){showToast('Email ou senha incorretos','error');return}Auth.setUser({id:user.id,full_name:user.full_name,email:user.email,avatar_url:user.avatar_url||'',is_admin:user.is_admin||false});showToast(`Bem-vindo, ${user.full_name.split(' ')[0]}! 👋`,'success');closeAuthModal();setTimeout(()=>location.reload(),500)}catch(err){showToast('Erro ao fazer login.','error');}finally{btn.disabled=false;btn.textContent='Acessar minha conta'}};
+      window.handleRegister=async(e)=>{e.preventDefault();const btn=document.getElementById('btn-reg-step1');if(btn){btn.disabled=true;btn.textContent='Criando...';}try{const name=document.getElementById('reg-name')?.value.trim()||'';const email=document.getElementById('reg-email')?.value.trim()||'';const password=document.getElementById('reg-password')?.value||'';if(!name||!email||password.length<6){showToast('Preencha todos os campos','error');return;}const existing=await API.findUserByEmail(email);if(existing){showToast('Email já cadastrado','error');return;}const hash=await Auth.hashPassword(password);const nu=await API.post('users',{full_name:name,email,password_hash:hash,email_verified:true,provider:'local',is_admin:false,favorites:[],cart:[]});Auth.setUser({id:nu.id,full_name:nu.full_name,email:nu.email,avatar_url:'',is_admin:false,provider:'local'});showToast(`🎉 Conta criada! Bem-vindo, ${nu.full_name.split(' ')[0]}!`,'success',5000);closeAuthModal();setTimeout(()=>location.reload(),700);}catch(err){showToast('Erro ao criar conta.','error');}finally{if(btn){btn.disabled=false;btn.textContent='Criar conta';}}};
+    }
+
+    // ── Render layout ────────────────────────────────────────────────────
+    document.getElementById("topbar-root").innerHTML  = renderTopbar();
+    document.getElementById("header-root").innerHTML  = renderHeader();
+    document.getElementById("sidebar-root").innerHTML = renderSidebar();
+    document.getElementById("mobile-nav-root").innerHTML = renderMobileNav();
+    document.getElementById("auth-modal-root").innerHTML = renderAuthModal();
+    document.getElementById("footer-root").innerHTML  = renderFooter();
+    initMobileMenu();
+
+    // ── Constantes Supabase ─────────────────────────────────────────────
+    const SB_URL = "https://piqnqegawcdhykatpflj.supabase.co";
+    const SB_KEY = "sb_publishable_mGMkvi5A0S3iVySpI_ek_Q_IFekBWjH";
+
+    // ── Estado global ────────────────────────────────────────────────────
+    const ICONS = { accounts:["🗡️","⚔️","🏆","👑","🌟","💎","🔥"], fruits:["🛡️","🔮","💫","🌀","⚡","🌊","🔥"], gamepass:["⭐","🎮"] };
+    let currentProduct  = null;
+    let selectedMethod  = null;
+    let pixTimerInterval = null;
+    let currentOrderId  = null;
+    let currentDeliveryId = null;
+    let buyerInfo       = null;  // { name, cpf, discord }
+
+    const urlParams  = new URLSearchParams(window.location.search);
+    const productId  = urlParams.get("id");
+
+    // ── Gerador de ID de 8 chars alfanumérico ───────────────────────────
+    function generateOrderId() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let id = '';
+      for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
+      return id;
+    }
+
+    // ── Máscara CPF ──────────────────────────────────────────────────────
+    function maskCPF(el) {
+      let v = el.value.replace(/\D/g,'').slice(0,11);
+      if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+      else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{3})/,'$1.$2.$3');
+      else if (v.length > 3) v = v.replace(/^(\d{3})(\d{3})/,'$1.$2');
+      el.value = v;
+    }
+
+    // ── Carrega produto ──────────────────────────────────────────────────
+    async function loadProduct() {
+      if (!productId) { renderError(); return; }
+      try {
+        // Tenta Supabase primeiro
+        let product = null;
+        try {
+          const r = await fetch(`${SB_URL}/rest/v1/products?select=*&id=eq.${productId}`,
+            { headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`} });
+          if (r.ok) {
+            const arr = await r.json();
+            if (Array.isArray(arr) && arr.length > 0) product = arr[0];
+          }
+        } catch {}
+
+        // Fallback API interna
+        if (!product) {
+          product = await API.getOne("products", productId);
+        }
+
+        if (!product || product.active === false) { renderError(); return; }
+        currentProduct = product;
+        document.title = `${product.name} — Deal Blox`;
+        renderProduct(product);
+      } catch { renderError(); }
+    }
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+    function getCategoryLabel(cat) {
+      return { accounts:"Contas Blox Fruits", contas:"Contas Blox Fruits", fruits:"Frutas", frutas:"Frutas", gamepass:"Gamepass" }[cat] || cat;
+    }
+    function getCategoryHref(cat) {
+      if (cat==='accounts'||cat==='contas') return "/contas.html";
+      if (cat==='fruits'||cat==='frutas')   return "/frutas.html";
+      return "/";
+    }
+
+    // ── Renderiza detalhe do produto ─────────────────────────────────────
+    function renderProduct(p) {
+      const icons   = ICONS[p.category] || ["🎮"];
+      const icon    = icons[p.name.length % icons.length];
+      const discount = p.original_price && p.original_price > p.price
+        ? Math.round((1 - p.price / p.original_price) * 100) : 0;
+      const isFav   = JSON.parse(localStorage.getItem('lt_favs')||'[]').includes(p.id);
+      const inStock = (p.stock ?? 1) > 0;
+      const stockLow = inStock && p.stock <= 3;
+      const details  = Array.isArray(p.details) ? p.details : (p.details ? String(p.details).split('\n').filter(Boolean) : []);
+      const desc     = p.description || p.descricao || '';
+
+      const el = document.getElementById("product-detail");
+      el.innerHTML = `
+        <div class="detail-breadcrumb">
+          <a href="/">Início</a><span>›</span>
+          <a href="${getCategoryHref(p.category)}">${getCategoryLabel(p.category)}</a>
+          <span>›</span><span style="color:var(--text2)">${p.name}</span>
+        </div>
+
+        <div class="detail-grid">
+          <!-- IMAGEM -->
+          <div class="detail-image-area">
+            ${p.image_url
+              ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;border-radius:var(--r2);object-fit:cover">`
+              : `<span style="font-size:96px;filter:drop-shadow(0 8px 24px rgba(0,0,0,.3))">${icon}</span>`}
+            ${discount > 0 ? `<div style="position:absolute;top:16px;left:16px;background:var(--red);color:white;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px">-${discount}% OFF</div>` : ''}
+          </div>
+
+          <!-- INFO -->
+          <div class="detail-info">
+            <span class="detail-category">
+              ${p.category==='fruits'||p.category==='frutas' ? '🛡️' : p.category==='accounts'||p.category==='contas' ? '👤' : '⭐'}
+              ${getCategoryLabel(p.category)}
+            </span>
+
+            <h1 class="detail-title">${p.name}</h1>
+
+            <div class="detail-price-box">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div class="detail-price">${formatPrice(p.price)}</div>
+                ${p.original_price > p.price ? `<div class="detail-price-old">${formatPrice(p.original_price)}</div>` : ''}
+              </div>
+              <div class="detail-stock-badge">
+                <span style="width:8px;height:8px;background:${inStock?'var(--green)':'var(--red)'};border-radius:50%;display:inline-block"></span>
+                <span style="font-size:13px;color:${inStock?'var(--green)':'var(--red)'};font-weight:600">
+                  ${!inStock ? 'Esgotado' : stockLow ? `Restam ${p.stock} unidades` : `${p.stock} em estoque`}
+                </span>
+              </div>
+            </div>
+
+            <div class="detail-actions">
+              <button class="btn-buy-now" onclick="initCheckout()" ${!inStock?'disabled style="opacity:.5;cursor:not-allowed"':''}>
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                ${inStock ? 'Comprar Agora' : 'Produto Esgotado'}
+              </button>
+              <div style="display:flex;gap:10px">
+                <button class="btn-add-cart" style="flex:1" onclick="addToCart()" ${!inStock?'disabled style="opacity:.5;cursor:not-allowed"':''}>
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  Carrinho
+                </button>
+                <button class="btn-add-cart" id="fav-detail-btn" onclick="toggleDetailFav()" style="width:52px;justify-content:center">
+                  <svg width="18" height="18" fill="${isFav?'#ef4444':'none'}" stroke="${isFav?'#ef4444':'currentColor'}" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="detail-features">
+              <div class="detail-feature"><div class="detail-feature-icon">⚡</div><div class="detail-feature-label">Entrega Rápida</div></div>
+              <div class="detail-feature"><div class="detail-feature-icon">🔒</div><div class="detail-feature-label">Pagamento Seguro</div></div>
+              <div class="detail-feature"><div class="detail-feature-icon">💬</div><div class="detail-feature-label">Suporte Discord</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DESCRIÇÃO -->
+        <div class="detail-description">
+          <h3>📋 Descrição do Produto</h3>
+          <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:${details.length?'20px':'0'}">${desc || 'Produto digital com entrega segura e rápida via Discord.'}</p>
+          ${details.length ? `
+          <h3 style="margin-top:20px">✅ Itens Inclusos</h3>
+          <ul class="detail-items-list">
+            ${details.map(d=>`<li>${d}</li>`).join('')}
+          </ul>` : ''}
+        </div>
+
+        <!-- AVISO -->
+        <div style="background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);border-radius:var(--r2);padding:16px 20px;margin-top:16px;display:flex;gap:12px;align-items:flex-start">
+          <span style="font-size:20px">⚠️</span>
+          <div>
+            <strong style="font-size:13px;color:var(--white)">Importante antes de comprar</strong>
+            <p style="font-size:12px;color:var(--text2);margin-top:4px;line-height:1.6">
+              Produto digital. Após confirmação do pagamento, você receberá um ID único para retirada no Discord.
+              Contas têm garantia de reembolso em até 15 minutos após a compra.
+              <a href="/termos.html" style="font-weight:700;color:var(--cyan2)">Leia os Termos de Serviço.</a>
+            </p>
+          </div>
+        </div>`;
+    }
+
+    function renderError() {
+      document.getElementById("product-detail").innerHTML = `
+        <div class="error-page">
+          <div class="error-code">404</div>
+          <div class="error-title">Produto não encontrado</div>
+          <div class="error-desc">Este produto não existe ou foi removido.</div>
+          <button onclick="history.back()" class="btn-submit" style="width:auto;padding:12px 28px">← Voltar</button>
+        </div>`;
+    }
+
+    // ── Carrinho ─────────────────────────────────────────────────────────
+    function addToCart() {
+      if (!currentProduct) return;
+      Cart.addItem(currentProduct);
+      showToast("Adicionado ao carrinho! 🛒","success");
+    }
+
+    // ── Favorito (salva no banco se logado) ──────────────────────────────
+    async function toggleDetailFav() {
+      if (!currentProduct) return;
+      let favs = JSON.parse(localStorage.getItem('lt_favs')||'[]');
+      const idx = favs.indexOf(currentProduct.id);
+      if (idx >= 0) favs.splice(idx,1); else favs.push(currentProduct.id);
+      localStorage.setItem('lt_favs', JSON.stringify(favs));
+      const isFav = favs.includes(currentProduct.id);
+      const btn = document.getElementById("fav-detail-btn");
+      if (btn) btn.innerHTML = `<svg width="18" height="18" fill="${isFav?'#ef4444':'none'}" stroke="${isFav?'#ef4444':'currentColor'}" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+      showToast(isFav ? "Adicionado aos favoritos! ❤️" : "Removido dos favoritos","success");
+      // Salva no banco
+      try {
+        const user = Auth.getUser();
+        if (user && user.id) await API.patch("users", user.id, { favorites: favs });
+      } catch(e) { console.warn('Fav sync:', e); }
+    }
+
+    // ── Tutorial Discord ─────────────────────────────────────────────────
+    function toggleDiscordTutorial() {
+      const el = document.getElementById('discord-tutorial');
+      el.classList.toggle('show');
+    }
+
+    // ── Checkout: inicializa ─────────────────────────────────────────────
+    function initCheckout() {
+      // BLOQUEIA sem login
+      if (!Auth.isLoggedIn()) {
+        showToast("Faça login para comprar 🔒","info");
+        showAuthModal("login");
+        return;
+      }
+      if (!currentProduct) return;
+      const p = currentProduct;
+      const user = Auth.getUser();
+
+      // Pré-preenche campos com dados do perfil se disponíveis
+      setTimeout(() => {
+        const nameEl = document.getElementById('buyer-name');
+        const discordEl = document.getElementById('buyer-discord');
+        if (nameEl && user.full_name) nameEl.value = user.full_name;
+        if (discordEl && user.discord_id) discordEl.value = user.discord_id;
+      }, 50);
+
+      // Preenche resumo
+      const summaryHTML = `
+        <div class="product-name">${p.name}</div>
+        <div class="product-cat">${getCategoryLabel(p.category)} · Entrega via Discord</div>
+        <div class="product-price">${formatPrice(p.price)}</div>`;
+      document.getElementById('info-summary').innerHTML = summaryHTML;
+
+      showStep("info");
+      const modal = document.getElementById("checkout-modal");
+      if (modal) modal.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeCheckout() {
+      const modal = document.getElementById("checkout-modal");
+      if (modal) modal.style.display = "none";
+      document.body.style.overflow = "";
+      if (pixTimerInterval) { clearInterval(pixTimerInterval); pixTimerInterval = null; }
+      // Reseta estado do modal para próxima abertura
+      selectedMethod = null;
+      buyerInfo = null;
+    }
+
+    function showStep(step) {
+      document.querySelectorAll(".payment-step").forEach(el => el.classList.remove("active"));
+      document.getElementById("step-" + step).classList.add("active");
+    }
+
+    // ── Valida dados e avança para pagamento ──────────────────────────────
+    function goToPayment() {
+      const name    = document.getElementById('buyer-name').value.trim();
+      const cpf     = document.getElementById('buyer-cpf').value.trim();
+      const discord = document.getElementById('buyer-discord').value.trim();
+
+      if (!name || name.split(' ').filter(Boolean).length < 2) {
+        showToast("Informe seu nome completo","error"); return;
+      }
+      if (!discord) {
+        showToast("ID do Discord é obrigatório","error"); return;
+      }
+
+      buyerInfo = { name, cpf, discord };
+
+      // Preenche resumo da tela de pagamento
+      const p = currentProduct;
+      document.getElementById('method-summary').innerHTML = `
+        <div class="product-name">${p.name}</div>
+        <div class="product-cat">Comprador: ${name} · Discord: ${discord}</div>
+        <div class="product-price">${formatPrice(p.price)}</div>`;
+
+      selectedMethod = null;
+      document.querySelectorAll(".payment-method-btn").forEach(b => b.classList.remove("selected"));
+      document.getElementById("btn-proceed-payment").disabled = true;
+      showStep("method");
+    }
+
+    function selectPaymentMethod(method) {
+      selectedMethod = method;
+      document.querySelectorAll(".payment-method-btn").forEach(b => b.classList.remove("selected"));
+      document.getElementById(method + "-btn").classList.add("selected");
+      document.getElementById("btn-proceed-payment").disabled = false;
+    }
+
+    async function proceedPayment() {
+      if (!selectedMethod) return;
+      if (selectedMethod === "pix") {
+        showStep("pix");
+        await generatePixPayment();
+      } else {
+        showStep("card");
+        await loadCardForm();
+      }
+    }
+
+    // ── PIX ──────────────────────────────────────────────────────────────
+    async function generatePixPayment() {
+      const p    = currentProduct;
+      const user = Auth.getUser();
+      const deliveryId = generateOrderId();
+      currentDeliveryId = deliveryId;
+
+      // Cria pedido no banco ANTES do pagamento
+      try {
+        const order = await API.post("orders", {
+          user_id:        user.id,
+          user_email:     user.email,
+          product_id:     p.id,
+          product_name:   p.name,
+          amount:         p.price,
+          status:         "pending",
+          payment_method: "pix",
+          delivery_id:    deliveryId,
+          buyer_name:     buyerInfo.name,
+          buyer_cpf:      buyerInfo.cpf || "",
+          discord_id:     buyerInfo.discord,
+        });
+        currentOrderId = order.id;
+      } catch(err) { console.warn("Erro ao criar pedido:", err); }
+
+      // Verifica se MP está configurado
+      const mpKey = (typeof LAGTECK_CONFIG !== 'undefined') ? LAGTECK_CONFIG.MP_PUBLIC_KEY : "";
+      const hasRealMP = mpKey && !mpKey.includes("SUA_") && mpKey.trim() !== "";
+
+      if (!hasRealMP) {
+        // MODO DEMO — mostra QR fictício + botão para simular pagamento
+        const demoPixCode = `00020126580014br.gov.bcb.pix0136${deliveryId}-demo-lag-teck-pix5204000053039865802BR5913LAG TECK DEMO6008BRASILIA62290525LT${deliveryId}6304FFFF`;
+        document.getElementById("pix-qr-container").innerHTML = `
+          <p style="font-size:11px;color:var(--yellow);margin-bottom:12px">⚠️ Modo demonstração — PIX fictício</p>
+          <div style="background:white;padding:16px;border-radius:8px;display:inline-block;margin-bottom:10px">
+            <svg width="140" height="140" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="120" height="120" fill="white"/>
+              <rect x="5" y="5" width="40" height="40" rx="3" fill="none" stroke="#1e3a8a" stroke-width="3"/>
+              <rect x="15" y="15" width="20" height="20" fill="#1e3a8a"/>
+              <rect x="75" y="5" width="40" height="40" rx="3" fill="none" stroke="#1e3a8a" stroke-width="3"/>
+              <rect x="85" y="15" width="20" height="20" fill="#1e3a8a"/>
+              <rect x="5" y="75" width="40" height="40" rx="3" fill="none" stroke="#1e3a8a" stroke-width="3"/>
+              <rect x="15" y="85" width="20" height="20" fill="#1e3a8a"/>
+              <rect x="55" y="55" width="10" height="10" fill="#1e3a8a"/>
+              <rect x="70" y="55" width="10" height="10" fill="#1e3a8a"/>
+              <rect x="85" y="55" width="10" height="10" fill="#1e3a8a"/>
+              <rect x="100" y="55" width="15" height="10" fill="#1e3a8a"/>
+              <rect x="55" y="70" width="10" height="10" fill="#1e3a8a"/>
+              <rect x="70" y="70" width="25" height="10" fill="#1e3a8a"/>
+              <rect x="100" y="70" width="15" height="10" fill="#1e3a8a"/>
+              <rect x="55" y="85" width="10" height="25" fill="#1e3a8a"/>
+              <rect x="70" y="95" width="10" height="15" fill="#1e3a8a"/>
+              <rect x="85" y="85" width="30" height="15" fill="#1e3a8a"/>
+            </svg>
+          </div>
+          <div class="pix-code-text" id="demo-pix-code" onclick="copyPixCode(this)" title="Clique para copiar">${demoPixCode}</div>
+          <button class="btn-copy-pix" onclick="copyPixCode(document.getElementById('demo-pix-code'))">📋 Copiar código PIX</button>
+          <button onclick="simulatePixPayment()" class="btn-proceed" style="margin-top:12px;font-size:13px">
+            ✅ Simular pagamento PIX (demo)
+          </button>
+          <div style="margin-top:10px;padding:10px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:var(--r);font-size:11px;color:var(--green)">
+            Para pagamentos reais, configure MP_PUBLIC_KEY em js/config.js
+          </div>`;
+        startPixTimer(null); // timer visual apenas, não chama callback automático
+        return;
+      }
+
+      // Integração real Mercado Pago via backend (Vercel Function)
+      try {
+        const r = await fetch('/api/payments/create-pix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount:       p.price,
+            description:  p.name,
+            email:        Auth.getUser().email,
+            delivery_id:  deliveryId,
+          }),
+          signal: AbortSignal.timeout(15000)
+        });
+
+        if (r.ok) {
+          const data = await r.json();
+          document.getElementById("pix-qr-container").innerHTML = `
+            <img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code PIX" style="width:180px;height:180px;margin-bottom:10px">
+            <div class="pix-code-text" onclick="copyPixCode(this)" title="Clique para copiar">${data.qr_code}</div>
+            <button class="btn-copy-pix" onclick="copyPixCode(document.querySelector('.pix-code-text'))">📋 Copiar código PIX</button>`;
+          startPixTimer(() => checkPixPayment(data.payment_id));
+        } else {
+          throw new Error(`HTTP ${r.status}`);
+        }
+      } catch(err) {
+        console.warn("Backend PIX indisponível:", err.message);
+        showToast("Configure o backend Mercado Pago para PIX real","warning",6000);
+        startPixTimer(() => showDiscordJoin());
+      }
+    }
+
+    async function checkPixPayment(paymentId) {
+      // Verifica status do pagamento (polling a cada 5s)
+      for (let i = 0; i < 36; i++) { // 3 min
+        await new Promise(r => setTimeout(r, 5000));
+        try {
+          const r = await fetch(`/api/payments/status/${paymentId}`);
+          if (r.ok) {
+            const data = await r.json();
+            if (data.status === 'approved') {
+              clearInterval(pixTimerInterval);
+              await confirmPayment();
+              return;
+            }
+          }
+        } catch {}
+      }
+    }
+
+    function copyPixCode(el) {
+      const code = typeof el === 'string' ? el : (el?.textContent || '');
+      navigator.clipboard.writeText(code).then(() => showToast("Código PIX copiado! ✓","success")).catch(() => showToast("Selecione e copie manualmente","info"));
+    }
+
+    async function simulatePixPayment() {
+      if (pixTimerInterval) { clearInterval(pixTimerInterval); pixTimerInterval = null; }
+      showToast("Simulando pagamento PIX...","info");
+      await new Promise(r => setTimeout(r, 1200));
+      showDiscordJoin();
+    }
+
+    function startPixTimer(onExpire) {
+      let seconds = 15 * 60;
+      const total = seconds;
+      const timerText = document.getElementById("pix-timer-text");
+      const timerFill = document.getElementById("pix-timer-fill");
+
+      if (pixTimerInterval) clearInterval(pixTimerInterval);
+      pixTimerInterval = setInterval(() => {
+        seconds--;
+        const m = Math.floor(seconds/60).toString().padStart(2,"0");
+        const s = (seconds%60).toString().padStart(2,"0");
+        if (timerText) timerText.textContent = `${m}:${s}`;
+        if (timerFill) timerFill.style.width = (seconds/total*100)+"%";
+        if (seconds <= 0) {
+          clearInterval(pixTimerInterval);
+          pixTimerInterval = null;
+          if (typeof onExpire === 'function') {
+            onExpire();
+          } else {
+            showToast("PIX expirado. Inicie uma nova compra.","warning");
+            closeCheckout();
+          }
+        }
+      }, 1000);
+    }
+
+    // ── CARTÃO ───────────────────────────────────────────────────────────
+    async function loadCardForm() {
+      const container = document.getElementById("card-form-container");
+      const mpKey = (typeof LAGTECK_CONFIG !== 'undefined') ? LAGTECK_CONFIG.MP_PUBLIC_KEY : "";
+      const hasRealMP = mpKey && !mpKey.includes("SUA_") && mpKey.trim() !== "";
+
+      // Garante que temos um deliveryId para o pedido de cartão
+      if (!currentDeliveryId) {
+        currentDeliveryId = generateOrderId();
+      }
+
+      // Cria pedido no banco ANTES do pagamento com cartão
+      if (!currentOrderId) {
+        const user = Auth.getUser();
+        const p = currentProduct;
+        try {
+          const order = await API.post("orders", {
+            user_id:        user.id,
+            user_email:     user.email,
+            product_id:     p.id,
+            product_name:   p.name,
+            amount:         p.price,
+            status:         "pending",
+            payment_method: "card",
+            delivery_id:    currentDeliveryId,
+            buyer_name:     buyerInfo?.name || user.full_name,
+            buyer_cpf:      buyerInfo?.cpf || "",
+            discord_id:     buyerInfo?.discord || "",
+          });
+          currentOrderId = order.id;
+        } catch(err) { console.warn("Erro ao criar pedido cartão:", err); }
+      }
+
+      if (!hasRealMP) {
+        container.innerHTML = `
+          <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:var(--r2);padding:16px;font-size:13px;text-align:center;color:#f59e0b;margin-bottom:12px">
+            ⚠️ Configure a <strong>MP_PUBLIC_KEY</strong> em <code>js/config.js</code> para cartão real.
+          </div>
+          <div style="font-size:12px;color:var(--text2);text-align:center;margin-bottom:12px">
+            Obtenha sua chave em <a href="https://www.mercadopago.com.br/developers" target="_blank" style="color:var(--cyan2)">mercadopago.com.br/developers</a>
+          </div>
+          <button onclick="simulateCardPayment()" class="btn-proceed">
+            💳 Simular Pagamento com Cartão (demo)
+          </button>`;
+        return;
+      }
+
+      try {
+        container.innerHTML = '<div id="mp-card-form"></div>';
+        const mp = new MercadoPago(mpKey, { locale:"pt-BR" });
+        const bricks = mp.bricks();
+        await bricks.create("cardPayment","mp-card-form", {
+          initialization: { amount: currentProduct.price },
+          callbacks: {
+            onReady: () => {},
+            onSubmit: async (formData) => { await processCardPayment(formData); },
+            onError:  (err) => {
+              console.error("Brick error:", err);
+              showToast("Erro no formulário. Tente o PIX.","error");
+            }
+          }
+        });
+      } catch(err) {
+        console.error("Erro ao carregar Brick:", err);
+        container.innerHTML = `<p style="color:var(--red);text-align:center;padding:20px">Erro ao carregar formulário de cartão. Tente o PIX.</p>`;
+      }
+    }
+
+    async function simulateCardPayment() {
+      showToast("Processando pagamento simulado...","info");
+      await new Promise(r => setTimeout(r, 1500));
+      showDiscordJoin();
+    }
+
+    async function processCardPayment(formData) {
+      try {
+        const r = await fetch('/api/payments/create-card', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            amount:      currentProduct.price,
+            description: currentProduct.name,
+            email:       Auth.getUser().email,
+            delivery_id: currentDeliveryId,
+          })
+        });
+        if (r.ok) {
+          const data = await r.json();
+          if (data.status === 'approved') await confirmPayment();
+          else showToast("Pagamento recusado. Verifique os dados do cartão.","error");
+        } else throw new Error(`HTTP ${r.status}`);
+      } catch(err) {
+        console.error("Cartão erro:", err);
+        showToast("Erro no pagamento com cartão. Tente o PIX.","error");
+      }
+    }
+
+    // ── Discord: obrigatório entrar no servidor ────────────────────────────
+    function showDiscordJoin() {
+      if (pixTimerInterval) clearInterval(pixTimerInterval);
+      showStep("discord-join");
+    }
+
+    async function confirmDiscordJoin() {
+      await confirmPayment();
+    }
+
+    // ── Confirma pagamento: atualiza banco + email + perfil ──────────────
+    async function confirmPayment() {
+      if (pixTimerInterval) clearInterval(pixTimerInterval);
+      const user = Auth.getUser();
+      const p    = currentProduct;
+      const deliveryId = currentDeliveryId || generateOrderId();
+
+      try {
+        // Atualiza status do pedido
+        if (currentOrderId) {
+          await API.patch("orders", currentOrderId, {
+            status:      "paid",
+            delivery_id: deliveryId,
+          });
+        } else {
+          // Cria pedido se não existia (ex: modo demo)
+          const order = await API.post("orders", {
+            user_id:        user.id,
+            user_email:     user.email,
+            product_id:     p.id,
+            product_name:   p.name,
+            amount:         p.price,
+            status:         "paid",
+            payment_method: selectedMethod || "pix",
+            delivery_id:    deliveryId,
+            buyer_name:     buyerInfo?.name || user.full_name,
+            buyer_cpf:      buyerInfo?.cpf  || "",
+            discord_id:     buyerInfo?.discord || "",
+          });
+          currentOrderId = order.id;
+        }
+
+        // Reduz estoque
+        if (p.stock > 0) {
+          await API.patch("products", p.id, { stock: Math.max(0, (p.stock || 1) - 1) });
+        }
+
+        // Cria notificação/mensagem no perfil do usuário
+        try {
+          await API.post("messages", {
+            user_id:   user.id,
+            user_email: user.email,
+            type:      "purchase",
+            title:     "Compra confirmada! 🎉",
+            body:      `Seu pedido de <strong>${p.name}</strong> foi confirmado.\nID de entrega: <strong>${deliveryId}</strong>\nLeve este ID ao ticket no Discord para retirar seu produto.`,
+            read:      false,
+            order_id:  currentOrderId || "",
+            delivery_id: deliveryId,
+          });
+        } catch(e) { console.warn("Notificação:", e); }
+
+        // Envia email de confirmação
+        try {
+          if (typeof emailjs !== 'undefined' && LAGTECK_CONFIG.EMAILJS_PUBLIC_KEY) {
+            emailjs.init(LAGTECK_CONFIG.EMAILJS_PUBLIC_KEY);
+            await emailjs.send(LAGTECK_CONFIG.EMAILJS_SERVICE_ID, LAGTECK_CONFIG.EMAILJS_TEMPLATE_ID, {
+              to_name:     buyerInfo?.name || user.full_name,
+              to_email:    user.email,
+              product_name: p.name,
+              order_id:    deliveryId,
+              discord_link: "https://discord.gg/rPFN7BMC5k",
+              site_name:   "Deal Blox",
+            });
+          }
+        } catch(e) { console.warn("Email:", e); }
+
+      } catch(err) {
+        console.error("confirmPayment:", err);
+      }
+
+      // Exibe sucesso
+      document.getElementById("order-id-display").textContent = deliveryId;
+      showStep("success");
+    }
+
+    // ── Inicialização ────────────────────────────────────────────────────
+    loadProduct();
+
+    // Fecha modal ao clicar fora (no overlay)
+    document.getElementById("checkout-modal").addEventListener("click", function(e) {
+      if (e.target === this) closeCheckout();
+    });
+
+    // ESC fecha modal
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        const modal = document.getElementById("checkout-modal");
+        if (modal && modal.style.display === "flex") closeCheckout();
+      }
+    });
+  </script>
+</body>
+</html>

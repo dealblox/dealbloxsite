@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Perfil — Deal Blox</title>
+  <link rel="icon" href="/images/logo-dealblox.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .profile-tabs { display:flex; gap:4px; background:var(--bg3); border-radius:var(--r); padding:4px; margin-bottom:24px; flex-wrap:wrap; }
+    .profile-tab  { flex:1; padding:9px 12px; background:none; border:none; border-radius:6px; color:var(--text2); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; cursor:pointer; font-family:var(--font); transition:all .2s; white-space:nowrap; min-width:80px; }
+    .profile-tab:hover { color:var(--white); }
+    .profile-tab.active { background:var(--bg2); color:var(--cyan2); }
+    .profile-section { display:none; }
+    .profile-section.active { display:block; }
+    .field-mask { font-family:monospace; letter-spacing:.5px; }
+    .msg-card { background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:12px; }
+    .msg-card.unread { border-left:4px solid var(--cyan); }
+    .msg-card.read   { border-left:4px solid var(--border); opacity:.8; }
+    .msg-type-badge  { font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px; }
+    .msg-type-purchase { background:rgba(16,185,129,.15);color:var(--green); }
+    .msg-type-admin    { background:rgba(245,158,11,.15);color:var(--yellow); }
+    .msg-type-system   { background:rgba(59,130,246,.15);color:var(--blue3); }
+    .msg-title { font-size:14px;font-weight:700;color:var(--white);margin:6px 0 4px; }
+    .msg-body  { font-size:13px;color:var(--text2);line-height:1.6; }
+    .msg-date  { font-size:11px;color:var(--text3);margin-top:8px; }
+  </style>
+</head>
+<body>
+  <div id="topbar-root"></div>
+  <div id="header-root"></div>
+  <div id="mobile-nav-root"></div>
+  <div id="auth-modal-root"></div>
+
+  <div class="page-layout">
+    <div id="sidebar-root"></div>
+    <main class="main-content" id="profile-main">
+      <div class="spinner"></div>
+    </main>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    document.getElementById("topbar-root").innerHTML  = renderTopbar();
+    document.getElementById("header-root").innerHTML  = renderHeader();
+    document.getElementById("sidebar-root").innerHTML = renderSidebar("perfil");
+    document.getElementById("mobile-nav-root").innerHTML = renderMobileNav("perfil");
+    document.getElementById("auth-modal-root").innerHTML = renderAuthModal();
+    document.getElementById("footer-root").innerHTML  = renderFooter();
+    initMobileMenu();
+
+    // ── Máscaras ────────────────────────────────────────────────────────
+    function maskCPF(el) {
+      let v = el.value.replace(/\D/g,'').slice(0,11);
+      if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+      else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{3})/,'$1.$2.$3');
+      else if (v.length > 3) v = v.replace(/^(\d{3})(\d{3})/,'$1.$2');
+      el.value = v;
+    }
+    function maskPhone(el) {
+      let v = el.value.replace(/\D/g,'').slice(0,11);
+      if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})/,'($1) $2-$3');
+      else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3');
+      else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5})/,'($1) $2');
+      el.value = v;
+    }
+
+    // ── Aba ativa ───────────────────────────────────────────────────────
+    function switchProfileTab(tab) {
+      document.querySelectorAll('.profile-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('tab-'+tab)?.classList.add('active');
+      document.getElementById('section-'+tab)?.classList.add('active');
+    }
+
+    // ── Carrega perfil ──────────────────────────────────────────────────
+    async function loadProfile() {
+      const user = Auth.getUser();
+      if (!user) {
+        document.getElementById("profile-main").innerHTML = `
+          <div class="empty-state">
+            <div style="font-size:64px;margin-bottom:16px">🔒</div>
+            <h3>Faça login para acessar seu perfil</h3>
+            <p style="margin-bottom:20px">Você precisa estar logado para ver seu perfil.</p>
+            <button onclick="showAuthModal('login')" class="btn-submit" style="width:auto;padding:12px 28px">Fazer Login</button>
+          </div>`;
+        return;
+      }
+
+      // Busca dados completos do banco
+      let dbUser = null;
+      try { dbUser = await API.getOne('users', user.id); } catch(e) {}
+      const fullUser = dbUser || user;
+
+      // Pedidos
+      const ordersRes = await API.get("orders", { search: user.email, limit: 50 }).catch(() => ({ data:[] }));
+      const orders = (ordersRes.data || []).filter(o => o.user_email === user.email || o.user_id === user.id);
+
+      // Favoritos (banco tem precedência)
+      let favIds = [];
+      try {
+        if (Array.isArray(fullUser.favorites) && fullUser.favorites.length > 0) {
+          favIds = fullUser.favorites;
+          localStorage.setItem('lt_favs', JSON.stringify(favIds));
+        } else {
+          favIds = JSON.parse(localStorage.getItem('lt_favs') || '[]');
+        }
+      } catch(e) { favIds = []; }
+
+      // Mensagens
+      let messages = [];
+      try {
+        const msgRes = await API.get('messages', { search: user.email, limit: 50 });
+        messages = (msgRes.data || []).filter(m => m.user_id === user.id || m.user_email === user.email)
+                    .sort((a,b) => (b.created_at||0) - (a.created_at||0));
+      } catch(e) {}
+      const unreadCount = messages.filter(m => !m.read).length;
+
+      const initials = (user.full_name || "U").split(" ").map(n => n[0]).join("").slice(0,2).toUpperCase();
+
+      document.getElementById("profile-main").innerHTML = `
+        <!-- ── HEADER DO PERFIL ── -->
+        <div class="profile-header">
+          <div class="profile-avatar-lg">
+            ${user.avatar_url ? `<img src="${user.avatar_url}" alt="${user.full_name}">` : initials}
+          </div>
+          <div>
+            <div class="profile-name">${user.full_name || 'Usuário'}</div>
+            <div class="profile-email">${user.email}</div>
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+              <span style="background:rgba(255,255,255,.15);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600">${orders.length} compra${orders.length!==1?'s':''}</span>
+              <span style="background:rgba(255,255,255,.15);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600">${favIds.length} favorito${favIds.length!==1?'s':''}</span>
+              ${unreadCount > 0 ? `<span style="background:var(--cyan);color:var(--bg);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700">${unreadCount} msg nova${unreadCount!==1?'s':''}</span>` : ''}
+              ${user.is_admin ? '<span style="background:#f59e0b;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700">⭐ Admin</span>' : ''}
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CARDS RÁPIDOS ── -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px">
+          <div class="profile-card" style="cursor:pointer;text-align:center" onclick="switchProfileTab('orders')">
+            <div style="font-size:28px;margin-bottom:4px">🧾</div>
+            <div style="font-size:22px;font-weight:800;color:var(--cyan2)">${orders.length}</div>
+            <div style="font-size:12px;color:var(--text2)">Pedidos</div>
+          </div>
+          <div class="profile-card" style="cursor:pointer;text-align:center" onclick="window.location.href='/favoritos.html'">
+            <div style="font-size:28px;margin-bottom:4px">❤️</div>
+            <div style="font-size:22px;font-weight:800;color:var(--cyan2)">${favIds.length}</div>
+            <div style="font-size:12px;color:var(--text2)">Favoritos</div>
+          </div>
+          <div class="profile-card" style="cursor:pointer;text-align:center;position:relative" onclick="switchProfileTab('messages')">
+            <div style="font-size:28px;margin-bottom:4px">💬</div>
+            <div style="font-size:22px;font-weight:800;color:var(--cyan2)">${messages.length}</div>
+            <div style="font-size:12px;color:var(--text2)">Mensagens</div>
+            ${unreadCount>0?`<span style="position:absolute;top:12px;right:12px;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px">${unreadCount}</span>`:''}
+          </div>
+        </div>
+
+        <!-- ── ABAS ── -->
+        <div class="profile-tabs">
+          <button class="profile-tab active" id="tab-edit" onclick="switchProfileTab('edit')">✏️ Perfil</button>
+          <button class="profile-tab" id="tab-orders" onclick="switchProfileTab('orders')">🧾 Pedidos</button>
+          <button class="profile-tab" id="tab-messages" onclick="switchProfileTab('messages')">
+            💬 Mensagens ${unreadCount>0?`<span style="background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:4px">${unreadCount}</span>`:''}
+          </button>
+        </div>
+
+        <!-- ── ABA EDITAR PERFIL ── -->
+        <div class="profile-section active" id="section-edit">
+
+          <!-- Informações básicas -->
+          <div class="profile-card">
+            <h3>✏️ Informações Pessoais</h3>
+            <form onsubmit="saveProfile(event)" class="auth-form" style="margin-top:12px">
+              <div class="form-group">
+                <label class="form-label">Nome Completo</label>
+                <input type="text" class="form-input" id="edit-name" value="${fullUser.full_name || ''}" placeholder="Seu nome completo">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email (não editável)</label>
+                <input type="email" class="form-input" value="${user.email}" disabled style="opacity:.6">
+              </div>
+              <div class="form-group">
+                <label class="form-label">CPF <span style="color:var(--text3);font-weight:400;font-size:10px">(opcional)</span></label>
+                <input type="text" class="form-input field-mask" id="edit-cpf" value="${fullUser.cpf || ''}" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)" autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Telefone / WhatsApp <span style="color:var(--text3);font-weight:400;font-size:10px">(opcional)</span></label>
+                <input type="text" class="form-input field-mask" id="edit-phone" value="${fullUser.phone || ''}" placeholder="(11) 99999-9999" maxlength="15" oninput="maskPhone(this)" autocomplete="off">
+              </div>
+              <button type="submit" class="btn-submit" style="width:auto;padding:11px 28px" id="btn-save-profile">Salvar Alterações</button>
+            </form>
+          </div>
+
+          <!-- Conta -->
+          <div class="profile-card" style="margin-top:16px">
+            <h3>🔐 Conta</h3>
+            <p style="font-size:13px;color:var(--text2);margin:8px 0 14px">Provedor: <strong style="color:var(--white)">${fullUser.provider || 'local'}</strong></p>
+            ${user.is_admin ? `
+            <a href="/admin.html" class="btn-submit" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;text-decoration:none;width:auto;margin-bottom:12px">⚙️ Abrir Painel Admin</a><br>` : ''}
+            <button onclick="Auth.logout()" style="padding:11px 24px;border:1.5px solid var(--red);border-radius:var(--r);background:transparent;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-family:var(--font)">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sair da conta
+            </button>
+          </div>
+        </div>
+
+        <!-- ── ABA PEDIDOS ── -->
+        <div class="profile-section" id="section-orders">
+          <div class="profile-card">
+            <h3>🧾 Histórico de Pedidos</h3>
+            ${orders.length ? `
+              <div style="overflow-x:auto;margin-top:12px">
+                <table class="admin-table" style="min-width:500px">
+                  <thead>
+                    <tr>
+                      <th>ID Entrega</th>
+                      <th>Produto</th>
+                      <th>Valor</th>
+                      <th>Status</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${orders.sort((a,b)=>(b.created_at||0)-(a.created_at||0)).map(o => `
+                    <tr>
+                      <td>
+                        <code style="font-size:12px;font-weight:700;color:var(--cyan2);letter-spacing:1px">${o.delivery_id || o.id?.slice(0,10)}</code>
+                        <button onclick="navigator.clipboard.writeText('${o.delivery_id||''}').then(()=>showToast('ID copiado!','success'))" style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:11px;margin-left:4px" title="Copiar ID">📋</button>
+                      </td>
+                      <td style="font-size:12px;font-weight:600">${o.product_name || '—'}</td>
+                      <td><strong style="color:var(--cyan2)">${formatPrice(o.amount||0)}</strong></td>
+                      <td><span class="status-badge ${o.status}">${{pending:'Pendente',paid:'Pago',delivered:'Entregue',cancelled:'Cancelado'}[o.status]||o.status}</span></td>
+                      <td style="font-size:11px;color:var(--text3)">${o.created_at ? new Date(o.created_at).toLocaleDateString('pt-BR') : '—'}</td>
+                    </tr>`).join('')}
+                  </tbody>
+                </table>
+              </div>
+            ` : `
+              <p style="font-size:13px;color:var(--text2);margin-top:12px">Nenhum pedido ainda. <a href="/" style="color:var(--cyan2)">Explorar produtos →</a></p>
+            `}
+          </div>
+        </div>
+
+        <!-- ── ABA MENSAGENS ── -->
+        <div class="profile-section" id="section-messages">
+          <div id="messages-container">
+            ${messages.length === 0
+              ? `<div class="empty-state"><div style="font-size:48px;margin-bottom:12px">💬</div><h3>Nenhuma mensagem</h3><p>Notificações de compras e mensagens do suporte aparecerão aqui.</p></div>`
+              : messages.map(m => `
+                <div class="msg-card ${m.read ? 'read' : 'unread'}" id="msg-${m.id}">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                    <span class="msg-type-badge msg-type-${m.type||'system'}">${m.type==='purchase'?'Compra':m.type==='admin'?'Suporte':'Sistema'}</span>
+                    ${!m.read ? '<span style="width:8px;height:8px;background:var(--cyan);border-radius:50%;flex-shrink:0"></span>' : ''}
+                  </div>
+                  <div class="msg-title">${m.title || 'Notificação'}</div>
+                  <div class="msg-body">${(m.body||'').replace(/\n/g,'<br>')}</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+                    <div class="msg-date">${m.created_at ? new Date(m.created_at).toLocaleString('pt-BR') : '—'}</div>
+                    ${!m.read ? `<button onclick="markMsgRead('${m.id}')" style="background:none;border:none;color:var(--cyan2);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font)">Marcar como lida ✓</button>` : ''}
+                  </div>
+                </div>`).join('')}
+          </div>
+          ${messages.some(m=>!m.read) ? `
+          <button onclick="markAllRead()" style="margin-top:12px;background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.25);color:var(--cyan2);border-radius:var(--r);padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">
+            ✓ Marcar todas como lidas
+          </button>` : ''}
+        </div>`;
+
+      // Armazena mensagens para mark functions
+      window._profileMessages = messages;
+    }
+
+    // ── Salvar perfil ────────────────────────────────────────────────────
+    async function saveProfile(e) {
+      e.preventDefault();
+      const user    = Auth.getUser();
+      const btn     = document.getElementById('btn-save-profile');
+      const newName = document.getElementById("edit-name").value.trim();
+      const cpf     = document.getElementById("edit-cpf").value.trim();
+      const phone   = document.getElementById("edit-phone").value.trim();
+
+      if (!newName || newName.split(" ").filter(Boolean).length < 2) {
+        showToast("Informe seu nome completo","error"); return;
+      }
+
+      btn.disabled = true; btn.textContent = "Salvando...";
+      try {
+        await API.patch("users", user.id, { full_name: newName, cpf, phone });
+        Auth.setUser({ ...user, full_name: newName });
+        showToast("Perfil atualizado! ✓","success");
+        setTimeout(() => location.reload(), 700);
+      } catch { showToast("Erro ao salvar","error"); }
+      finally { btn.disabled = false; btn.textContent = "Salvar Alterações"; }
+    }
+
+    // ── Mensagens ────────────────────────────────────────────────────────
+    async function markMsgRead(msgId) {
+      try {
+        await API.patch('messages', msgId, { read: true });
+        const card = document.getElementById('msg-'+msgId);
+        if (card) {
+          card.classList.remove('unread'); card.classList.add('read');
+          card.querySelector('button[onclick*="markMsgRead"]')?.remove();
+          const dot = card.querySelector('span[style*="background:var(--cyan)"]');
+          if (dot) dot.remove();
+        }
+        showToast("Mensagem marcada como lida","info");
+      } catch(e) {}
+    }
+
+    async function markAllRead() {
+      const msgs = (window._profileMessages || []).filter(m => !m.read);
+      await Promise.all(msgs.map(m => API.patch('messages', m.id, { read: true }).catch(()=>{})));
+      showToast("Todas marcadas como lidas!","success");
+      setTimeout(() => location.reload(), 700);
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

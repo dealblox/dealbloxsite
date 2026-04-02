@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamepass — Deal Blox</title>
+  <link rel="icon" href="/images/logo-dealblox.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="topbar-root"></div>
+  <div id="header-root"></div>
+  <div id="mobile-nav-root"></div>
+  <div id="auth-modal-root"></div>
+
+  <div class="page-layout">
+    <div id="sidebar-root"></div>
+    <main class="main-content">
+      <div class="maintenance-overlay">
+        <span class="maintenance-badge">⏳ EM BREVE</span>
+        <div class="maintenance-icon">⭐</div>
+        <h2>Gamepass em breve!</h2>
+        <p>Estamos preparando gamepasses exclusivos de Blox Fruits. Siga nosso Discord para ser notificado quando estiver disponível.</p>
+        <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a href="/" style="display:inline-flex;align-items:center;gap:8px;background:var(--grad-button);color:#fff;border-radius:var(--r2);padding:12px 24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:var(--glow-blue)">← Voltar ao início</a>
+          <a href="https://discord.gg/rPFN7BMC5k" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:rgba(88,101,242,.15);color:#7289da;border:1px solid rgba(88,101,242,.3);border-radius:var(--r2);padding:12px 24px;font-size:14px;font-weight:700;text-decoration:none">💬 Acompanhar no Discord</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    document.getElementById('topbar-root').innerHTML = renderTopbar();
+    document.getElementById('header-root').innerHTML = renderHeader();
+    document.getElementById('sidebar-root').innerHTML = renderSidebar('gamepass');
+    document.getElementById('mobile-nav-root').innerHTML = renderMobileNav('gamepass');
+    document.getElementById('auth-modal-root').innerHTML = renderAuthModal();
+    document.getElementById('footer-root').innerHTML = renderFooter();
+    initMobileMenu();
+    initHeaderSearch();
+    highlightActiveNav();
+  </script>
+</body>
+</html>

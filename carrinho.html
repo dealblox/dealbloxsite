@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrinho — Deal Blox</title>
+  <link rel="icon" href="/images/logo-dealblox.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .cart-summary-box { background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r2);padding:24px;position:sticky;top:calc(var(--header-h) + 24px); }
+  </style>
+</head>
+<body>
+  <div id="topbar-root"></div>
+  <div id="header-root"></div>
+  <div id="mobile-nav-root"></div>
+  <div id="auth-modal-root"></div>
+  <div class="page-layout">
+    <div id="sidebar-root"></div>
+    <main class="main-content">
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start">
+        <div>
+          <h1 style="font-size:1.3rem;font-weight:800;margin-bottom:20px">🛒 Meu Carrinho</h1>
+          <div id="cart-items"></div>
+        </div>
+        <div class="cart-summary-box" id="cart-summary" style="display:none">
+          <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px">Resumo do Pedido</h3>
+          <div id="summary-items"></div>
+          <div style="border-top:1px solid var(--gray-200);margin:16px 0;padding-top:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:14px;color:var(--gray-500)">Total</span>
+              <span style="font-size:22px;font-weight:800;color:var(--blue-800)" id="cart-total-display">R$ 0,00</span>
+            </div>
+          </div>
+          <p style="font-size:11px;color:var(--gray-400);margin-bottom:14px">💡 Para finalizar a compra de cada item individualmente, clique em "Ver Detalhes" no produto.</p>
+          <a href="/contas.html" class="btn-add-cart" style="display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;margin-top:8px">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Continuar comprando
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="footer-root"></div>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    document.getElementById("topbar-root").innerHTML = renderTopbar();
+    document.getElementById("header-root").innerHTML = renderHeader();
+    document.getElementById("sidebar-root").innerHTML = renderSidebar("carrinho");
+    document.getElementById("mobile-nav-root").innerHTML = renderMobileNav("carrinho");
+    document.getElementById("auth-modal-root").innerHTML = renderAuthModal();
+    document.getElementById("footer-root").innerHTML = renderFooter();
+    initMobileMenu();
+
+    const ICONS = ["🗡️","⚔️","🏆","👑","🛡️","🔮","💫","⚡"];
+
+    function renderCart() {
+      const items = Cart.getItems();
+      const container = document.getElementById("cart-items");
+      const summary = document.getElementById("cart-summary");
+      const totalDisplay = document.getElementById("cart-total-display");
+
+      if (!items.length) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding:80px 24px">
+            <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <h3>Seu carrinho está vazio</h3>
+            <p>Adicione produtos para continuar</p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+              <a href="/contas.html" class="btn-submit" style="text-decoration:none;display:inline-block;padding:11px 24px;width:auto">Ver Contas</a>
+              <a href="/frutas.html" class="btn-add-cart" style="text-decoration:none;display:inline-block;padding:11px 24px">Ver Frutas</a>
+            </div>
+          </div>`;
+        summary.style.display = "none";
+        return;
+      }
+
+      summary.style.display = "block";
+      totalDisplay.textContent = formatPrice(Cart.getTotal());
+
+      container.innerHTML = items.map(item => {
+        const icon = ICONS[(item.name || "").length % ICONS.length];
+        return `
+        <div class="cart-item" style="margin-bottom:12px">
+          <div class="cart-item-img">
+            ${item.image_url ? `<img src="${item.image_url}" alt="${item.name}">` : icon}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:4px">${item.name}</div>
+            <div style="font-size:12px;color:var(--gray-400)">${{accounts:'Conta Blox Fruits',fruits:'Fruta',gamepass:'Gamepass'}[item.category] || item.category}</div>
+            <div style="font-size:16px;font-weight:800;color:var(--blue-800);margin-top:6px">${formatPrice(item.price)}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+            <button onclick="window.location.href='/produto.html?id=${item.id}'" class="btn-view-details" style="width:auto;padding:8px 14px;font-size:12px">
+              Ver Detalhes
+            </button>
+            <button onclick="removeFromCart('${item.id}')" style="background:var(--gray-100);border:none;padding:6px 10px;border-radius:var(--radius-sm);font-size:12px;color:var(--red);cursor:pointer;font-weight:500">
+              🗑️ Remover
+            </button>
+          </div>
+        </div>`;
+      }).join("");
+
+      document.getElementById("summary-items").innerHTML = items.map(i =>
+        `<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+          <span style="color:var(--gray-600);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.name}</span>
+          <span style="font-weight:600">${formatPrice(i.price)}</span>
+        </div>`
+      ).join("");
+    }
+
+    function removeFromCart(id) {
+      Cart.removeItem(id);
+      showToast("Item removido do carrinho", "info");
+      renderCart();
+    }
+
+    renderCart();
+    window.addEventListener("lagteck:cart", () => renderCart());
+  </script>
+</body>
+</html>

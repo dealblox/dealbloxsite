@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mensagens — Deal Blox</title>
+  <link rel="icon" href="/images/logo-dealblox.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .msg-card { background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:18px;margin-bottom:12px;transition:border-color .2s; }
+    .msg-card.unread { border-left:4px solid var(--cyan);background:rgba(6,182,212,.04); }
+    .msg-card.read   { border-left:4px solid var(--border);opacity:.85; }
+    .msg-card:hover  { border-color:var(--border2); }
+    .msg-header { display:flex;align-items:center;gap:10px;margin-bottom:8px; }
+    .msg-type-badge { font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0; }
+    .msg-type-purchase { background:rgba(16,185,129,.15);color:var(--green); }
+    .msg-type-admin    { background:rgba(245,158,11,.15);color:var(--yellow); }
+    .msg-type-system   { background:rgba(59,130,246,.15);color:var(--blue3); }
+    .msg-unread-dot { width:8px;height:8px;background:var(--cyan);border-radius:50%;flex-shrink:0; }
+    .msg-title { font-size:14px;font-weight:700;color:var(--white);flex:1; }
+    .msg-body  { font-size:13px;color:var(--text2);line-height:1.65; }
+    .msg-footer { display:flex;align-items:center;justify-content:space-between;margin-top:10px; }
+    .msg-date  { font-size:11px;color:var(--text3); }
+    .btn-mark-read { background:none;border:none;color:var(--cyan2);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);padding:0; }
+    .btn-mark-read:hover { text-decoration:underline; }
+    .msg-filter-bar { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px; }
+    .msg-filter-btn { padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:none;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s; }
+    .msg-filter-btn:hover { border-color:var(--border2);color:var(--white); }
+    .msg-filter-btn.active { background:rgba(6,182,212,.12);border-color:rgba(6,182,212,.35);color:var(--cyan2); }
+    .msg-empty { text-align:center;padding:60px 20px;color:var(--text2); }
+    .msg-empty .msg-icon { font-size:64px;margin-bottom:16px; }
+    .discord-cta { background:rgba(88,101,242,.1);border:1px solid rgba(88,101,242,.25);border-radius:var(--r2);padding:20px;margin-top:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap; }
+    .discord-cta p { font-size:13px;color:var(--text2);flex:1;line-height:1.5; }
+    .btn-discord { display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#5865F2,#7289da);color:#fff;border:none;border-radius:var(--r2);padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);text-decoration:none;flex-shrink:0; }
+  </style>
+</head>
+<body>
+  <div id="topbar-root"></div>
+  <div id="header-root"></div>
+  <div id="mobile-nav-root"></div>
+  <div id="auth-modal-root"></div>
+
+  <div class="page-layout">
+    <div id="sidebar-root"></div>
+    <main class="main-content">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+        <h1 style="font-size:1.3rem;font-weight:800">💬 Mensagens</h1>
+        <div style="display:flex;gap:10px" id="header-actions"></div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="msg-filter-bar" id="filter-bar" style="display:none">
+        <button class="msg-filter-btn active" onclick="filterMsgs('all',this)">Todas</button>
+        <button class="msg-filter-btn" onclick="filterMsgs('unread',this)">Não lidas</button>
+        <button class="msg-filter-btn" onclick="filterMsgs('purchase',this)">🧾 Compras</button>
+        <button class="msg-filter-btn" onclick="filterMsgs('admin',this)">🛠️ Suporte</button>
+        <button class="msg-filter-btn" onclick="filterMsgs('system',this)">⚙️ Sistema</button>
+      </div>
+
+      <div id="msgs-container">
+        <div class="spinner" style="margin:40px auto"></div>
+      </div>
+
+      <!-- CTA Discord -->
+      <div class="discord-cta" id="discord-cta" style="display:none">
+        <div>
+          <div style="font-size:24px;margin-bottom:4px">💬</div>
+          <p>Para suporte personalizado e dúvidas sobre pedidos, abra um ticket no nosso servidor do Discord.</p>
+        </div>
+        <a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="btn-discord">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+          Abrir Ticket
+        </a>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="footer-root"></div>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/layout.js"></script>
+  <script>
+    // ── Fallback inline ──────────────────────────────────────────────────
+    if (typeof LAGTECK_CONFIG === 'undefined') { window.LAGTECK_CONFIG = {MP_PUBLIC_KEY:"",EMAILJS_SERVICE_ID:"service_mzmityx",EMAILJS_TEMPLATE_ID:"template_6ztpr7k",EMAILJS_PUBLIC_KEY:"7SAN7fAAsYLc7e-6W",DISCORD_SERVER:"https://discord.gg/rPFN7BMC5k",SITE_NAME:"Deal Blox"}; }
+    if (typeof Auth === 'undefined') { window.Auth = { STORAGE_KEY:"lagteck_user", getUser(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||null}catch{return null}}, setUser(u){localStorage.setItem(this.STORAGE_KEY,JSON.stringify(u))}, logout(){localStorage.removeItem(this.STORAGE_KEY);window.location.href="/"}, isLoggedIn(){return!!this.getUser()} }; }
+    if (typeof Cart === 'undefined') { window.Cart = { STORAGE_KEY:"lagteck_cart", getItems(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||[]}catch{return[]}}, getCount(){return this.getItems().reduce((a,i)=>a+(i.qty||1),0)} }; }
+    if (typeof API === 'undefined') { window.API = { async get(t,p={}){const qs=new URLSearchParams(p).toString();const res=await fetch(`tables/${t}${qs?"?"+qs:""}`);return res.json()}, async getOne(t,id){const res=await fetch(`tables/${t}/${id}`);if(!res.ok)return null;return res.json()}, async post(t,d){const res=await fetch(`tables/${t}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return res.json()}, async patch(t,id,d){const res=await fetch(`tables/${t}/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});return res.json()} }; }
+    if (typeof formatPrice === 'undefined') { window.formatPrice = (v) => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v); }
+    if (typeof showToast === 'undefined') { window.showToast=(msg,type='success',dur=3500)=>{let c=document.getElementById('toast-container');if(!c){c=document.createElement('div');c.id='toast-container';c.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px';document.body.appendChild(c)}const t=document.createElement('div');const bc={success:'#10b981',error:'#ef4444',info:'#3b82f6',warning:'#f59e0b'};t.style.cssText=`background:#0f1320;color:#c8d8f0;padding:14px 18px;border-radius:12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;min-width:260px;max-width:380px;border-left:4px solid ${bc[type]||bc.info};box-shadow:0 8px 40px rgba(0,0,0,.6)`;t.innerHTML=`<span>${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#4a5568;font-size:16px;margin-left:auto">×</button>`;c.appendChild(t);setTimeout(()=>t.remove(),dur)}; }
+    if (typeof showAuthModal === 'undefined') { window.showAuthModal=(t='login')=>{const m=document.getElementById('auth-modal');if(m){m.style.display='flex';document.body.style.overflow='hidden'}};window.closeAuthModal=()=>{const m=document.getElementById('auth-modal');if(m){m.style.display='none';document.body.style.overflow=''}}; }
+    if (typeof renderTopbar === 'undefined') {
+      window.renderTopbar=()=>`<div class="topbar"><span class="topbar-dot"></span>⚡ Entrega rápida via Discord &nbsp;·&nbsp; <a href="https://discord.gg/rPFN7BMC5k" target="_blank">Entrar no servidor ✨</a></div>`;
+      window.renderHeader=()=>{const user=Auth.getUser();const cc=Cart.getCount();return`<header class="site-header"><div class="header-inner"><button class="mobile-menu-btn" id="mobile-menu-btn"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:32px;height:32px;border-radius:8px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><nav class="header-nav"><a href="/contas.html">Contas</a><a href="/frutas.html">Frutas</a></nav><div class="header-actions"><a href="/carrinho.html" class="header-btn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></a>${user?`<a href="/perfil.html" class="header-btn" style="padding:3px"><div class="sidebar-avatar" style="width:28px;height:28px;font-size:12px;border-radius:6px">${(user.full_name?.[0]||'U').toUpperCase()}</div></a>`:`<button class="btn-login" onclick="showAuthModal('login')">Entrar</button>`}</div></div></header>`};
+      window.renderSidebar=(a='')=>`<aside class="sidebar"><span class="sidebar-section-label">Loja</span><a href="/" class="sidebar-item">🏠 Início</a><a href="/contas.html" class="sidebar-item">👤 Contas Blox</a><a href="/frutas.html" class="sidebar-item">🛡️ Frutas</a><span class="sidebar-section-label">Conta</span><a href="/perfil.html" class="sidebar-item ${a==='perfil'?'active':''}">👤 Perfil</a><a href="/favoritos.html" class="sidebar-item ${a==='favoritos'?'active':''}">❤️ Favoritos</a><a href="/mensagens.html" class="sidebar-item ${a==='mensagens'?'active':''}">💬 Mensagens</a></aside>`;
+      window.renderMobileNav=(a='')=>`<div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileNav()"></div><div class="mobile-nav" id="mobile-nav"><div class="mobile-nav-header"><a href="/" class="logo"><span class="logo-text">Deal Blox</span></a><button class="mobile-nav-close" onclick="closeMobileNav()">✕</button></div><a href="/" class="mobile-nav-item">🏠 Início</a><a href="/contas.html" class="mobile-nav-item">👤 Contas</a><a href="/frutas.html" class="mobile-nav-item">🛡️ Frutas</a></div>`;
+      window.renderFooter=()=>`<footer class="site-footer"><div class="footer-inner"><div class="footer-bottom"><p>© 2026 Deal Blox.</p></div></div></footer>`;
+      window.renderAuthModal=()=>`<div class="modal-overlay" id="auth-modal" style="display:none"><div class="modal-box"><button class="modal-close" onclick="closeAuthModal()">✕</button><p style="color:var(--white);text-align:center;padding:20px">Faça login em <a href="/" style="color:var(--cyan2)">lagteck.vercel.app</a></p></div></div>`;
+      window.initMobileMenu=()=>{document.getElementById('mobile-menu-btn')?.addEventListener('click',()=>{document.getElementById('mobile-nav')?.classList.add('open');document.getElementById('mobile-nav-overlay')?.classList.add('open')})};
+      window.closeMobileNav=()=>{document.getElementById('mobile-nav')?.classList.remove('open');document.getElementById('mobile-nav-overlay')?.classList.remove('open')};
+    }
+
+    document.getElementById("topbar-root").innerHTML  = renderTopbar();
+    document.getElementById("header-root").innerHTML  = renderHeader();
+    document.getElementById("sidebar-root").innerHTML = renderSidebar("mensagens");
+    document.getElementById("mobile-nav-root").innerHTML = renderMobileNav("mensagens");
+    document.getElementById("auth-modal-root").innerHTML = renderAuthModal();
+    document.getElementById("footer-root").innerHTML  = renderFooter();
+    initMobileMenu();
+
+    let allMessages = [];
+    let currentFilter = 'all';
+
+    // ── Carrega mensagens ────────────────────────────────────────────────
+    async function loadMessages() {
+      const user = Auth.getUser();
+      const container = document.getElementById('msgs-container');
+
+      if (!user) {
+        container.innerHTML = `
+          <div class="msg-empty">
+            <div class="msg-icon">🔒</div>
+            <h3>Faça login para ver suas mensagens</h3>
+            <p style="margin-bottom:20px">Suas notificações de compras e mensagens do suporte ficam aqui.</p>
+            <button onclick="showAuthModal('login')" class="btn-submit" style="width:auto;padding:12px 28px">Fazer Login</button>
+          </div>`;
+        return;
+      }
+
+      try {
+        const res = await API.get('messages', { search: user.email, limit: 100 });
+        allMessages = (res.data || [])
+          .filter(m => m.user_id === user.id || m.user_email === user.email)
+          .sort((a,b) => (b.created_at||0) - (a.created_at||0));
+
+        const unread = allMessages.filter(m => !m.read).length;
+
+        // Mostra filtros e botão mark-all
+        document.getElementById('filter-bar').style.display = 'flex';
+        document.getElementById('discord-cta').style.display = 'flex';
+
+        if (unread > 0) {
+          document.getElementById('header-actions').innerHTML = `
+            <button onclick="markAllRead()" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.25);color:var(--cyan2);border-radius:var(--r);padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">
+              ✓ Marcar todas como lidas (${unread})
+            </button>`;
+        }
+
+        renderMessages();
+      } catch(err) {
+        container.innerHTML = `<div class="msg-empty"><div class="msg-icon">⚠️</div><h3>Erro ao carregar mensagens</h3><p>Tente recarregar a página.</p></div>`;
+        console.error('[mensagens]', err);
+      }
+    }
+
+    // ── Renderiza lista ──────────────────────────────────────────────────
+    function renderMessages() {
+      const container = document.getElementById('msgs-container');
+      let list = [...allMessages];
+
+      if (currentFilter === 'unread')   list = list.filter(m => !m.read);
+      else if (currentFilter !== 'all') list = list.filter(m => m.type === currentFilter);
+
+      if (!list.length) {
+        const emptyMsgs = {
+          all:      { icon:'💬', text:'Nenhuma mensagem ainda', sub:'Compras e notificações aparecerão aqui.' },
+          unread:   { icon:'✅', text:'Nenhuma mensagem não lida', sub:'Você está em dia!' },
+          purchase: { icon:'🧾', text:'Nenhuma compra registrada', sub:'Faça sua primeira compra!' },
+          admin:    { icon:'🛠️', text:'Nenhuma mensagem do suporte', sub:'Entre no Discord para suporte.' },
+          system:   { icon:'⚙️', text:'Nenhuma notificação do sistema', sub:'' },
+        };
+        const e = emptyMsgs[currentFilter] || emptyMsgs.all;
+        container.innerHTML = `<div class="msg-empty"><div class="msg-icon">${e.icon}</div><h3>${e.text}</h3>${e.sub?`<p>${e.sub}</p>`:''}</div>`;
+        return;
+      }
+
+      const typeLabels = { purchase:'Compra', admin:'Suporte', system:'Sistema' };
+
+      container.innerHTML = list.map(m => `
+        <div class="msg-card ${m.read?'read':'unread'}" id="msgcard-${m.id}">
+          <div class="msg-header">
+            <span class="msg-type-badge msg-type-${m.type||'system'}">${typeLabels[m.type]||'Sistema'}</span>
+            ${!m.read ? '<span class="msg-unread-dot"></span>' : ''}
+            <span class="msg-title">${m.title || 'Notificação'}</span>
+          </div>
+          <div class="msg-body">${(m.body||'').replace(/\n/g,'<br>')}</div>
+          <div class="msg-footer">
+            <span class="msg-date">${m.created_at ? new Date(m.created_at).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) : '—'}</span>
+            ${!m.read ? `<button class="btn-mark-read" onclick="markRead('${m.id}')">Marcar como lida ✓</button>` : '<span style="font-size:11px;color:var(--text3)">✓ Lida</span>'}
+          </div>
+        </div>`).join('');
+    }
+
+    // ── Filtros ──────────────────────────────────────────────────────────
+    function filterMsgs(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.msg-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderMessages();
+    }
+
+    // ── Marcar como lida ─────────────────────────────────────────────────
+    async function markRead(msgId) {
+      try {
+        await API.patch('messages', msgId, { read: true });
+        const msg = allMessages.find(m => m.id === msgId);
+        if (msg) msg.read = true;
+        renderMessages();
+        // Atualiza header
+        const unread = allMessages.filter(m => !m.read).length;
+        if (unread === 0) document.getElementById('header-actions').innerHTML = '';
+        else document.getElementById('header-actions').innerHTML = `<button onclick="markAllRead()" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.25);color:var(--cyan2);border-radius:var(--r);padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)">✓ Marcar todas (${unread})</button>`;
+        showToast('Mensagem marcada como lida','info');
+      } catch(e) { showToast('Erro ao atualizar','error'); }
+    }
+
+    async function markAllRead() {
+      const unread = allMessages.filter(m => !m.read);
+      await Promise.all(unread.map(m => API.patch('messages', m.id, { read: true }).catch(()=>{})));
+      allMessages.forEach(m => m.read = true);
+      document.getElementById('header-actions').innerHTML = '';
+      renderMessages();
+      showToast('Todas marcadas como lidas! ✓','success');
+    }
+
+    loadMessages();
+  </script>
+</body>
+</html>
