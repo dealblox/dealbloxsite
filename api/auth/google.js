@@ -12,9 +12,9 @@
 export default async function handler(req, res) {
   // ── CORS: aceita os dois domínios do projeto ──────────────────
   const allowedOrigins = [
-    "https://lagteck.xyz",
-    "https://www.lagteck.xyz",
-    "https://lagteck.vercel.app",
+    "https://dealblox.com.br",
+    "https://www.dealblox.com.br",
+    "https://dealbloxsite.vercel.app",
     // Desenvolvimento local
     "http://localhost:3000",
     "http://localhost:5500",
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const REDIRECT_URI = "https://lagteck.xyz/auth-callback.html";
+    const REDIRECT_URI = redirect_uri || "https://www.dealblox.com.br/auth-callback.html";
 
 const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
   method: "POST",

@@ -9,7 +9,54 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    .cart-summary-box { background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r2);padding:24px;position:sticky;top:calc(var(--header-h) + 24px); }
+    .cart-layout { display:grid; grid-template-columns:1fr 360px; gap:24px; align-items:start; }
+    .cart-summary-box { background:var(--card-bg,#111); border:1px solid var(--border,rgba(255,26,26,.12)); border-radius:var(--r2,12px); padding:24px; position:sticky; top:calc(var(--header-h,62px) + 24px); }
+    .cart-item-row { display:flex; gap:14px; align-items:center; background:var(--card-bg,#111); border:1px solid var(--border,rgba(255,26,26,.12)); border-radius:var(--r2,12px); padding:14px; margin-bottom:10px; transition:border-color .2s; }
+    .cart-item-row:hover { border-color:rgba(255,26,26,.3); }
+    .cart-item-thumb { width:56px; height:56px; border-radius:8px; background:linear-gradient(135deg,#1a0000,#0a0a0a); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; overflow:hidden; }
+    .cart-item-thumb img { width:100%; height:100%; object-fit:cover; }
+    .cart-item-name { font-size:14px; font-weight:700; color:var(--white,#f0f0f0); margin-bottom:3px; }
+    .cart-item-cat  { font-size:11px; color:var(--text2,#888); }
+    .cart-item-price{ font-size:16px; font-weight:900; background:linear-gradient(90deg,#ff4d4d,#00cfff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-top:4px; }
+    .cart-item-actions { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+    .btn-cart-detail { background:linear-gradient(135deg,#cc0000,#ff1a1a); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:11px; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:.4px; transition:opacity .2s; white-space:nowrap; font-family:inherit; text-decoration:none; }
+    .btn-cart-detail:hover { opacity:.85; }
+    .btn-cart-remove { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#ef4444; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:700; cursor:pointer; transition:all .2s; font-family:inherit; }
+    .btn-cart-remove:hover { background:rgba(239,68,68,.2); }
+
+    /* BOTÃO COMPRAR TUDO */
+    .btn-buy-all { width:100%; background:linear-gradient(135deg,#cc0000,#ff1a1a); color:#fff; border:none; border-radius:var(--r2,12px); padding:15px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 0 20px rgba(255,26,26,.5); transition:all .2s; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; }
+    .btn-buy-all:hover { box-shadow:0 0 30px rgba(255,26,26,.7); transform:translateY(-1px); }
+    .btn-continue-shopping { width:100%; background:transparent; border:1px solid rgba(0,207,255,.3); color:#00cfff; border-radius:var(--r2,12px); padding:12px; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; }
+    .btn-continue-shopping:hover { background:rgba(0,207,255,.08); border-color:rgba(0,207,255,.5); }
+
+    /* MODAL DE COMPRAR TUDO */
+    .buy-all-overlay { position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(8px); z-index:999; display:none; align-items:center; justify-content:center; padding:20px; }
+    .buy-all-overlay.open { display:flex; }
+    .buy-all-modal { background:#0f0f0f; border:1px solid rgba(255,26,26,.3); border-radius:20px; padding:32px; width:100%; max-width:500px; max-height:90vh; overflow-y:auto; position:relative; animation:slideUp .3s ease; box-shadow:0 24px 80px rgba(0,0,0,.9),0 0 40px rgba(255,26,26,.15); }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .buy-all-modal h2 { font-size:20px; font-weight:800; color:#f0f0f0; margin-bottom:4px; }
+    .buy-all-modal .ba-subtitle { font-size:13px; color:#888; margin-bottom:20px; }
+    .ba-close { position:absolute; top:16px; right:16px; width:30px; height:30px; background:#1a1a1a; border:1px solid rgba(255,26,26,.2); color:#888; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; cursor:pointer; transition:.2s; }
+    .ba-close:hover { background:rgba(239,68,68,.1); color:#ef4444; }
+    .ba-field { margin-bottom:14px; }
+    .ba-label { display:block; font-size:11px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+    .ba-input { width:100%; background:#141414; border:1px solid rgba(255,26,26,.2); border-radius:8px; padding:10px 14px; color:#f0f0f0; font-size:14px; font-family:inherit; outline:none; transition:.2s; }
+    .ba-input:focus { border-color:#ff1a1a; box-shadow:0 0 0 3px rgba(255,26,26,.12); }
+    .ba-input::placeholder { color:#4a4a4a; }
+    .ba-summary { background:#141414; border:1px solid rgba(255,26,26,.12); border-radius:10px; padding:14px; margin-bottom:16px; }
+    .ba-summary-row { display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px; color:#888; }
+    .ba-summary-row:last-child { margin-bottom:0; border-top:1px solid rgba(255,26,26,.1); padding-top:8px; margin-top:4px; }
+    .ba-summary-row:last-child strong { color:#f0f0f0; font-size:16px; }
+    .ba-summary-row:last-child span { background:linear-gradient(90deg,#ff4d4d,#00cfff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-size:20px; font-weight:900; }
+    .btn-ba-confirm { width:100%; background:linear-gradient(135deg,#cc0000,#ff1a1a); color:#fff; border:none; border-radius:12px; padding:14px; font-size:15px; font-weight:800; cursor:pointer; box-shadow:0 0 20px rgba(255,26,26,.4); transition:all .2s; font-family:inherit; margin-top:4px; }
+    .btn-ba-confirm:hover { box-shadow:0 0 30px rgba(255,26,26,.6); transform:translateY(-1px); }
+    .btn-ba-confirm:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+    @media(max-width:860px){
+      .cart-layout { grid-template-columns:1fr; }
+      .cart-summary-box { position:static; }
+    }
   </style>
 </head>
 <body>
@@ -17,28 +64,61 @@
   <div id="header-root"></div>
   <div id="mobile-nav-root"></div>
   <div id="auth-modal-root"></div>
+
+  <!-- MODAL COMPRAR TUDO -->
+  <div class="buy-all-overlay" id="buy-all-overlay">
+    <div class="buy-all-modal">
+      <button class="ba-close" onclick="closeBuyAll()">✕</button>
+      <h2>🛍️ Comprar Tudo</h2>
+      <p class="ba-subtitle">Confirme seus dados para enviar o pedido completo via Discord</p>
+
+      <div class="ba-field">
+        <label class="ba-label">Nome Completo *</label>
+        <input class="ba-input" id="ba-name" type="text" placeholder="Seu nome completo" autocomplete="name">
+      </div>
+      <div class="ba-field">
+        <label class="ba-label">ID do Discord * <span style="font-size:10px;color:#4a4a4a;text-transform:none">(ID numérico 15-17 dígitos ou @usuario)</span></label>
+        <input class="ba-input" id="ba-discord" type="text" placeholder="@seuusuario ou 1234567890123456" maxlength="32">
+      </div>
+
+      <div class="ba-summary" id="ba-summary"></div>
+
+      <p style="font-size:11px;color:#4a4a4a;margin-bottom:14px;line-height:1.5">
+        ⚡ Ao confirmar, nossa equipe entrará em contato via Discord para finalizar cada item individualmente. Pagamento pelo Mercado Pago.
+      </p>
+      <button class="btn-ba-confirm" id="btn-ba-confirm" onclick="confirmBuyAll()">
+        ✅ Confirmar Pedido e Entrar em Contato
+      </button>
+    </div>
+  </div>
+
   <div class="page-layout">
     <div id="sidebar-root"></div>
     <main class="main-content">
-      <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start">
-        <div>
-          <h1 style="font-size:1.3rem;font-weight:800;margin-bottom:20px">🛒 Meu Carrinho</h1>
-          <div id="cart-items"></div>
-        </div>
+      <h1 style="font-size:1.3rem;font-weight:800;margin-bottom:20px">🛒 Meu Carrinho</h1>
+      <div class="cart-layout">
+        <div id="cart-items"></div>
         <div class="cart-summary-box" id="cart-summary" style="display:none">
-          <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px">Resumo do Pedido</h3>
+          <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--white,#f0f0f0)">📋 Resumo do Pedido</h3>
           <div id="summary-items"></div>
-          <div style="border-top:1px solid var(--gray-200);margin:16px 0;padding-top:16px">
+          <div style="border-top:1px solid rgba(255,26,26,.15);margin:16px 0;padding-top:16px">
             <div style="display:flex;justify-content:space-between;align-items:center">
-              <span style="font-size:14px;color:var(--gray-500)">Total</span>
-              <span style="font-size:22px;font-weight:800;color:var(--blue-800)" id="cart-total-display">R$ 0,00</span>
+              <span style="font-size:13px;color:#888">Total estimado</span>
+              <span style="font-size:22px;font-weight:900;background:linear-gradient(90deg,#ff4d4d,#00cfff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="cart-total-display">R$ 0,00</span>
             </div>
           </div>
-          <p style="font-size:11px;color:var(--gray-400);margin-bottom:14px">💡 Para finalizar a compra de cada item individualmente, clique em "Ver Detalhes" no produto.</p>
-          <a href="/contas.html" class="btn-add-cart" style="display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;margin-top:8px">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          <!-- BOTÃO COMPRAR TUDO -->
+          <button class="btn-buy-all" onclick="openBuyAll()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            🛍️ Comprar Tudo
+          </button>
+          <a href="/contas.html" class="btn-continue-shopping">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             Continuar comprando
           </a>
+          <p style="font-size:10px;color:#4a4a4a;margin-top:12px;line-height:1.5">
+            💡 Para comprar um item individualmente, clique em "Ver Produto" no item.
+          </p>
         </div>
       </div>
     </main>
@@ -58,22 +138,25 @@
     initMobileMenu();
 
     const ICONS = ["🗡️","⚔️","🏆","👑","🛡️","🔮","💫","⚡"];
+    const CAT_NAMES = { accounts:'Conta Blox Fruits', contas:'Conta Blox Fruits', fruits:'Fruta', frutas:'Fruta', gamepass:'Gamepass', scripts:'Script', executor:'Executor' };
+
+    function fmt(v){ return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0); }
 
     function renderCart() {
       const items = Cart.getItems();
       const container = document.getElementById("cart-items");
-      const summary = document.getElementById("cart-summary");
+      const summary   = document.getElementById("cart-summary");
       const totalDisplay = document.getElementById("cart-total-display");
 
       if (!items.length) {
         container.innerHTML = `
-          <div class="empty-state" style="padding:80px 24px">
-            <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            <h3>Seu carrinho está vazio</h3>
-            <p>Adicione produtos para continuar</p>
-            <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap">
-              <a href="/contas.html" class="btn-submit" style="text-decoration:none;display:inline-block;padding:11px 24px;width:auto">Ver Contas</a>
-              <a href="/frutas.html" class="btn-add-cart" style="text-decoration:none;display:inline-block;padding:11px 24px">Ver Frutas</a>
+          <div style="text-align:center;padding:80px 24px;color:#888">
+            <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" style="opacity:.3;margin-bottom:16px"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <h3 style="font-size:16px;font-weight:700;color:#f0f0f0;margin-bottom:8px">Seu carrinho está vazio</h3>
+            <p style="font-size:13px;margin-bottom:24px">Explore nossa loja e adicione produtos!</p>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+              <a href="/contas.html" style="background:linear-gradient(135deg,#cc0000,#ff1a1a);color:#fff;padding:11px 24px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none">Ver Contas</a>
+              <a href="/frutas.html" style="background:rgba(0,207,255,.08);color:#00cfff;border:1px solid rgba(0,207,255,.3);padding:10px 24px;border-radius:10px;font-weight:700;font-size:13px;text-decoration:none">Ver Frutas</a>
             </div>
           </div>`;
         summary.style.display = "none";
@@ -81,44 +164,154 @@
       }
 
       summary.style.display = "block";
-      totalDisplay.textContent = formatPrice(Cart.getTotal());
+      totalDisplay.textContent = fmt(Cart.getTotal());
 
       container.innerHTML = items.map(item => {
         const icon = ICONS[(item.name || "").length % ICONS.length];
         return `
-        <div class="cart-item" style="margin-bottom:12px">
-          <div class="cart-item-img">
-            ${item.image_url ? `<img src="${item.image_url}" alt="${item.name}">` : icon}
+        <div class="cart-item-row">
+          <div class="cart-item-thumb">
+            ${item.image_url ? `<img src="${item.image_url}" alt="${item.name}" onerror="this.style.display='none';this.parentElement.textContent='${icon}'">` : icon}
           </div>
           <div style="flex:1;min-width:0">
-            <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:4px">${item.name}</div>
-            <div style="font-size:12px;color:var(--gray-400)">${{accounts:'Conta Blox Fruits',fruits:'Fruta',gamepass:'Gamepass'}[item.category] || item.category}</div>
-            <div style="font-size:16px;font-weight:800;color:var(--blue-800);margin-top:6px">${formatPrice(item.price)}</div>
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-cat">${CAT_NAMES[item.category] || item.category || 'Produto'}</div>
+            <div class="cart-item-price">${fmt(item.price)}</div>
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-            <button onclick="window.location.href='/produto.html?id=${item.id}'" class="btn-view-details" style="width:auto;padding:8px 14px;font-size:12px">
-              Ver Detalhes
-            </button>
-            <button onclick="removeFromCart('${item.id}')" style="background:var(--gray-100);border:none;padding:6px 10px;border-radius:var(--radius-sm);font-size:12px;color:var(--red);cursor:pointer;font-weight:500">
-              🗑️ Remover
-            </button>
+          <div class="cart-item-actions">
+            <a href="/produto.html?id=${item.id}" class="btn-cart-detail">Ver Produto →</a>
+            <button onclick="removeFromCart('${item.id}')" class="btn-cart-remove">🗑️ Remover</button>
           </div>
         </div>`;
       }).join("");
 
       document.getElementById("summary-items").innerHTML = items.map(i =>
-        `<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
-          <span style="color:var(--gray-600);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.name}</span>
-          <span style="font-weight:600">${formatPrice(i.price)}</span>
+        `<div class="ba-summary-row">
+          <span style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.name}</span>
+          <span style="color:#f0f0f0;font-weight:600">${fmt(i.price)}</span>
         </div>`
-      ).join("");
+      ).join("") + `
+        <div class="ba-summary-row">
+          <strong>Total (${items.length} ${items.length===1?'item':'itens'})</strong>
+          <span>${fmt(Cart.getTotal())}</span>
+        </div>`;
     }
 
     function removeFromCart(id) {
       Cart.removeItem(id);
+      updateCartBadge && updateCartBadge();
       showToast("Item removido do carrinho", "info");
       renderCart();
     }
+
+    // ── MODAL COMPRAR TUDO ──
+    function openBuyAll() {
+      const user = Auth.getUser();
+      const items = Cart.getItems();
+      if (!items.length) { showToast("Seu carrinho está vazio","info"); return; }
+
+      // Pre-preenche dados do usuário
+      const nameEl = document.getElementById('ba-name');
+      const discEl = document.getElementById('ba-discord');
+      if(user) {
+        if(nameEl) nameEl.value = user.full_name || '';
+        if(discEl) discEl.value = user.discord_id || '';
+      }
+
+      // Monta resumo
+      const baSum = document.getElementById('ba-summary');
+      if(baSum) {
+        baSum.innerHTML = items.map(i =>
+          `<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;color:#888">
+            <span style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📦 ${i.name}</span>
+            <span style="color:#f0f0f0;font-weight:600">${fmt(i.price)}</span>
+          </div>`
+        ).join('') + `<div style="display:flex;justify-content:space-between;border-top:1px solid rgba(255,26,26,.1);padding-top:8px;margin-top:8px">
+          <strong style="color:#f0f0f0">${items.length} ${items.length===1?'item':'itens'}</strong>
+          <span style="font-weight:900;font-size:18px;background:linear-gradient(90deg,#ff4d4d,#00cfff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${fmt(Cart.getTotal())}</span>
+        </div>`;
+      }
+
+      document.getElementById('buy-all-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeBuyAll() {
+      document.getElementById('buy-all-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    async function confirmBuyAll() {
+      const name    = (document.getElementById('ba-name')?.value || '').trim();
+      const discord = (document.getElementById('ba-discord')?.value || '').trim();
+      const items   = Cart.getItems();
+
+      if (!name || name.split(' ').filter(Boolean).length < 2) {
+        showToast("Informe seu nome completo (nome e sobrenome)", "error"); return;
+      }
+      if (!discord) {
+        showToast("ID do Discord é obrigatório", "error"); return;
+      }
+      // Validação do Discord ID
+      const isNumericId = /^\d{15,17}$/.test(discord);
+      const isUsername  = /^@?[\w.]{2,32}(#\d{4})?$/.test(discord);
+      if (!isNumericId && !isUsername) {
+        showToast("ID do Discord inválido. Use ID numérico (15-17 dígitos) ou @seuusuario", "error"); return;
+      }
+      if (/^\d+$/.test(discord) && (discord.length < 15 || discord.length > 17)) {
+        showToast(`ID numérico do Discord deve ter 15-17 dígitos (você digitou ${discord.length})`, "error"); return;
+      }
+
+      const btn = document.getElementById('btn-ba-confirm');
+      if(btn){ btn.disabled = true; btn.textContent = '⏳ Processando...'; }
+
+      try {
+        // Registra o pedido na tabela de orders
+        const orderData = {
+          buyer_name:   name,
+          discord_id:   discord,
+          items:        items.map(i => `${i.name} (${fmt(i.price)})`).join(' | '),
+          total_price:  Cart.getTotal(),
+          status:       'pending',
+          order_type:   'cart_all',
+          created_at:   Date.now(),
+        };
+
+        try {
+          await API.post('orders', orderData);
+        } catch(e) { console.warn('Orders table:', e); }
+
+        // Monta mensagem para Discord
+        const itemsList = items.map(i => `• ${i.name} — ${fmt(i.price)}`).join('\n');
+        const discordMsg = encodeURIComponent(
+          `🛍️ PEDIDO DO CARRINHO\n\nCliente: ${name}\nDiscord: ${discord}\n\nItens:\n${itemsList}\n\nTotal: ${fmt(Cart.getTotal())}\n\n⚡ Entrar em contato para finalizar pagamento via Mercado Pago.`
+        );
+
+        showToast("✅ Pedido registrado! Redirecionando para o Discord...", "success", 5000);
+
+        // Limpa carrinho após confirmação
+        Cart.clear();
+        updateCartBadge && updateCartBadge();
+
+        // Redireciona para Discord após 2s
+        setTimeout(() => {
+          closeBuyAll();
+          window.open('https://discord.gg/rPFN7BMC5k', '_blank');
+          renderCart();
+        }, 1800);
+
+      } catch(err) {
+        console.error(err);
+        showToast("Erro ao processar pedido. Tente novamente.", "error");
+      } finally {
+        if(btn){ btn.disabled = false; btn.textContent = '✅ Confirmar Pedido e Entrar em Contato'; }
+      }
+    }
+
+    // Fecha modal ao clicar fora
+    document.getElementById('buy-all-overlay').addEventListener('click', function(e){
+      if(e.target === this) closeBuyAll();
+    });
 
     renderCart();
     window.addEventListener("lagteck:cart", () => renderCart());

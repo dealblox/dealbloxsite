@@ -1,199 +1,140 @@
-# 🎮 Lag Teck — Loja de Blox Fruits
+# Deal Blox — Loja Digital de Blox Fruits
 
-Loja digital estática hospedada no Vercel para venda de contas, frutas, gamepass e ferramentas de Blox Fruits.
+> Loja digital de contas, frutas, upamento, gamepass, scripts e suporte para Blox Fruits.  
+> **Domínio:** [dealblox.com.br](https://dealblox.com.br)
+
+---
+
+## 🎨 Design
+
+- **Tema:** Dark mode absoluto (`#0a0a0a`) com neon vermelho (`#ff1a1a`) e ciano (`#00cfff`)
+- **Fonte:** Space Grotesk (Google Fonts)
+- **Logo:** `/images/logo-dealblox.png` — raposa cibernética (mascote permanente)
+- **Hero:** Canvas 3D com cubos isométricos animados (vermelho + ciano piscando)
+
+---
+
+## 📂 Estrutura de Arquivos
+
+```
+index.html          → Página inicial (hero 3D, produtos em destaque, avaliações)
+contas.html         → Catálogo de contas Blox Fruits
+frutas.html         → Catálogo de frutas
+gamepass.html       → Gamepass (em breve)
+executor.html       → Executor
+scripts.html        → Scripts
+produto.html        → Página de produto individual + checkout
+carrinho.html       → Carrinho com botão "Comprar Tudo"
+perfil.html         → Perfil do usuário (dados, pedidos, mensagens)
+favoritos.html      → Produtos favoritos
+mensagens.html      → Notificações e mensagens
+jornalzinho.html    → Blog de notícias do servidor (3 artigos)
+admin.html          → Painel administrativo (senha protegida)
+auth-callback.html  → Callback OAuth (Google/Discord)
+faq.html            → FAQ
+termos.html         → Termos de uso
+privacidade.html    → Política de privacidade
+
+css/style.css       → Design system Deal Blox (tokens, componentes)
+js/config.js        → Configurações centrais (keys, URLs, emails)
+js/utils.js         → Auth, Cart, API, helpers
+js/layout.js        → renderTopbar, renderHeader, renderSidebar, renderFooter, renderAuthModal
+images/
+  logo-dealblox.png → Logo principal
+  bg-dealblox.png   → Background da logo
+  bg-cubos.png      → Cubos 3D (referência visual do hero)
+```
 
 ---
 
 ## ✅ Funcionalidades Implementadas
 
-### 🔐 Autenticação
-- **Login local** (email + senha) com hash SHA-256
-- **Login Google** via OAuth 2.0 fluxo implícito (`response_type=token`)  
-  — Funciona 100% sem backend: access_token vem no hash da URL, dados buscados via `/oauth2/v3/userinfo`
-- **Login Discord** via OAuth 2.0 (`response_type=code`)  
-  — Requer Vercel Functions (`/api/auth/discord.js`) para troca de código por token
-- **Cadastro** em 2 passos: dados → código de verificação por email (EmailJS)
-- **Recuperação de senha** via código por email
-- **Sessão** armazenada em `localStorage` como `lagteck_user`
-- **Log de acessos** gravado na tabela `access_logs` a cada login/cadastro
+### Loja
+- [x] Catálogo de produtos (contas, frutas, gamepass, executor, scripts)
+- [x] Página de produto com checkout (PIX, Cartão)
+- [x] Validação do Discord ID no checkout (15-17 dígitos numéricos ou @usuario)
+- [x] Carrinho de compras com botão **"Comprar Tudo"** (modal com resumo + Discord)
+- [x] Favoritos com sincronização no banco de dados
 
-### 🏪 Loja
-- **Página inicial** (`/index.html`) — carrega produtos de "contas" e "frutas" do Supabase com fallback para API interna; "Ver Detalhes" **não** exige login
-- **Contas Blox Fruits** (`/contas.html`) — filtro, busca, ordenação
-- **Frutas** (`/frutas.html`) — filtro, busca, ordenação  
-- **Gamepass** (`/gamepass.html`) — em breve
-- **Executor** (`/executor.html`)
-- **Scripts** (`/scripts.html`)
-- **Jornalzinho do Servidor** (`/jornalzinho.html`)
+### Auth
+- [x] Cadastro com verificação por email (EmailJS)
+- [x] Login com email/senha
+- [x] OAuth Google (requer GOOGLE_CLIENT_ID configurado no Google Console para dealblox.com.br)
+- [x] OAuth Discord (requer DISCORD_CLIENT_ID configurado)
+- [x] Perfil: editar nome, CPF, telefone
+- [x] Histórico de pedidos no perfil
 
-### 💳 Checkout (produto.html)
-- **Bloqueio de compra** sem login com redirecionamento ao modal de autenticação
-- **Visualização do produto** disponível sem login
-- **Modal de checkout** corrigido: botão X fecha corretamente; ESC também fecha; clique fora fecha
-- **Step 1 — Dados do comprador**: Nome (obrigatório), CPF (opcional), Discord ID (obrigatório) + tutorial inline
-- **Step 2 — Método de pagamento**: PIX ou Cartão
-- **Step 3A — PIX**: QR Code fictício em modo demo + botão "Simular pagamento PIX"; PIX real via Mercado Pago quando configurado
-- **Step 3B — Cartão**: Botão "Simular Pagamento (demo)" em modo demo; formulário MP Brick quando chave configurada
-- **Step 4 — Discord obrigatório**: Exige entrada no servidor antes de confirmar
-- **Step 5 — Sucesso**: ID de entrega de 8 caracteres alfanuméricos, notificação por email (EmailJS), mensagem no perfil
-- **Pedido salvo** na tabela `orders` com delivery_id, status, dados do comprador
-- **Estoque decrementado** automaticamente após pagamento
-- **Notificação criada** na tabela `messages` do usuário
+### Jornalzinho (Blog)
+- [x] **Artigo #1:** Nuke do servidor Discord (timeline completa: bot 3rd party → avisos → ataque → recuperação)
+- [x] **Artigo #2:** A jornada do nome — Lag Teck → FoxBlox Store → Deal Blox (timeline 3 fases)
+- [x] **Artigo #3:** Nome definitivo "Deal Blox" — status panel, alerts, por que esse nome
 
-### 🧭 Navegação
-- **Sidebar** com seções: Loja | Outros | Minha Conta
-- **Header** com busca global, carrinho, perfil
-- **Mobile nav** responsivo com todas as seções
-- **auth-callback.html** robusto: detecta `state` vazio, suporte a code flow e implicit
-
-### 👤 Perfil e Conta
-- **Perfil** (`/perfil.html`) — campos: nome, CPF (opcional), telefone (opcional), email (somente leitura); 3 abas: Perfil / Pedidos / Mensagens
-- **Favoritos** (`/favoritos.html`) — sincroniza com banco (se logado) + localStorage
-- **Carrinho** (`/carrinho.html`)
-- **Mensagens** (`/mensagens.html`) — filtros por tipo; marcar lida/todas; CTA Discord
-
-### 💾 Tabelas no banco (RESTful API)
-| Tabela | Campos principais |
-|--------|------------------|
-| `users` | id, full_name, email, password_hash, cpf, phone, favorites[], is_admin, provider |
-| `products` | id, name, category, price, original_price, stock, active, rarity, image_url |
-| `orders` | id, user_id, user_email, product_id, product_name, amount, status, payment_method, delivery_id, buyer_name, buyer_cpf, discord_id |
-| `messages` | id, user_id, user_email, type, title, body, read, order_id, delivery_id |
-| `access_logs` | id, user_id, user_email, provider, timestamp |
+### Site
+- [x] Cores neon vermelhas em TODAS as páginas (index.html incluído)
+- [x] Hero 3D animado com cubos isométricos (canvas 2D com perspectiva isométrica)
+- [x] Logo `logo-dealblox.png` em todos os HTML, layout.js, favicon
+- [x] Domínio `dealblox.com.br` em todos os configs
+- [x] Email `dealblox.suporte@gmail.com` em todos os arquivos
+- [x] Responsive mobile (mobile nav, breakpoints)
 
 ---
 
-## 📁 Estrutura de Arquivos
+## ⚙️ Configurações Importantes
 
-```
-/
-├── index.html              — Página inicial
-├── contas.html             — Listagem de contas
-├── frutas.html             — Listagem de frutas
-├── produto.html            — Detalhe de produto
-├── auth-callback.html      — Callback OAuth Google/Discord
-├── perfil.html             — Perfil do usuário
-├── jornalzinho.html        — Jornalzinho do servidor (em breve)
-├── admin.html              — Painel administrativo
-├── js/
-│   ├── config.js           — Configurações e credenciais públicas
-│   ├── utils.js            — Auth, Cart, API, loginGoogle(), loginDiscord()
-│   └── layout.js           — renderHeader, renderSidebar, renderAuthModal, handlers
-├── css/
-│   └── style.css           — Estilos globais
-├── api/
-│   ├── auth/google.js      — Vercel Function: troca code→token Google
-│   └── auth/discord.js     — Vercel Function: troca code→token Discord
-├── vercel.json             — Configuração Vercel (rewrites, headers, funções)
-└── .env.example            — Template de variáveis de ambiente
+### js/config.js
+```js
+GOOGLE_CLIENT_ID:    "188362380531-...apps.googleusercontent.com"  // ← Atualizar no Google Console para dealblox.com.br
+DISCORD_CLIENT_ID:   "1464057901739151454"                          // ← Atualizar redirect URI no Discord Dev Portal
+MP_PUBLIC_KEY:       "APP_USR-6658413354375969-..."
+ADMIN_PASSWORD:      "lagteck@admin2026"
+SITE_URL:            "https://dealblox.com.br"
+SUPPORT_EMAIL:       "dealblox.suporte@gmail.com"
 ```
 
----
+### ⚠️ Para Google OAuth funcionar em produção
+1. Acesse [Google Cloud Console](https://console.cloud.google.com/)
+2. Vá em Credenciais → ID cliente OAuth 2.0
+3. Adicione `https://dealblox.com.br` em **Origens JS autorizadas**
+4. Adicione `https://dealblox.com.br/auth-callback.html` em **URIs de redirecionamento**
 
-## 🔑 Variáveis de Ambiente (Vercel)
-
-| Variável | Uso |
-|---|---|
-| `GOOGLE_CLIENT_ID` | ID do cliente OAuth Google (frontend + backend) |
-| `GOOGLE_CLIENT_SECRET` | Secret Google (apenas backend/Vercel Function) |
-| `DISCORD_CLIENT_ID` | ID do cliente OAuth Discord |
-| `DISCORD_CLIENT_SECRET` | Secret Discord (apenas backend/Vercel Function) |
-| `MP_PUBLIC_KEY` | Chave pública Mercado Pago (frontend) |
-| `MP_ACCESS_TOKEN` | Token privado Mercado Pago (backend) |
-| `EMAILJS_SERVICE_ID` | `service_mzmityx` |
-| `EMAILJS_TEMPLATE_ID` | `template_6ztpr7k` |
-| `EMAILJS_PUBLIC_KEY` | `7SAN7fAAsYLc7e-6W` |
-| `ADMIN_PASSWORD` | Senha do painel admin |
-
-> ⚠️ Nunca commite secrets. Use `.env.local` localmente.
+### ⚠️ Para Discord OAuth funcionar em produção
+1. Acesse [Discord Developer Portal](https://discord.com/developers/applications)
+2. Na aplicação → OAuth2 → Redirects
+3. Adicione `https://dealblox.com.br/auth-callback.html`
 
 ---
 
-## 🔗 URIs de Redirecionamento OAuth (cadastrar nos consoles)
+## 🗄️ Tabelas de Dados
 
-**Google Cloud Console → Credenciais → URIs de redirecionamento autorizados:**
-```
-https://lagteck.xyz/auth-callback.html
-https://lagteck.vercel.app/auth-callback.html
-```
-
-**Discord Developer Portal → OAuth2 → Redirects:**
-```
-https://lagteck.xyz/auth-callback.html
-https://lagteck.vercel.app/auth-callback.html
-```
+| Tabela        | Campos principais                                              |
+|---------------|---------------------------------------------------------------|
+| `users`       | id, full_name, email, password_hash, cpf, phone, discord_id, favorites |
+| `products`    | id, name, category, price, stock, image_url, rarity           |
+| `orders`      | id, buyer_name, discord_id, items, total_price, status, order_type |
+| `messages`    | id, user_id, type, title, body, read                          |
+| `access_logs` | id, user_id, ip, browser, device_type, action                 |
 
 ---
 
-## 🔄 Fluxo OAuth
+## 🛠️ Pendências / Próximos Passos
 
-### Google (fluxo implícito — funciona sem backend)
-1. `loginGoogle()` → redireciona para Google com `response_type=token`
-2. Google redireciona para `/auth-callback.html#access_token=...&state=google`
-3. `auth-callback.html` lê o token do hash → busca dados em `googleapis.com/oauth2/v3/userinfo`
-4. Cria/atualiza usuário no banco → salva sessão → redireciona
-
-### Discord (requer Vercel Functions)
-1. `loginDiscord()` → redireciona para Discord com `response_type=code`
-2. Discord redireciona para `/auth-callback.html?code=...&state=discord`
-3. `auth-callback.html` → POST `/api/auth/discord` com o code
-4. Vercel Function troca code por token → busca `/users/@me` → retorna JSON
-5. Cria/atualiza usuário → salva sessão → redireciona
+- [ ] Configurar Google OAuth Client ID para domínio `dealblox.com.br` no Google Console
+- [ ] Configurar Discord OAuth redirect URI para `dealblox.com.br` 
+- [ ] Backend para QR Code PIX (requer Vercel Function ou servidor)
+- [ ] Pagamento com cartão — integração completa Mercado Pago (requer backend)
+- [ ] Painel admin: mais funcionalidades de gestão de pedidos
+- [ ] Sistema de upamento (gamepass em breve)
 
 ---
 
-## 🗄️ Tabelas de Dados (RESTful Table API)
+## 🎯 Histórico de Nomes
 
-### `users`
-| Campo | Tipo | Descrição |
-|---|---|---|
-| full_name | text | Nome completo |
-| email | text | Email único |
-| password_hash | text | SHA-256 + salt |
-| email_verified | bool | Email confirmado |
-| provider | text | local / google / discord |
-| avatar_url | text | URL do avatar |
-| is_admin | bool | Admin? |
+1. **Lag Teck** — nome original, escolhido de última hora, tradução: "loja de atrasos"
+2. **FoxBlox Store** — transição: raposa + Blox Fruits
+3. **Deal Blox** — nome definitivo: "negócio + Blox Fruits"
 
-### `products`
-| Campo | Tipo | Descrição |
-|---|---|---|
-| name | text | Nome do produto |
-| category | text | accounts / fruits / gamepass |
-| price | number | Preço em R$ |
-| stock | number | Estoque |
-| active | bool | Ativo? |
-| rarity | text | Comum / Rara / Épica / Lendária / Mítica |
-
-### `access_logs`
-Registra cada login/cadastro com IP, cidade, navegador, OS, dispositivo, provider.
+🦊 O mascote **Raposa** e os donos/equipe permanecem os mesmos.
 
 ---
 
-## ⚙️ Páginas e Rotas
-
-| Rota | Descrição |
-|---|---|
-| `/` | Página inicial |
-| `/contas.html` | Contas Blox Fruits |
-| `/frutas.html` | Frutas |
-| `/produto.html?id=ID` | Detalhe do produto |
-| `/auth-callback.html` | Callback OAuth |
-| `/perfil.html` | Perfil do usuário |
-| `/admin.html` | Painel admin |
-| `/jornalzinho.html` | Jornalzinho (em breve) |
-
----
-
-## ⏳ Pendente / Próximos Passos
-
-- [ ] Configurar `GOOGLE_CLIENT_ID` e `DISCORD_CLIENT_ID` reais em `js/config.js`
-- [ ] Adicionar variáveis no painel Vercel → Settings → Environment Variables
-- [ ] Registrar URIs de redirecionamento no Google Console e Discord Portal
-- [ ] Implementar conteúdo do Jornalzinho do Servidor
-- [ ] Implementar fluxo de pagamento Mercado Pago
-- [ ] Implementar sistema de mensagens
-- [ ] Upload de imagem de perfil
-- [ ] Sistema de avaliações de produtos
-#   D e a l B l o x - S i t e  
- 
+*© 2026 Deal Blox. Não afiliado à Roblox Corporation.*

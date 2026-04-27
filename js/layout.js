@@ -35,7 +35,7 @@ function renderHeader() {
       </button>
 
       <a href="/" class="logo">
-        <img src="/images/logo-lagteck.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:8px;object-fit:cover;box-shadow:0 0 12px rgba(239,68,68,.35);flex-shrink:0">
+        <img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:8px;object-fit:cover;box-shadow:0 0 12px rgba(239,68,68,.35);flex-shrink:0">
         <span class="logo-text">Deal Blox</span>
       </a>
 
@@ -188,7 +188,7 @@ function renderMobileNav(activePage = "") {
   <div class="mobile-nav" id="mobile-nav">
     <div class="mobile-nav-header">
       <a href="/" class="logo">
-        <img src="/images/logo-lagteck.png" alt="Deal Blox" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0">
+        <img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:32px;height:32px;border-radius:8px;object-fit:cover;flex-shrink:0">
         <span class="logo-text" style="font-size:17px">Deal Blox</span>
       </a>
       <button class="mobile-nav-close" onclick="closeMobileNav()">
@@ -283,7 +283,7 @@ function renderFooter() {
       <div class="footer-grid">
         <div class="footer-brand">
           <a href="/" class="logo" style="margin-bottom:14px;display:inline-flex">
-            <img src="/images/logo-lagteck.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
+            <img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
             <span class="logo-text">Deal Blox</span>
           </a>
           <p>Loja digital de Blox Fruits. Contas upadas, frutas raras e mais — entrega rápida e suporte via Discord.</p>
@@ -291,7 +291,7 @@ function renderFooter() {
             <a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="footer-social-btn" title="Discord">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
             </a>
-            <a href="mailto:lagteck@gmail.com" class="footer-social-btn" title="Email">
+            <a href="mailto:dealblox.suporte@gmail.com" class="footer-social-btn" title="Email">
               <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             </a>
           </div>
@@ -313,7 +313,7 @@ function renderFooter() {
           <ul>
             <li><a href="/faq.html">Perguntas Frequentes</a></li>
             <li><a href="https://discord.gg/rPFN7BMC5k" target="_blank">Servidor Discord</a></li>
-            <li><a href="mailto:lagteck@gmail.com">lagteck@gmail.com</a></li>
+            <li><a href="mailto:dealblox.suporte@gmail.com">dealblox.suporte@gmail.com</a></li>
           </ul>
         </div>
 
@@ -330,10 +330,45 @@ function renderFooter() {
       <div class="footer-bottom">
         <p class="footer-copy">© ${new Date().getFullYear()} Deal Blox. Todos os direitos reservados. Não afiliado à Roblox Corporation.</p>
         <div class="footer-payments">
-          <span style="color:var(--text3);font-size:11px;font-weight:600">Pagamentos:</span>
-          <span class="payment-icon">PIX</span>
-          <span class="payment-icon">Crédito</span>
-          <span class="payment-icon">Débito</span>
+          <span style="color:var(--text3);font-size:11px;font-weight:600;margin-right:4px">Pagamentos aceitos:</span>
+
+          <!-- Mercado Pago selo oficial -->
+          <span class="pay-badge" title="Mercado Pago" style="background:#fff;padding:3px 6px;border-radius:6px">
+            <img src="https://download.host2b.net/imagem/selo-mercadopago.svg" alt="Mercado Pago" style="height:24px;display:block">
+          </span>
+
+          <!-- PIX SVG -->
+          <span class="pay-badge" title="PIX">
+            <svg height="18" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="60" height="60" rx="10" fill="#32BCAD"/>
+              <path d="M23 30l5.5 5.5L37 22" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 23l4 4-4 4M41 23l-4 4 4 4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="900" fill="#fff">PIX</text>
+            </svg>
+          </span>
+
+          <!-- VISA SVG -->
+          <span class="pay-badge" title="Visa" style="background:#1a1f71">
+            <svg height="16" viewBox="0 0 80 26" xmlns="http://www.w3.org/2000/svg">
+              <text x="4" y="20" font-family="Arial,sans-serif" font-size="20" font-weight="900" font-style="italic" fill="#fff" letter-spacing="-1">VISA</text>
+            </svg>
+          </span>
+
+          <!-- Mastercard SVG -->
+          <span class="pay-badge" title="Mastercard" style="background:#252525">
+            <svg height="20" viewBox="0 0 50 30" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="15" r="12" fill="#EB001B"/>
+              <circle cx="32" cy="15" r="12" fill="#F79E1B"/>
+              <path d="M25 6.8a12 12 0 0 1 0 16.4A12 12 0 0 1 25 6.8z" fill="#FF5F00"/>
+            </svg>
+          </span>
+
+          <!-- Elo SVG -->
+          <span class="pay-badge" title="Elo" style="background:#FFD100">
+            <svg height="16" viewBox="0 0 60 24" xmlns="http://www.w3.org/2000/svg">
+              <text x="4" y="18" font-family="Arial,sans-serif" font-size="16" font-weight="900" fill="#000">elo</text>
+            </svg>
+          </span>
         </div>
       </div>
     </div>
@@ -353,7 +388,7 @@ function renderAuthModal() {
 
       <div class="auth-modal-logo">
         <div class="logo-icon" style="background:transparent;box-shadow:none;padding:0">
-          <img src="/images/logo-lagteck.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:10px;object-fit:cover;display:block;box-shadow:0 0 14px rgba(239,68,68,.4)">
+          <img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:10px;object-fit:cover;display:block;box-shadow:0 0 14px rgba(239,68,68,.4)">
         </div>
         <span>Deal Blox</span>
       </div>
@@ -409,7 +444,14 @@ function renderAuthModal() {
             </div>
             <div class="form-group">
               <label class="form-label">Senha</label>
-              <input type="password" class="form-input" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+              <input type="password" class="form-input" id="reg-password" placeholder="Mín. 6 chars: letras, números e símbolo" required minlength="6" maxlength="20" autocomplete="new-password" oninput="checkPasswordStrength(this.value)">
+              <div style="margin-top:7px;height:5px;border-radius:5px;background:rgba(255,255,255,0.08);overflow:hidden">
+                <div id="pwd-strength-fill" style="height:100%;width:0%;border-radius:5px;transition:width .3s ease,background .3s ease"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+                <span id="pwd-strength-text" style="font-size:11px;font-weight:700;font-family:var(--font)"></span>
+                <span id="pwd-hint" style="font-size:11px;color:var(--text3)"></span>
+              </div>
             </div>
             <button type="submit" class="btn-auth-submit" id="btn-reg-step1">
               📧 Enviar código de verificação
@@ -534,6 +576,42 @@ async function handleLogin(e) {
 }
 
 // handleRegister antigo mantido por compatibilidade com fallbacks inline
+
+function checkPasswordStrength(pwd) {
+  const fill = document.getElementById("pwd-strength-fill");
+  const text = document.getElementById("pwd-strength-text");
+  const hint = document.getElementById("pwd-hint");
+  if (!fill || !text) return 0;
+  const hasLower   = /[a-z]/.test(pwd);
+  const hasUpper   = /[A-Z]/.test(pwd);
+  const hasNumber  = /[0-9]/.test(pwd);
+  const hasSpecial = /[^a-zA-Z0-9]/.test(pwd);
+  const len = pwd.length;
+  const missing = [];
+  if (!/[a-zA-Z]/.test(pwd)) missing.push("letra");
+  if (!hasNumber)             missing.push("número");
+  if (!hasSpecial)            missing.push("símbolo (!@#...)");
+  if (hint) hint.textContent = (missing.length > 0 && len > 0) ? "Faltando: " + missing.join(", ") : "";
+  if (len === 0) { fill.style.width = "0%"; fill.style.background = "transparent"; text.textContent = ""; return 0; }
+  let score = 0;
+  if (len >= 6)  score++;
+  if (len >= 10) score++;
+  if (len >= 14) score++;
+  if (hasLower || hasUpper) score++;
+  if (hasNumber)  score++;
+  if (hasSpecial) score++;
+  if (hasUpper && hasLower) score++;
+  let level, width, color, label;
+  if      (score <= 2) { level = 1; width = "20%";  color = "#ef4444"; label = "Muito fraca"; }
+  else if (score <= 3) { level = 2; width = "45%";  color = "#f97316"; label = "Fraca";       }
+  else if (score <= 5) { level = 3; width = "72%";  color = "#f59e0b"; label = "Média";       }
+  else                 { level = 4; width = "100%"; color = "#22c55e"; label = "Forte";        }
+  fill.style.width      = width;
+  fill.style.background = color;
+  text.textContent      = label;
+  text.style.color      = color;
+  return level;
+}
 async function handleRegister(e) { if(e) e.preventDefault(); await handleRegisterStep1(e); }
 
 // ── PASSO 1: valida dados e envia código ──────────────────────
@@ -546,8 +624,19 @@ async function handleRegisterStep1(e) {
   const email    = document.getElementById("reg-email")?.value.trim() || "";
   const password = document.getElementById("reg-password")?.value || "";
 
-  if (name.split(" ").filter(Boolean).length < 2) {
+  const nameParts = name.split(" ").filter(Boolean);
+  if (nameParts.length < 2) {
     showToast("Informe seu nome completo (nome e sobrenome)", "error");
+    if (btn) { btn.disabled = false; btn.textContent = "📧 Enviar código de verificação"; }
+    return;
+  }
+  if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) {
+    showToast("Nome inválido — use apenas letras, sem números ou símbolos", "error");
+    if (btn) { btn.disabled = false; btn.textContent = "📧 Enviar código de verificação"; }
+    return;
+  }
+  if (nameParts.some(p => p.length < 2)) {
+    showToast("Cada parte do nome precisa ter pelo menos 2 letras", "error");
     if (btn) { btn.disabled = false; btn.textContent = "📧 Enviar código de verificação"; }
     return;
   }
@@ -556,8 +645,18 @@ async function handleRegisterStep1(e) {
     if (btn) { btn.disabled = false; btn.textContent = "📧 Enviar código de verificação"; }
     return;
   }
-  if (password.length < 6) {
-    showToast("Senha deve ter no mínimo 6 caracteres", "error");
+  if (password.length < 6 || password.length > 20) {
+    showToast("Senha deve ter entre 6 e 20 caracteres", "error");
+    if (btn) { btn.disabled = false; btn.textContent = "📧 Enviar código de verificação"; }
+    return;
+  }
+  if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password) || !/[^a-zA-Z0-9]/.test(password)) {
+    showToast("Senha deve conter letras, números e um símbolo (ex: !@#)", "error");
+    if (btn) { btn.disabled = false; btn.textContent = "📧 Enviar código de verificação"; }
+    return;
+  }
+  if (checkPasswordStrength(password) <= 2) {
+    showToast("Senha muito fraca! Adicione mais caracteres variados.", "error");
     if (btn) { btn.disabled = false; btn.textContent = "📧 Enviar código de verificação"; }
     return;
   }
@@ -648,8 +747,17 @@ async function handleRegisterStep2(e) {
     closeAuthModal();
     setTimeout(() => location.reload(), 700);
   } catch(err) {
-    showToast("Erro ao criar conta. Tente novamente.", "error");
-    console.error(err);
+    console.error("[register step2] Erro:", err);
+    const msg = err?.message || "";
+    if (msg.includes("env vars") || msg.includes("não configurado") || msg.includes("500")) {
+      showToast("⚙️ Banco de dados não configurado no servidor. Adicione SUPABASE_URL e SUPABASE_KEY no Vercel.", "error", 10000);
+    } else if (msg.includes("403") || msg.includes("RLS") || msg.includes("policy")) {
+      showToast("🔒 Permissão negada pelo banco. Desative o RLS na tabela 'users' no Supabase.", "error", 10000);
+    } else if (msg.includes("duplicate") || msg.includes("unique") || msg.includes("23505")) {
+      showToast("Este email já está cadastrado. Faça login.", "error");
+    } else {
+      showToast("Erro ao criar conta: " + (msg || "Tente novamente."), "error", 8000);
+    }
     if (btn) { btn.disabled = false; btn.textContent = "✅ Verificar e criar conta"; }
   }
 }
@@ -720,44 +828,20 @@ async function handleForgotPassword(e) {
 }
 
 async function sendVerificationEmail(email, name, code, type = "verify") {
-  const cfg = typeof LAGTECK_CONFIG !== "undefined" ? LAGTECK_CONFIG : {};
-  const serviceId  = cfg.EMAILJS_SERVICE_ID  || "";
-  const templateId = cfg.EMAILJS_TEMPLATE_ID || "";
-  const publicKey  = cfg.EMAILJS_PUBLIC_KEY  || "";
-
-  if (typeof emailjs === "undefined") {
-    console.warn("⚠️ EmailJS não carregado. Código (DEV):", code);
-    showToast(`📋 Código de verificação: ${code}`, "info", 30000);
-    return;
-  }
-  if (!serviceId || serviceId.includes("SEU_") || !templateId || !publicKey || publicKey.includes("SUA_")) {
-    console.warn("⚠️ EmailJS não configurado. Código (DEV):", code);
-    showToast(`📋 Código de verificação: ${code}`, "info", 30000);
-    return;
-  }
   try {
-    // Inicializa EmailJS com a public key
-    emailjs.init(publicKey);
-    const templateParams = {
-      to_email: email,
-      to_name:  name,
-      code:     code,
-      type:     type,
-      subject:  type === "reset" ? "Redefinir senha — Deal Blox" : "Confirme seu email — Deal Blox",
-      message:  type === "reset"
-        ? `Seu código para redefinir a senha é: ${code}`
-        : `Seu código de verificação é: ${code}. Válido por 15 minutos.`,
-    };
-    const result = await emailjs.send(serviceId, templateId, templateParams);
-    console.log("[emailjs] ✅ Enviado:", result.status, result.text);
+    const r = await fetch("/api/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: type === "reset" ? "reset" : "verify", to_email: email, to_name: name, code: code }),
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    console.log("[email] \u2705 C\u00f3digo enviado para:", email);
   } catch(err) {
-    console.error("[emailjs] ❌ Erro ao enviar:", err);
-    // Exibe o código para não bloquear o usuário mesmo se o email falhar
-    showToast(`📋 Código de verificação: ${code}`, "info", 60000);
-    throw err; // Propaga para o caller decidir como tratar
+    console.error("[email] \u274c Erro ao enviar c\u00f3digo:", err);
+    showToast(`\ud83d\udccb C\u00f3digo de verifica\u00e7\u00e3o: ${code}`, "info", 60000);
+    throw err;
   }
 }
-
 // ── Salva log de acesso (usado no login/registro/oauth) ──────
 async function _saveAccessLog(userData, action) {
   try {
@@ -773,11 +857,11 @@ async function _saveAccessLog(userData, action) {
                /Linux/i.test(ua) ? "Linux" : "Outro";
     let ip = "", city = "", region = "", country = "", isp = "";
     try {
-      const geoRes = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(4000) });
+      const geoRes = await fetch("/api/geo", { signal: AbortSignal.timeout(6000) });
       if (geoRes.ok) {
         const geo = await geoRes.json();
         ip = geo.ip || ""; city = geo.city || "";
-        region = geo.region || ""; country = geo.country_name || ""; isp = geo.org || "";
+        region = geo.region || ""; country = geo.country || ""; isp = geo.isp || "";
       }
     } catch { /* silencia */ }
     const dateStr = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });

@@ -11,6 +11,12 @@
   <!-- Mercado Pago SDK -->
   <script src="https://sdk.mercadopago.com/js/v2"></script>
   <style>
+    /* ── Detalhe do produto ── */
+    .detail-grid { display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start; }
+    @media(max-width:768px){ .detail-grid { grid-template-columns:1fr; } }
+    .detail-image-area { position:relative;background:var(--bg2);border-radius:var(--r2);overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:260px;max-height:420px; }
+    .detail-image-area img { width:100%;max-height:420px;object-fit:contain; }
+
     /* ── Checkout steps ── */
     .payment-step { display:none; }
     .payment-step.active { display:block; }
@@ -97,20 +103,29 @@
         <div class="checkout-summary-box" id="info-summary"></div>
 
         <div class="checkout-field">
-          <label>Nome Completo <span class="field-required">*</span></label>
+          <label>Nome Completo <span class="field-required">*</span> <span style="color:var(--text3);font-size:10px">(nome na nota)</span></label>
           <input type="text" id="buyer-name" placeholder="Seu nome completo" autocomplete="name">
+          <div class="field-hint" id="checkout-name-hint" style="display:none">
+            <a href="/perfil.html" style="color:var(--cyan2)">Altere no perfil →</a>
+          </div>
         </div>
 
         <div class="checkout-field">
-          <label>CPF <span style="color:var(--text3);font-size:10px">(opcional)</span></label>
+          <label style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            CPF na nota
+            <span style="color:var(--text3);font-size:10px">(opcional)</span>
+            <span style="background:rgba(6,182,212,.12);color:var(--cyan2);font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px">✓ RECEITA FEDERAL</span>
+          </label>
           <input type="text" id="buyer-cpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)">
+          <div class="field-hint" id="checkout-cpf-hint"></div>
         </div>
 
         <div class="checkout-field">
           <label>ID do Discord <span class="field-required">*</span></label>
-          <input type="text" id="buyer-discord" placeholder="Ex: seuuser#1234 ou @seuuser">
-          <div class="field-hint">
-            É pelo Discord que você receberá seu produto.
+          <input type="text" id="buyer-discord" placeholder="Apenas ID numérico (ex: 123456789012345678)" maxlength="19" oninput="validateDiscordField(this, 'checkout-discord-hint')">
+          <span id="checkout-discord-hint" style="font-size:11px;font-weight:600;margin-top:4px;display:block;min-height:16px"></span>
+          <div class="field-hint" style="margin-top:6px">
+            💡 Para pegar seu ID numérico: Discord → Configurações → Avançado → ative <strong>Modo Desenvolvedor</strong> → clique com botão direito no seu nome → <strong>Copiar ID do Usuário</strong>.
             <button type="button" onclick="toggleDiscordTutorial()" style="background:none;border:none;color:var(--cyan2);font-size:11px;font-weight:700;cursor:pointer;padding:0 4px">Não tenho conta →</button>
           </div>
         </div>
@@ -228,6 +243,9 @@
           <p style="font-size:12px;color:var(--text3);margin-bottom:4px">⚠️ Guarde este ID — você precisará dele para retirar o produto no Discord.</p>
           <p style="font-size:12px;color:var(--text3);margin-bottom:20px">📧 Uma confirmação foi enviada para seu email.</p>
 
+          <!-- Credenciais aparecem aqui automaticamente se for produto de contas -->
+          <div id="success-credentials" style="display:none"></div>
+
           <a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="btn-proceed" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;margin-bottom:10px">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
             Retirar produto no Discord
@@ -249,10 +267,7 @@
     </main>
   </div>
 
-  <div id="footer-root"></div>
-
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script src="/js/config.js"></script>
+  <div id="footer-root"></div>  <script src="/js/config.js"></script>
   <script src="/js/utils.js"></script>
   <script src="/js/layout.js"></script>
   <script>
@@ -262,7 +277,7 @@
         MP_PUBLIC_KEY:"",EMAILJS_SERVICE_ID:"service_mzmityx",EMAILJS_TEMPLATE_ID:"template_6ztpr7k",EMAILJS_PUBLIC_KEY:"7SAN7fAAsYLc7e-6W",
         GOOGLE_CLIENT_ID:"",DISCORD_CLIENT_ID:"",DISCORD_REDIRECT_URI:window.location.origin+"/auth-callback.html",
         ADMIN_PASSWORD:"lagteck@admin2026",DISCORD_SERVER:"https://discord.gg/rPFN7BMC5k",
-        SITE_NAME:"Deal Blox",SITE_URL:"https://lagteck.vercel.app",SUPPORT_EMAIL:"lagteck@gmail.com",
+        SITE_NAME:"Deal Blox",SITE_URL:"https://dealblox.com.br",SUPPORT_EMAIL:"dealblox.suporte@gmail.com",
         SITE_DESCRIPTION:"Loja digital de contas e itens de Blox Fruits."
       };
     }
@@ -322,8 +337,8 @@
     initMobileMenu();
 
     // ── Constantes Supabase ─────────────────────────────────────────────
-    const SB_URL = "https://piqnqegawcdhykatpflj.supabase.co";
-    const SB_KEY = "sb_publishable_mGMkvi5A0S3iVySpI_ek_Q_IFekBWjH";
+    const SB_URL = "https://iydpkxgdnhlzwrgjbxfh.supabase.co";
+    const SB_KEY = "";  // Chave removida — usar apenas API interna
 
     // ── Estado global ────────────────────────────────────────────────────
     const ICONS = { accounts:["🗡️","⚔️","🏆","👑","🌟","💎","🔥"], fruits:["🛡️","🔮","💫","🌀","⚡","🌊","🔥"], gamepass:["⭐","🎮"] };
@@ -352,27 +367,100 @@
       else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{3})/,'$1.$2.$3');
       else if (v.length > 3) v = v.replace(/^(\d{3})(\d{3})/,'$1.$2');
       el.value = v;
+      // Validação em tempo real pelo algoritmo da Receita Federal
+      const hint = document.getElementById('checkout-cpf-hint');
+      if (!hint) return;
+      const digits = v.replace(/\D/g,'');
+      if (digits.length === 11) {
+        if (isValidCPF(v)) {
+          hint.textContent = '✓ CPF válido';
+          hint.style.color = 'var(--green)';
+        } else {
+          hint.textContent = '✗ CPF inválido — verifique os números';
+          hint.style.color = 'var(--red)';
+        }
+      } else {
+        hint.textContent = '';
+      }
+    }
+
+    // ── Validação CPF (algoritmo Receita Federal) ──────────────────────
+    function isValidCPF(cpf) {
+      const c = cpf.replace(/\D/g,'');
+      if (c.length !== 11) return false;
+      if (/^(\d)\1{10}$/.test(c)) return false;
+      let sum = 0, rest;
+      for (let i = 1; i <= 9; i++) sum += parseInt(c[i-1]) * (11 - i);
+      rest = (sum * 10) % 11;
+      if (rest === 10 || rest === 11) rest = 0;
+      if (rest !== parseInt(c[9])) return false;
+      sum = 0;
+      for (let i = 1; i <= 10; i++) sum += parseInt(c[i-1]) * (12 - i);
+      rest = (sum * 10) % 11;
+      if (rest === 10 || rest === 11) rest = 0;
+      return rest === parseInt(c[10]);
+    }
+
+    // ── Validação Discord ─────────────────────────────────────────────────
+    // Discord Snowflake ID: 17-19 dígitos numéricos (epoch Discord = 2015)
+    // Username novo (2023+): letras, números, _ e . entre 2-32 chars, sem #
+    // Username legado (2015-2023): Texto#4dígitos
+    function getDiscordValidation(val) {
+      if (!val) return { valid: false, message: 'ID do Discord é obrigatório' };
+
+      const clean = val.trim().replace(/^@/, '');
+
+      // Aceita APENAS ID numérico (Snowflake 17-19 dígitos)
+      if (/^\d+$/.test(clean)) {
+        if (clean.length < 17) return { valid: false, type: 'numeric',
+          message: `ID muito curto — o ID numérico do Discord tem 17-19 dígitos (você digitou ${clean.length})` };
+        if (clean.length > 19) return { valid: false, type: 'numeric',
+          message: `ID muito longo — o ID numérico do Discord tem 17-19 dígitos (você digitou ${clean.length})` };
+        const DISCORD_EPOCH = 1420070400000n;
+        try {
+          const snowflake = BigInt(clean);
+          const timestamp = Number((snowflake >> 22n) + DISCORD_EPOCH);
+          const date = new Date(timestamp);
+          if (date.getFullYear() < 2015 || date.getFullYear() > 2030) {
+            return { valid: false, type: 'numeric', message: 'ID inválido — não parece ser um ID real do Discord' };
+          }
+        } catch(e) {}
+        return { valid: true, type: 'snowflake' };
+      }
+
+      // Bloqueio: username, nome ou qualquer coisa que não seja numérico
+      if (/[a-zA-Z]/.test(clean)) {
+        return { valid: false, message: '❌ Isso parece um nome de usuário, não um ID. O ID do Discord são apenas números (ex: 123456789012345678). Veja como copiar abaixo 👇' };
+      }
+
+      return { valid: false, message: 'Formato inválido — insira apenas o ID numérico (17-19 dígitos)' };
+    }
+
+    function validateDiscordField(el, hintId) {
+      const val = el.value.trim();
+      const hint = document.getElementById(hintId);
+      if (!hint) return;
+      if (!val) { hint.textContent = ''; el.style.borderColor = ''; return; }
+
+      const result = getDiscordValidation(val);
+      if (result.valid) {
+        const labels = { snowflake: '✓ ID numérico válido (Snowflake)', legacy_username: '✓ Username legado válido', new_username: '✓ Username válido' };
+        hint.textContent = labels[result.type] || '✓ Válido';
+        hint.style.color = 'var(--green)';
+        el.style.borderColor = '';
+      } else {
+        hint.textContent = '✗ ' + result.message;
+        hint.style.color = 'var(--red)';
+        el.style.borderColor = 'var(--red)';
+      }
     }
 
     // ── Carrega produto ──────────────────────────────────────────────────
     async function loadProduct() {
       if (!productId) { renderError(); return; }
       try {
-        // Tenta Supabase primeiro
-        let product = null;
-        try {
-          const r = await fetch(`${SB_URL}/rest/v1/products?select=*&id=eq.${productId}`,
-            { headers:{"apikey":SB_KEY,"Authorization":`Bearer ${SB_KEY}`} });
-          if (r.ok) {
-            const arr = await r.json();
-            if (Array.isArray(arr) && arr.length > 0) product = arr[0];
-          }
-        } catch {}
-
-        // Fallback API interna
-        if (!product) {
-          product = await API.getOne("products", productId);
-        }
+        // Carrega via API interna (Vercel → Supabase)
+        let product = await API.getOne("products", productId);
 
         if (!product || product.active === false) { renderError(); return; }
         currentProduct = product;
@@ -415,7 +503,7 @@
           <!-- IMAGEM -->
           <div class="detail-image-area">
             ${p.image_url
-              ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;border-radius:var(--r2);object-fit:cover">`
+              ? `<img src="${p.image_url}" alt="${p.name}" style="width:100%;max-height:420px;border-radius:var(--r2);object-fit:contain;background:var(--bg2)">`
               : `<span style="font-size:96px;filter:drop-shadow(0 8px 24px rgba(0,0,0,.3))">${icon}</span>`}
             ${discount > 0 ? `<div style="position:absolute;top:16px;left:16px;background:var(--red);color:white;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px">-${discount}% OFF</div>` : ''}
           </div>
@@ -468,7 +556,7 @@
 
         <!-- DESCRIÇÃO -->
         <div class="detail-description">
-          <h3>📋 Descrição do Produto</h3>
+          <h3>📌 Garantido</h3>
           <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:${details.length?'20px':'0'}">${desc || 'Produto digital com entrega segura e rápida via Discord.'}</p>
           ${details.length ? `
           <h3 style="margin-top:20px">✅ Itens Inclusos</h3>
@@ -533,7 +621,7 @@
     }
 
     // ── Checkout: inicializa ─────────────────────────────────────────────
-    function initCheckout() {
+    async function initCheckout() {
       // BLOQUEIA sem login
       if (!Auth.isLoggedIn()) {
         showToast("Faça login para comprar 🔒","info");
@@ -544,12 +632,45 @@
       const p = currentProduct;
       const user = Auth.getUser();
 
-      // Pré-preenche campos com dados do perfil se disponíveis
+      // Busca dados atualizados do banco para garantir CPF/discord corretos
+      let fullUser = user;
+      try {
+        const dbUser = await API.getOne('users', user.id);
+        if (dbUser) {
+          fullUser = dbUser;
+          Auth.setUser({ ...user, ...dbUser }); // atualiza cache local
+        }
+      } catch(e) { console.warn('Checkout: não foi possível buscar dados do perfil', e); }
+
+      // Pré-preenche e bloqueia campos com dados do perfil
       setTimeout(() => {
-        const nameEl = document.getElementById('buyer-name');
+        const nameEl    = document.getElementById('buyer-name');
+        const cpfEl     = document.getElementById('buyer-cpf');
         const discordEl = document.getElementById('buyer-discord');
-        if (nameEl && user.full_name) nameEl.value = user.full_name;
-        if (discordEl && user.discord_id) discordEl.value = user.discord_id;
+        const cpfHint   = document.getElementById('checkout-cpf-hint');
+
+        if (nameEl && fullUser.full_name) {
+          nameEl.value = fullUser.full_name;
+          nameEl.readOnly = true;
+          nameEl.style.opacity = '.75';
+          nameEl.title = 'Altere seu nome no perfil';
+          const nameHint = document.getElementById('checkout-name-hint');
+          if (nameHint) nameHint.style.display = 'block';
+        }
+        if (cpfEl && fullUser.cpf) {
+          cpfEl.value = fullUser.cpf;
+          cpfEl.readOnly = true;
+          cpfEl.style.opacity = '.75';
+          cpfEl.title = 'Altere seu CPF no perfil';
+          if (cpfHint) {
+            cpfHint.innerHTML = '✓ CPF salvo no perfil &nbsp;·&nbsp; <a href="/perfil.html" style="color:var(--cyan2)">Alterar →</a>';
+            cpfHint.style.color = 'var(--green)';
+          }
+        }
+        // Discord ID: sempre editável (pode mudar a qualquer hora)
+        if (discordEl && fullUser.discord_id) {
+          discordEl.value = fullUser.discord_id;
+        }
       }, 50);
 
       // Preenche resumo
@@ -587,10 +708,24 @@
       const discord = document.getElementById('buyer-discord').value.trim();
 
       if (!name || name.split(' ').filter(Boolean).length < 2) {
-        showToast("Informe seu nome completo","error"); return;
+        showToast("Informe seu nome completo (nome e sobrenome)","error"); return;
+      }
+      // Valida CPF se preenchido
+      if (cpf && !isValidCPF(cpf)) {
+        showToast("CPF inválido — verifique os números","error");
+        document.getElementById("buyer-cpf").focus();
+        return;
       }
       if (!discord) {
-        showToast("ID do Discord é obrigatório","error"); return;
+        showToast("ID do Discord é obrigatório","error");
+        document.getElementById("buyer-discord").focus();
+        return;
+      }
+      const discordValidation = getDiscordValidation(discord);
+      if (!discordValidation.valid) {
+        showToast(discordValidation.message, "error");
+        document.getElementById("buyer-discord").focus();
+        return;
       }
 
       buyerInfo = { name, cpf, discord };
@@ -713,7 +848,13 @@
             <img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code PIX" style="width:180px;height:180px;margin-bottom:10px">
             <div class="pix-code-text" onclick="copyPixCode(this)" title="Clique para copiar">${data.qr_code}</div>
             <button class="btn-copy-pix" onclick="copyPixCode(document.querySelector('.pix-code-text'))">📋 Copiar código PIX</button>`;
-          startPixTimer(() => checkPixPayment(data.payment_id));
+          // Salva o payment_id no pedido para rastreamento
+          if (currentOrderId && data.payment_id) {
+            API.patch("orders", currentOrderId, { payment_id: data.payment_id }).catch(() => {});
+          }
+          // Inicia timer visual E polling simultâneos imediatamente
+          startPixTimer(null);
+          checkPixPayment(data.payment_id);
         } else {
           throw new Error(`HTTP ${r.status}`);
         }
@@ -895,6 +1036,8 @@
       const p    = currentProduct;
       const deliveryId = currentDeliveryId || generateOrderId();
 
+      let accountCredentials = null; // { username, password }
+
       try {
         // Atualiza status do pedido
         if (currentOrderId) {
@@ -903,7 +1046,6 @@
             delivery_id: deliveryId,
           });
         } else {
-          // Cria pedido se não existia (ex: modo demo)
           const order = await API.post("orders", {
             user_id:        user.id,
             user_email:     user.email,
@@ -920,46 +1062,103 @@
           currentOrderId = order.id;
         }
 
-        // Reduz estoque
-        if (p.stock > 0) {
-          await API.patch("products", p.id, { stock: Math.max(0, (p.stock || 1) - 1) });
+        // Se for produto de contas, pega uma do estoque e entrega
+        if (p.category === "contas") {
+          try {
+            // Busca uma conta disponível
+            const stockData = await API.get("account_stock", {
+              product_id: `eq.${p.id}`,
+              status: "eq.available",
+              limit: 1,
+            });
+            const stock = stockData?.data || stockData;
+            const conta = Array.isArray(stock) ? stock[0] : null;
+
+            if (conta) {
+              accountCredentials = { username: conta.username, password: conta.password };
+
+              // Marca como vendida
+              await API.patch("account_stock", conta.id, {
+                status: "sold",
+                sold_to_user_id: user.id,
+                sold_to_email: user.email,
+                order_id: currentOrderId,
+                sold_at: new Date().toISOString(),
+              });
+
+              // Atualiza contador de estoque do produto
+              await API.patch("products", p.id, { stock: Math.max(0, (p.stock || 1) - 1) });
+            }
+          } catch(e) { console.warn("Busca de conta no estoque:", e); }
+        } else {
+          // Frutas/gamepass — só reduz estoque numérico
+          if (p.stock > 0) {
+            await API.patch("products", p.id, { stock: Math.max(0, (p.stock || 1) - 1) });
+          }
         }
 
-        // Cria notificação/mensagem no perfil do usuário
+        // Monta mensagem com ou sem credenciais
+        let msgBody;
+        if (p.category === "contas" && accountCredentials) {
+          msgBody = `Seu pedido de <strong>${p.name}</strong> foi confirmado! 🎉\n\n🔑 <strong>Credenciais da sua conta:</strong>\n👤 Usuário: <strong>${accountCredentials.username}</strong>\n🔒 Senha: <strong>${accountCredentials.password}</strong>\n\n⚠️ Troque a senha imediatamente após acessar!`;
+        } else if (p.category === "contas" && !accountCredentials) {
+          msgBody = `Seu pedido de <strong>${p.name}</strong> foi confirmado! 🎉\n\nNosso estoque está sendo reabastecido. Abra um ticket no Discord para receber sua conta rapidamente.\n🔗 discord.gg/rPFN7BMC5k`;
+        } else {
+          msgBody = `Seu pedido de <strong>${p.name}</strong> foi confirmado! 🎉\n\nAbra um ticket no Discord para receber seu produto.\nID de entrega: <strong>${deliveryId}</strong>\n🔗 discord.gg/rPFN7BMC5k`;
+        }
+
+        // Salva mensagem no perfil
         try {
           await API.post("messages", {
-            user_id:   user.id,
-            user_email: user.email,
-            type:      "purchase",
-            title:     "Compra confirmada! 🎉",
-            body:      `Seu pedido de <strong>${p.name}</strong> foi confirmado.\nID de entrega: <strong>${deliveryId}</strong>\nLeve este ID ao ticket no Discord para retirar seu produto.`,
-            read:      false,
-            order_id:  currentOrderId || "",
+            user_id:     user.id,
+            user_email:  user.email,
+            type:        "purchase",
+            title:       "Compra confirmada! 🎉",
+            body:        msgBody,
+            read:        false,
+            order_id:    currentOrderId || "",
             delivery_id: deliveryId,
           });
         } catch(e) { console.warn("Notificação:", e); }
 
-        // Envia email de confirmação
+        // Envia email via Resend (backend)
         try {
-          if (typeof emailjs !== 'undefined' && LAGTECK_CONFIG.EMAILJS_PUBLIC_KEY) {
-            emailjs.init(LAGTECK_CONFIG.EMAILJS_PUBLIC_KEY);
-            await emailjs.send(LAGTECK_CONFIG.EMAILJS_SERVICE_ID, LAGTECK_CONFIG.EMAILJS_TEMPLATE_ID, {
-              to_name:     buyerInfo?.name || user.full_name,
-              to_email:    user.email,
-              product_name: p.name,
-              order_id:    deliveryId,
-              discord_link: "https://discord.gg/rPFN7BMC5k",
-              site_name:   "Deal Blox",
-            });
-          }
+          await fetch("/api/email/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              type:             accountCredentials ? "contas" : "discord",
+              to_name:          buyerInfo?.name || user.full_name,
+              to_email:         user.email,
+              product_name:     p.name,
+              order_id:         deliveryId,
+              account_username: accountCredentials?.username || "",
+              account_password: accountCredentials?.password || "",
+              discord_link:     "https://discord.gg/rPFN7BMC5k",
+            }),
+          });
         } catch(e) { console.warn("Email:", e); }
 
       } catch(err) {
         console.error("confirmPayment:", err);
       }
 
-      // Exibe sucesso
+      // Exibe tela de sucesso com credenciais se houver
       document.getElementById("order-id-display").textContent = deliveryId;
+      if (accountCredentials) {
+        // Injeta credenciais na tela de sucesso se o elemento existir
+        const credEl = document.getElementById("success-credentials");
+        if (credEl) {
+          credEl.innerHTML = `
+            <div style="background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.25);border-radius:12px;padding:16px;margin-top:16px;text-align:left">
+              <p style="font-weight:700;color:#06b6d4;margin-bottom:8px">🔑 Credenciais da sua conta</p>
+              <p style="margin:4px 0">👤 Usuário: <strong>${accountCredentials.username}</strong></p>
+              <p style="margin:4px 0">🔒 Senha: <strong>${accountCredentials.password}</strong></p>
+              <p style="font-size:11px;color:#f59e0b;margin-top:8px">⚠️ Troque a senha imediatamente após acessar!</p>
+            </div>`;
+          credEl.style.display = "block";
+        }
+      }
       showStep("success");
     }
 

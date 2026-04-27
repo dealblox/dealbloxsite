@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transcript — Deal Blox</title>
+  <meta name="description" content="Visualizador de transcripts de tickets — Deal Blox">
+  <link rel="icon" href="/images/logo-dealblox.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── TOKENS (mesmos do site) ── */
+    :root {
+      --bg:     #0a0a0a; --bg2: #0f0f0f; --bg3: #141414; --bg4: #1a1a1a;
+      --card:   #111111; --card2: #161616;
+      --red:    #cc0000; --red2: #ff1a1a; --red3: #ff4d4d;
+      --cyan:   #00aadd; --cyan2: #00cfff; --cyan3: #33d9ff;
+      --green:  #10b981; --yellow: #f59e0b; --violet: #8b5cf6;
+      --white:  #f0f0f0; --text: #d0d0d0; --text2: #888; --text3: #4a4a4a;
+      --border: rgba(255,26,26,.12); --border2: rgba(255,26,26,.22); --border3: rgba(0,207,255,.35);
+      --grad-text: linear-gradient(90deg,#ff4d4d,#00cfff);
+      --glow-r: 0 0 20px rgba(255,26,26,.7),0 0 50px rgba(255,26,26,.3);
+      --glow-c: 0 0 20px rgba(0,207,255,.7),0 0 50px rgba(0,207,255,.3);
+      --font: 'Space Grotesk',system-ui,sans-serif;
+      --font-body: 'Inter',system-ui,sans-serif;
+      --r: 8px; --r2: 12px; --r3: 18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    a { color: var(--cyan2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: linear-gradient(90deg,#0a0000,#150000,#000a10,#0a0a0a);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text2);
+    }
+    .topbar a { color: var(--cyan2); }
+    .topbar-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+    /* ── HEADER ── */
+    .page-header {
+      background: #0c0c0c;
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font); font-weight: 700; font-size: 18px; color: var(--white); }
+    .logo img { width: 34px; height: 34px; border-radius: 8px; box-shadow: var(--glow-r); }
+    .logo-badge {
+      background: rgba(0,207,255,.1);
+      border: 1px solid var(--border3);
+      color: var(--cyan2);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 20px;
+      letter-spacing: .5px;
+    }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg3); border: 1px solid var(--border2);
+      color: var(--text); padding: 7px 16px; border-radius: var(--r2);
+      font-size: 13px; font-weight: 500; transition: all .2s;
+    }
+    .back-btn:hover { border-color: var(--border3); color: var(--cyan2); text-decoration: none; }
+
+    /* ── MAIN ── */
+    .main { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* ── LOADING / ERROR ── */
+    .state-center {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 60vh; gap: 16px; text-align: center;
+    }
+    .spinner {
+      width: 44px; height: 44px; border: 3px solid var(--bg4);
+      border-top-color: var(--cyan2); border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .state-icon { font-size: 48px; }
+    .state-title { font-family: var(--font); font-size: 22px; font-weight: 700; color: var(--white); }
+    .state-sub { color: var(--text2); font-size: 14px; }
+
+    /* ── HERO INFO ── */
+    .hero {
+      background: linear-gradient(135deg,#0f0000 0%,#0a0a0a 50%,#00080f 100%);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--red2), transparent 40%, var(--cyan2));
+    }
+    .hero-title {
+      font-family: var(--font); font-size: 26px; font-weight: 800;
+      background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .hero-server { color: var(--text2); font-size: 14px; margin-bottom: 20px; }
+    .hero-server strong { color: var(--white); }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+    .meta-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      padding: 14px 16px;
+    }
+    .meta-card .label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text3); margin-bottom: 6px;
+    }
+    .meta-card .value {
+      font-size: 14px; font-weight: 600; color: var(--white);
+      word-break: break-all;
+    }
+    .meta-card .value.status-closed { color: var(--red3); }
+    .meta-card .value.status-open { color: var(--green); }
+    .meta-card .value.status-claimed { color: var(--yellow); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .stat-pill {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 12px; font-weight: 600; color: var(--text2);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stat-pill span { color: var(--white); }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-family: var(--font); font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px; color: var(--text3);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--border2), transparent);
+    }
+
+    /* ── MENSAGENS ── */
+    .messages-list { display: flex; flex-direction: column; gap: 4px; }
+
+    .msg {
+      background: var(--bg2);
+      border: 1px solid transparent;
+      border-radius: var(--r2);
+      padding: 14px 16px;
+      transition: border-color .15s, background .15s;
+    }
+    .msg:hover { border-color: var(--border); background: var(--bg3); }
+    .msg.is-bot { border-left: 3px solid var(--cyan); }
+    .msg.has-embed { border-left: 3px solid var(--violet); }
+
+    .msg-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+    .msg-author { font-family: var(--font); font-weight: 700; font-size: 14px; color: var(--cyan2); }
+    .msg-author.is-bot { color: var(--violet); }
+    .msg-time { font-size: 11px; color: var(--text3); }
+
+    .msg-content {
+      font-size: 14px; line-height: 1.6; color: var(--text);
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .msg-content:empty { display: none; }
+
+    /* Embeds do Discord */
+    .embed-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .embed {
+      background: #0d0d1a;
+      border-left: 4px solid var(--violet);
+      border-radius: 0 var(--r) var(--r) 0;
+      padding: 12px 14px;
+    }
+    .embed-title { font-family: var(--font); font-weight: 700; font-size: 13px; color: var(--white); margin-bottom: 4px; }
+    .embed-desc { font-size: 13px; color: var(--text2); line-height: 1.5; white-space: pre-wrap; }
+
+    /* Attachments */
+    .attach-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .attach-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--bg4); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 5px 12px;
+      font-size: 12px; font-weight: 500; color: var(--cyan2);
+      transition: border-color .15s;
+    }
+    .attach-link:hover { border-color: var(--border3); text-decoration: none; }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      text-align: center;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text3);
+      font-size: 12px;
+      margin-top: 48px;
+    }
+    .page-footer a { color: var(--cyan2); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .main { padding: 20px 16px 60px; }
+      .hero { padding: 20px 20px; }
+      .hero-title { font-size: 20px; }
+      .page-header { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <span class="topbar-dot"></span>
+    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    Entrega <strong style="color:var(--white)">rápida e segura</strong> via Discord &nbsp;·&nbsp;
+    <a href="https://discord.gg/rPFN7BMC5k" target="_blank">Entrar no servidor ✨</a>
+  </div>
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <a href="/" class="logo">
+      <img src="/images/logo-dealblox.png" alt="Deal Blox">
+      <span>Deal Blox</span>
+      <span class="logo-badge">TRANSCRIPT</span>
+    </a>
+    <a href="/" class="back-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      Voltar ao site
+    </a>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+    <div class="state-center" id="loading-state">
+      <div class="spinner"></div>
+      <div class="state-title">Carregando transcript…</div>
+      <div class="state-sub">Buscando dados do ticket</div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    <a href="/">dealblox.com.br</a> &nbsp;·&nbsp; Sistema de Tickets &nbsp;·&nbsp; Todos os direitos reservados
+  </footer>
+
+  <script>
+
+
+    function escHtml(str = '') {
+      return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
+    }
+
+    function fmtDuration(openedAt, closedAt) {
+      if (!openedAt || !closedAt) return '—';
+      const diff = Math.max(0, new Date(closedAt) - new Date(openedAt));
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      return `${h}h ${m}m ${s}s`;
+    }
+
+    function statusLabel(s) {
+      const map = { closed:'Fechado', open:'Aberto', claimed:'Em atendimento', deleted:'Deletado' };
+      return map[s] || s || '—';
+    }
+
+    function renderTranscript(t) {
+      const msgs = Array.isArray(t.messages) ? t.messages : [];
+      const msgCount = msgs.length;
+
+      const metaCards = [
+        { label: 'Ticket', value: `#${String(t.ticket_number || 0).padStart(4,'0')}` },
+        { label: 'Canal', value: t.channel_name || '—' },
+        { label: 'Usuário', value: t.user_tag || t.user_id || '—' },
+        { label: 'Setor', value: t.sector || '—' },
+        { label: 'Status', value: statusLabel(t.status), cls: `status-${t.status}` },
+        { label: 'Responsável', value: t.claimed_by ? `<@${escHtml(t.claimed_by)}>` : 'Não assumido' },
+        { label: 'Fechado por', value: t.closed_by ? `<@${escHtml(t.closed_by)}>` : '—' },
+        { label: 'Motivo', value: t.close_reason || '—' },
+      ].map(c => `
+        <div class="meta-card">
+          <div class="label">${escHtml(c.label)}</div>
+          <div class="value ${c.cls || ''}">${c.value}</div>
+        </div>
+      `).join('');
+
+      const messagesHtml = msgs.map(m => {
+        const isBot = m.is_bot || false;
+        const hasEmbed = Array.isArray(m.embeds) && m.embeds.length > 0;
+        const cls = [isBot ? 'is-bot' : '', hasEmbed ? 'has-embed' : ''].filter(Boolean).join(' ');
+
+        const embedsHtml = hasEmbed ? `<div class="embed-list">${
+          m.embeds.map(e => `
+            <div class="embed">
+              ${e.title ? `<div class="embed-title">${escHtml(e.title)}</div>` : ''}
+              ${e.description ? `<div class="embed-desc">${escHtml(e.description)}</div>` : ''}
+            </div>
+          `).join('')
+        }</div>` : '';
+
+        const attachsHtml = Array.isArray(m.attachments) && m.attachments.length
+          ? `<div class="attach-list">${
+              m.attachments.map(a => `<a class="attach-link" href="${escHtml(a.url)}" target="_blank">📎 ${escHtml(a.name || 'arquivo')}</a>`).join('')
+            }</div>`
+          : '';
+
+        return `
+          <div class="msg ${cls}">
+            <div class="msg-header">
+              <span class="msg-author ${isBot ? 'is-bot' : ''}">${escHtml(m.author_tag || 'Desconhecido')}</span>
+              <span class="msg-time">${fmtDate(m.timestamp)}</span>
+            </div>
+            <div class="msg-content">${escHtml(m.content || '')}</div>
+            ${embedsHtml}
+            ${attachsHtml}
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('main').innerHTML = `
+        <div class="hero">
+          <div class="hero-title">Transcript do Ticket #${String(t.ticket_number || 0).padStart(4,'0')}</div>
+          <div class="hero-server">Servidor: <strong>${escHtml(t.guild_name || 'Deal Blox')}</strong></div>
+          <div class="meta-grid">${metaCards}</div>
+        </div>
+
+        <div class="stats-bar">
+          <div class="stat-pill">🗓️ Aberto em <span>${fmtDate(t.opened_at)}</span></div>
+          <div class="stat-pill">🔒 Fechado em <span>${fmtDate(t.closed_at)}</span></div>
+          <div class="stat-pill">⏱️ Duração <span>${fmtDuration(t.opened_at, t.closed_at)}</span></div>
+          <div class="stat-pill">💬 Mensagens <span>${msgCount}</span></div>
+        </div>
+
+        <div class="section-title">💬 Conversa</div>
+        <div class="messages-list">
+          ${msgCount > 0 ? messagesHtml : '<div class="state-center" style="min-height:200px"><div class="state-icon">🕳️</div><div class="state-sub">Nenhuma mensagem registrada</div></div>'}
+        </div>
+      `;
+    }
+
+    async function loadTranscript() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+
+      if (!id) {
+        document.getElementById('main').innerHTML = `
+          <div class="state-center">
+            <div class="state-icon">🔍</div>
+            <div class="state-title">Nenhum ID informado</div>
+            <div class="state-sub">Use o link enviado na sua DM do Discord</div>
+          </div>`;
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/transcripts/get?id=${encodeURIComponent(id)}`);
+
+        if (res.status === 404) {
+          document.getElementById('main').innerHTML = `
+            <div class="state-center">
+              <div class="state-icon">❌</div>
+              <div class="state-title">Transcript não encontrado</div>
+              <div class="state-sub">O ID <code>${escHtml(id)}</code> não existe ou foi removido</div>
+            </div>`;
+          return;
+        }
+
+        if (!res.ok) throw new Error(`Erro ${res.status}`);
+
+        const transcript = await res.json();
+        renderTranscript(transcript);
+        document.title = `Transcript #${String(transcript.ticket_number || 0).padStart(4,'0')} — Deal Blox`;
+
+      } catch (err) {
+        document.getElementById('main').innerHTML = `
+          <div class="state-center">
+            <div class="state-icon">⚠️</div>
+            <div class="state-title">Erro ao carregar</div>
+            <div class="state-sub">${escHtml(err.message)}</div>
+          </div>`;
+      }
+    }
+
+    loadTranscript();
+  </script>
+</body>
+</html>

@@ -16,26 +16,26 @@ a{text-decoration:none;color:inherit}
 button{cursor:pointer}
 img{max-width:100%;height:auto}
 
-/* ===== TOKENS ===== */
+/* ===== TOKENS — DEAL BLOX NEON RED/CYAN ===== */
 :root{
-  --bg:#0a0d14;--bg2:#0f1320;--bg3:#141826;--bg4:#1a2035;
-  --sidebar:#0c0f1c;--card:#111420;--card2:#161b2e;
-  --blue:#1d4ed8;--blue2:#2563eb;--blue3:#3b82f6;--blue4:#60a5fa;
-  --cyan:#06b6d4;--cyan2:#22d3ee;--cyan3:#67e8f9;
+  --bg:#0a0a0a;--bg2:#0f0f0f;--bg3:#141414;--bg4:#1a1a1a;
+  --sidebar:#0c0c0c;--card:#111111;--card2:#161616;
+  --blue:#cc0000;--blue2:#e60000;--blue3:#ff1a1a;--blue4:#ff4d4d;
+  --cyan:#00aadd;--cyan2:#00cfff;--cyan3:#33d9ff;
   --violet:#8b5cf6;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;
-  --white:#f0f6ff;--text:#c8d8f0;--text2:#8898aa;--text3:#4a5568;
-  --border:rgba(99,179,237,.1);--border2:rgba(99,179,237,.2);--border3:rgba(99,179,237,.35);
-  --grad-btn:linear-gradient(135deg,#1d4ed8,#06b6d4);
-  --grad-text:linear-gradient(90deg,#60a5fa,#22d3ee);
-  --grad-topbar:linear-gradient(90deg,#1d4ed8,#2563eb,#06b6d4);
-  --glow-b:0 0 20px rgba(37,99,235,.6),0 0 50px rgba(37,99,235,.25);
-  --glow-c:0 0 20px rgba(6,182,212,.6),0 0 50px rgba(6,182,212,.25);
+  --white:#f0f0f0;--text:#d0d0d0;--text2:#888888;--text3:#4a4a4a;
+  --border:rgba(255,26,26,.12);--border2:rgba(255,26,26,.22);--border3:rgba(0,207,255,.35);
+  --grad-btn:linear-gradient(135deg,#cc0000,#ff1a1a);
+  --grad-text:linear-gradient(90deg,#ff4d4d,#00cfff);
+  --grad-topbar:linear-gradient(90deg,#0a0000,#150000,#000a10,#0a0a0a);
+  --glow-b:0 0 20px rgba(255,26,26,.7),0 0 50px rgba(255,26,26,.3);
+  --glow-c:0 0 20px rgba(0,207,255,.7),0 0 50px rgba(0,207,255,.3);
   --r:8px;--r2:12px;--r3:18px;
   --sidebar-w:195px;--header-h:62px;--topbar-h:38px;
   --font:'Space Grotesk',system-ui,sans-serif;
   --t:all .2s ease;
-  --shadow-card:0 4px 24px rgba(0,0,0,.5),0 0 0 1px rgba(99,179,237,.08);
-  --shadow-card-hover:0 8px 40px rgba(0,0,0,.7),0 0 0 1px rgba(6,182,212,.3),0 0 30px rgba(6,182,212,.12);
+  --shadow-card:0 4px 24px rgba(0,0,0,.6),0 0 0 1px rgba(255,26,26,.08);
+  --shadow-card-hover:0 8px 40px rgba(0,0,0,.8),0 0 0 1px rgba(0,207,255,.3),0 0 30px rgba(255,26,26,.12);
 }
 
 /* ===== BODY ===== */
@@ -44,10 +44,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
-::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--blue3),var(--cyan));border-radius:3px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ff1a1a,#00cfff);border-radius:3px}
 
 /* ===== TOPBAR ===== */
-.topbar{background:var(--grad-topbar);height:var(--topbar-h);display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;font-weight:700;color:#fff;letter-spacing:.5px;white-space:nowrap;overflow:hidden;position:relative;z-index:100;flex-shrink:0}
+.topbar{background:var(--grad-topbar);border-bottom:1px solid rgba(255,26,26,.3);height:var(--topbar-h);display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;font-weight:700;color:#fff;letter-spacing:.5px;white-space:nowrap;overflow:hidden;position:relative;z-index:100;flex-shrink:0}
 .topbar-dot{width:6px;height:6px;background:#fff;border-radius:50%;animation:blink 1.5s ease-in-out infinite;flex-shrink:0}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .topbar a{color:#fff;font-weight:800;text-decoration:underline;text-underline-offset:2px}
@@ -61,15 +61,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .header-nav{display:flex;align-items:center;gap:4px;flex:1}
 .header-nav a{color:var(--text2);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:6px 12px;border-radius:var(--r);transition:var(--t)}
 .header-nav a:hover{color:var(--white);background:rgba(37,99,235,.15)}
-.header-nav a.active{color:var(--cyan2);background:rgba(6,182,212,.12);border-bottom:2px solid var(--cyan);border-radius:var(--r) var(--r) 0 0}
+.header-nav a.active{color:var(--cyan2);background:rgba(0,207,255,.1);border-bottom:2px solid var(--cyan2);border-radius:var(--r) var(--r) 0 0}
 .header-search{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:7px 14px;flex:0 1 240px;transition:var(--t)}
-.header-search:focus-within{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,.15)}
+.header-search:focus-within{border-color:var(--cyan2);box-shadow:0 0 0 3px rgba(0,207,255,.15)}
 .header-search svg{color:var(--text2);flex-shrink:0}
 .header-search input{background:none;border:none;outline:none;color:var(--white);font-size:13px;font-family:var(--font);width:100%}
 .header-search input::placeholder{color:var(--text3)}
 .header-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .header-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--text2);border-radius:var(--r);background:var(--bg3);border:1px solid var(--border);transition:var(--t);position:relative}
-.header-btn:hover{color:var(--cyan2);border-color:var(--border2);background:rgba(6,182,212,.1)}
+.header-btn:hover{color:var(--cyan2);border-color:rgba(0,207,255,.3);background:rgba(0,207,255,.1)}
 .cart-badge{position:absolute;top:-5px;right:-5px;background:var(--grad-btn);color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;box-shadow:var(--glow-b)}
 .btn-login{display:flex;align-items:center;gap:6px;background:var(--grad-btn);color:#fff;border:none;border-radius:var(--r);padding:8px 16px;font-size:13px;font-weight:700;box-shadow:var(--glow-b);transition:var(--t);font-family:var(--font)}
 .btn-login:hover{box-shadow:var(--glow-c);transform:translateY(-1px)}
@@ -82,8 +82,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sidebar{width:var(--sidebar-w);background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 10px;gap:4px;flex-shrink:0;position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h) - var(--topbar-h));overflow-y:auto}
 .sidebar-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:12px 8px 6px}
 .sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);color:var(--text2);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;transition:var(--t);white-space:nowrap}
-.sidebar-item:hover{background:rgba(37,99,235,.12);color:var(--white)}
-.sidebar-item.active{background:rgba(6,182,212,.12);color:var(--cyan2);border-bottom:2px solid var(--cyan);border-radius:var(--r) var(--r) 0 0}
+.sidebar-item:hover{background:rgba(255,26,26,.1);color:var(--white)}
+.sidebar-item.active{background:rgba(0,207,255,.1);color:var(--cyan2);border-bottom:2px solid var(--cyan2);border-radius:var(--r) var(--r) 0 0}
 .sidebar-badge-em-breve{font-size:9px;font-weight:800;background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:2px 6px;margin-left:auto}
 .sidebar-avatar{width:36px;height:36px;border-radius:50%;background:var(--grad-btn);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0}
 .sidebar-avatar img{width:100%;height:100%;object-fit:cover}
@@ -96,42 +96,89 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .main-content{flex:1;min-width:0;padding:28px 28px 60px}
 
 /* ===== HERO ===== */
-.hero{position:relative;background:linear-gradient(135deg,#060d2a 0%,#0f1535 40%,#101e4a 70%,#082035 100%);border-radius:var(--r3);overflow:hidden;padding:56px 48px;margin-bottom:32px;border:1px solid var(--border2)}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 80% 50%,rgba(6,182,212,.15) 0%,transparent 60%),radial-gradient(ellipse 400px 300px at 20% 50%,rgba(37,99,235,.2) 0%,transparent 60%);pointer-events:none}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,235,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.06) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 0%,transparent 100%)}
-.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero{position:relative;background:linear-gradient(135deg,#0a0000 0%,#0a0a0a 50%,#000a0f 100%);border-radius:var(--r3);overflow:hidden;padding:0;margin-bottom:32px;border:1px solid rgba(255,26,26,.25);display:flex;min-height:420px}
+
+/* Canvas 3D ocupa metade direita */
+#hero-canvas-3d{position:absolute;right:0;top:0;width:60%;height:100%;pointer-events:none;opacity:.95}
+
+/* Gradiente de overlay: escurece a esquerda onde fica o texto */
+.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,0,0,.97) 0%,rgba(10,0,0,.8) 40%,rgba(10,0,0,.2) 75%,transparent 100%),radial-gradient(ellipse 400px 300px at 20% 50%,rgba(255,26,26,.12) 0%,transparent 60%);pointer-events:none;z-index:1}
+
+.hero-text-side{position:relative;z-index:2;padding:56px 48px;max-width:600px;display:flex;flex-direction:column;justify-content:center}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,26,26,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,207,255,.04) 1px,transparent 1px);background-size:40px 40px;z-index:0}
+.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 .hero-particle{position:absolute;border-radius:50%;animation:floatP var(--dur,6s) ease-in-out infinite;opacity:.4}
 @keyframes floatP{0%,100%{transform:translateY(0) scale(1);opacity:.3}50%{transform:translateY(-20px) scale(1.2);opacity:.7}}
-.hero-content{position:relative;z-index:2;max-width:680px}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.3);color:var(--cyan2);border-radius:20px;padding:6px 16px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
-.hero-badge::before{content:'';width:7px;height:7px;background:var(--cyan2);border-radius:50%;animation:blink 1.5s ease-in-out infinite}
+.hero-content{position:relative;z-index:2;max-width:680px} /* alias para .hero-text-side */
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,26,26,.1);border:1px solid rgba(255,26,26,.35);color:#ff4d4d;border-radius:20px;padding:6px 16px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
+.hero-badge::before{content:'';width:7px;height:7px;background:#ff1a1a;border-radius:50%;box-shadow:0 0 6px #ff1a1a;animation:blink 1.5s ease-in-out infinite}
 .hero h1{font-size:clamp(28px,4vw,48px);font-weight:900;line-height:1.1;color:var(--white);margin-bottom:16px;letter-spacing:-1px}
-.hero h1 .grad{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1 .grad{background:linear-gradient(90deg,#ff4d4d,#00cfff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{font-size:15px;color:var(--text);line-height:1.7;margin-bottom:28px;max-width:500px}
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .btn-hero-primary{display:inline-flex;align-items:center;gap:8px;background:var(--grad-btn);color:#fff;border:none;border-radius:var(--r2);padding:13px 28px;font-size:15px;font-weight:800;box-shadow:var(--glow-b);transition:var(--t);text-decoration:none;font-family:var(--font)}
 .btn-hero-primary:hover{box-shadow:var(--glow-c);transform:translateY(-2px)}
-.btn-hero-secondary{display:inline-flex;align-items:center;gap:8px;background:rgba(37,99,235,.12);color:var(--cyan2);border:1px solid rgba(6,182,212,.3);border-radius:var(--r2);padding:13px 24px;font-size:14px;font-weight:700;transition:var(--t);text-decoration:none}
-.btn-hero-secondary:hover{background:rgba(6,182,212,.15);border-color:var(--cyan);transform:translateY(-2px)}
+.btn-hero-secondary{display:inline-flex;align-items:center;gap:8px;background:rgba(0,207,255,.08);color:var(--cyan2);border:1px solid rgba(0,207,255,.3);border-radius:var(--r2);padding:13px 24px;font-size:14px;font-weight:700;transition:var(--t);text-decoration:none}
+.btn-hero-secondary:hover{background:rgba(0,207,255,.15);border-color:var(--cyan2);transform:translateY(-2px)}
 .btn-hero-discord{display:inline-flex;align-items:center;gap:8px;background:rgba(88,101,242,.15);color:#7289da;border:1px solid rgba(88,101,242,.3);border-radius:var(--r2);padding:13px 20px;font-size:13px;font-weight:700;transition:var(--t);text-decoration:none}
 .btn-hero-discord:hover{background:rgba(88,101,242,.25);transform:translateY(-2px)}
+.btn-hero-whatsapp{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.15);color:#25D366;border:1px solid rgba(37,211,102,.3);border-radius:var(--r2);padding:13px 20px;font-size:13px;font-weight:700;transition:var(--t);text-decoration:none}
+.btn-hero-whatsapp:hover{background:rgba(37,211,102,.25);border-color:#25D366;transform:translateY(-2px)}
 .hero-stats{display:flex;gap:32px;margin-top:36px}
 .hero-stat-item{text-align:left}
-.hero-stat-num{font-size:26px;font-weight:900;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.hero-stat-num{font-size:26px;font-weight:900;background:linear-gradient(90deg,#ff4d4d,#00cfff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
 .hero-stat-label{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
 /* ===== SECTION HEADER ===== */
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px}
 .section-title{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;color:var(--white);text-transform:uppercase;letter-spacing:.5px}
-.section-title::before{content:'';width:4px;height:22px;background:linear-gradient(90deg,var(--blue3),var(--cyan));border-radius:2px;flex-shrink:0}
-.section-link{font-size:12px;font-weight:700;color:var(--cyan2);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:4px;transition:var(--t);white-space:nowrap}
+.section-title::before{content:'';width:4px;height:22px;background:linear-gradient(90deg,#ff1a1a,#00cfff);border-radius:2px;flex-shrink:0}
+.section-link{font-size:12px;font-weight:700;color:#00cfff;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:4px;transition:var(--t);white-space:nowrap}
 .section-link:hover{color:var(--white);gap:8px}
+
+
+/* ===== HERO GUARANTEES ===== */
+.hero-guarantees{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;margin-top:16px}
+.hero-guarantees span{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#10b981;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:4px 12px}
+
+/* ===== HERO PROOF ===== */
+.hero-proof{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 16px}
+.hero-proof-stars{font-size:14px;letter-spacing:1px}
+.hero-proof-text{font-size:13px;color:var(--text)}
+.hero-proof-text strong{color:var(--white)}
+.hero-proof-avatars{display:flex;align-items:center;gap:6px;margin-left:auto}
+.proof-avatar{font-size:16px;opacity:.7}
+.proof-label{font-size:11px;color:var(--text2);font-weight:600}
+
+/* ===== COMO FUNCIONA ===== */
+.how-grid{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:24px 20px;gap:8px;flex-wrap:wrap}
+.how-step{display:flex;align-items:center;gap:12px;flex:1;min-width:150px}
+.how-num{width:38px;height:38px;border-radius:50%;background:var(--grad-btn);color:#fff;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--glow-b)}
+.how-info strong{display:block;font-size:13px;font-weight:700;color:var(--white);margin-bottom:2px}
+.how-info span{font-size:11px;color:var(--text2)}
+.how-arrow{font-size:18px;color:var(--text3);flex-shrink:0;padding:0 2px}
+@media(max-width:700px){.how-arrow{display:none}.how-grid{gap:14px}}
+
+/* ===== TRUST + ABOUT GRID ===== */
+.trust-about-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.about-two-rows{display:flex;flex-direction:column;gap:16px}
+.about-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:22px;transition:var(--t)}
+.about-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.about-card h3{font-size:14px;font-weight:800;color:var(--white);margin-bottom:6px}
+.about-card p{font-size:13px;color:var(--text);line-height:1.65}
+.about-card strong{color:var(--cyan2)}
+.trust-mp-card{display:flex;flex-direction:column;justify-content:center}
+.trust-mp-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.trust-mp-header strong{font-size:15px;font-weight:800;color:var(--white)}
+.trust-mp-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.trust-mp-badges span{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:rgba(0,158,227,.1);color:#00cfff;border:1px solid rgba(0,158,227,.25)}
+@media(max-width:700px){.trust-about-grid{grid-template-columns:1fr}}
 
 /* ===== BENEFITS ===== */
 .benefits-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
 .benefit-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px;display:flex;align-items:center;gap:12px;transition:var(--t)}
 .benefit-card:hover{border-color:var(--border2);background:var(--card2);transform:translateY(-2px)}
-.benefit-icon{width:40px;height:40px;border-radius:var(--r);background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.benefit-icon{width:40px;height:40px;border-radius:var(--r);background:rgba(255,26,26,.1);border:1px solid rgba(255,26,26,.25);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .benefit-text strong{display:block;font-size:13px;font-weight:700;color:var(--white);margin-bottom:2px}
 .benefit-text span{font-size:11px;color:var(--text2)}
 
@@ -140,9 +187,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* ===== PRODUCT CARD ===== */
 .product-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;transition:all .3s ease;cursor:pointer;display:flex;flex-direction:column;box-shadow:var(--shadow-card)}
-.product-card:hover{border-color:rgba(6,182,212,.35);box-shadow:var(--shadow-card-hover);transform:translateY(-4px)}
+.product-card:hover{border-color:rgba(255,26,26,.4);box-shadow:0 8px 40px rgba(0,0,0,.8),0 0 0 1px rgba(255,26,26,.3),0 0 30px rgba(255,26,26,.1);transform:translateY(-4px)}
 .product-card:hover .product-card-img-inner{transform:scale(1.05)}
-.product-card-img{aspect-ratio:4/3;overflow:hidden;position:relative;background:linear-gradient(145deg,#0f1535,#0a0d22)}
+.product-card-img{aspect-ratio:4/3;overflow:hidden;position:relative;background:linear-gradient(145deg,#0f0000,#0a0a0a)}
 .product-card-img-inner{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;display:block}
 .product-card-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(5,8,18,.85) 0%,transparent 60%)}
 .product-card-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
@@ -163,11 +210,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .stock-out{color:var(--red)}
 .stock-low{color:var(--yellow)}
 .product-card-price{display:flex;align-items:baseline;gap:8px}
-.price-current{font-size:18px;font-weight:900;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.price-current{font-size:18px;font-weight:900;background:linear-gradient(90deg,#ff4d4d,#00cfff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .price-original{font-size:12px;color:var(--text3);text-decoration:line-through}
 .price-pix{font-size:10px;color:var(--green);font-weight:700;background:rgba(16,185,129,.1);border-radius:4px;padding:2px 6px}
-.btn-view-details{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:var(--grad-btn);color:#fff;border:none;border-radius:var(--r);padding:9px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;transition:var(--t);box-shadow:0 0 10px rgba(37,99,235,.4);margin-top:auto;font-family:var(--font)}
-.btn-view-details:hover{box-shadow:var(--glow-c);transform:translateY(-1px)}
+.btn-view-details{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:linear-gradient(135deg,#cc0000,#ff1a1a);color:#fff;border:none;border-radius:var(--r);padding:9px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;transition:var(--t);box-shadow:0 0 10px rgba(255,26,26,.4);margin-top:auto;font-family:var(--font)}
+.btn-view-details:hover{box-shadow:0 0 20px rgba(0,207,255,.5);transform:translateY(-1px)}
 
 /* ===== EMPTY STATE ===== */
 .empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text2)}
@@ -203,6 +250,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .auth-tab{flex:1;padding:8px;background:none;border:none;border-radius:6px;color:var(--text2);font-size:13px;font-weight:700;transition:var(--t);cursor:pointer;font-family:var(--font)}
 .auth-tab.active{background:var(--bg2);color:var(--white)}
 .form-group{margin-bottom:14px}
+.password-strength-bar{margin-top:6px;height:4px;border-radius:4px;background:var(--bg3);overflow:hidden}
+.password-strength-fill{height:100%;border-radius:4px;transition:width .3s ease,background .3s ease;width:0%}
+.password-strength-text{font-size:11px;margin-top:4px;font-weight:600;font-family:var(--font)}
+.pwd-hint{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5}
 .form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 .form-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 14px;color:var(--white);font-size:14px;font-family:var(--font);outline:none;transition:var(--t)}
 .form-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(6,182,212,.12)}
@@ -250,8 +301,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .mobile-nav-close{width:32px;height:32px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;font-family:var(--font)}
 .mobile-nav-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:12px 8px 4px}
 .mobile-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);color:var(--text2);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;transition:var(--t)}
-.mobile-nav-item:hover{background:rgba(37,99,235,.12);color:var(--white)}
-.mobile-nav-item.active{background:rgba(6,182,212,.12);color:var(--cyan2)}
+.mobile-nav-item:hover{background:rgba(255,26,26,.1);color:var(--white)}
+.mobile-nav-item.active{background:rgba(0,207,255,.1);color:var(--cyan2)}
 .btn-mobile-login{background:var(--grad-btn);color:#fff;border:none;border-radius:var(--r);padding:11px;font-size:13px;font-weight:700;text-align:center;box-shadow:var(--glow-b);cursor:pointer;font-family:var(--font)}
 .btn-mobile-register{background:transparent;color:var(--cyan2);border:1px solid rgba(6,182,212,.3);border-radius:var(--r);padding:10px;font-size:13px;font-weight:700;text-align:center;cursor:pointer;font-family:var(--font)}
 .mobile-nav-btns{display:flex;flex-direction:column;gap:8px;margin-top:20px;padding:0 8px}
@@ -307,7 +358,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .pagination{display:flex;justify-content:center;gap:8px;margin-top:24px;flex-wrap:wrap}
 .pagination button{background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:var(--r);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:var(--t);font-family:var(--font)}
 .pagination button:hover{border-color:var(--border2);color:var(--white)}
-.pagination button.active{background:rgba(6,182,212,.12);border-color:rgba(6,182,212,.35);color:var(--cyan2)}
+.pagination button.active{background:rgba(0,207,255,.1);border-color:rgba(0,207,255,.35);color:var(--cyan2)}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:1100px){.header-nav{display:none}.header-search{flex:1}.mobile-menu-btn{display:flex}.benefits-strip{grid-template-columns:repeat(2,1fr)}}
@@ -339,10 +390,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <section class="hero">
         <div class="hero-grid"></div>
         <div class="hero-particles" id="hero-particles"></div>
-        <div class="hero-content">
-          <div class="hero-badge">LOJA OFICIAL · BLOX FRUITS · 2026</div>
-          <h1>Domine o jogo.<br><span class="grad">Compre na Deal Blox.</span></h1>
-          <p>Contas upadas, frutas raras e itens exclusivos com entrega rápida via Discord. Pagamento seguro pelo Mercado Pago.</p>
+        <!-- Canvas 3D com cubos animados -->
+        <canvas id="hero-canvas-3d"></canvas>
+        <!-- Conteúdo textual -->
+        <div class="hero-text-side">
+          <div class="hero-badge">⭐ 4.9/5 · +500 VENDAS REALIZADAS</div>
+          <h1>Contas prontas para jogar, itens raros<br><span class="grad">e entrega rápida por e-mail.</span></h1>
+          <p>Receba acesso em poucos minutos com pagamento seguro.</p>
           <div class="hero-btns">
             <a href="/contas.html" class="btn-hero-primary">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -356,7 +410,30 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
               Discord
             </a>
+            <a href="https://wa.me/5561985154930" target="_blank" class="btn-hero-whatsapp">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+              WhatsApp
+            </a>
           </div>
+          <!-- GARANTIA VISÍVEL -->
+          <div class="hero-guarantees">
+            <span>✔ Entrega rápida por e-mail</span>
+            <span>✔ Pagamento seguro</span>
+            <span>✔ Suporte após a compra</span>
+          </div>
+
+          <!-- PROVA SOCIAL RÁPIDA -->
+          <div class="hero-proof">
+            <div class="hero-proof-stars">⭐⭐⭐⭐⭐</div>
+            <div class="hero-proof-text"><strong>4.9/5</strong> baseado em <strong>+500 vendas</strong></div>
+            <div class="hero-proof-avatars">
+              <span class="proof-avatar">👤</span>
+              <span class="proof-avatar">👤</span>
+              <span class="proof-avatar">👤</span>
+              <span class="proof-label">+500 clientes satisfeitos</span>
+            </div>
+          </div>
+
           <div class="hero-stats">
             <div class="hero-stat-item"><div class="hero-stat-num">500+</div><div class="hero-stat-label">Vendas</div></div>
             <div class="hero-stat-item"><div class="hero-stat-num">4.9★</div><div class="hero-stat-label">Avaliação</div></div>
@@ -368,10 +445,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
       <!-- BENEFITS -->
       <div class="benefits-strip">
-        <div class="benefit-card"><div class="benefit-icon">⚡</div><div class="benefit-text"><strong>Entrega Imediata</strong><span>Via Discord em minutos</span></div></div>
-        <div class="benefit-card"><div class="benefit-icon">🏆</div><div class="benefit-text"><strong>Produtos Premium</strong><span>Contas verificadas</span></div></div>
-        <div class="benefit-card"><div class="benefit-icon">🔒</div><div class="benefit-text"><strong>100% Seguro</strong><span>Mercado Pago</span></div></div>
-        <div class="benefit-card"><div class="benefit-icon">💰</div><div class="benefit-text"><strong>Melhor Preço</strong><span>Garantia de 15 min</span></div></div>
+        <div class="benefit-card"><div class="benefit-icon">📧</div><div class="benefit-text"><strong>Entrega por E-mail</strong><span>Credenciais em minutos</span></div></div>
+        <div class="benefit-card"><div class="benefit-icon">🔒</div><div class="benefit-text"><strong>Pagamento Seguro</strong><span>Mercado Pago oficial</span></div></div>
+        <div class="benefit-card"><div class="benefit-icon">🎮</div><div class="benefit-text"><strong>Contas Verificadas</strong><span>Frutas raras incluídas</span></div></div>
+        <div class="benefit-card"><div class="benefit-icon">💬</div><div class="benefit-text"><strong>Suporte Pós-venda</strong><span>Discord 24h por dia</span></div></div>
       </div>
 
       <!-- CONTAS EM DESTAQUE -->
@@ -405,7 +482,66 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
         </div>
       </div>
 
-      <!-- DISCORD BANNER -->
+      <!-- COMO FUNCIONA -->
+      <div style="margin-top:44px;margin-bottom:36px">
+        <div class="section-header">
+          <h2 class="section-title">Como funciona</h2>
+        </div>
+        <div class="how-grid">
+          <div class="how-step">
+            <div class="how-num">1</div>
+            <div class="how-info"><strong>Escolha o produto</strong><span>Conta, fruta ou item raro</span></div>
+          </div>
+          <div class="how-arrow">→</div>
+          <div class="how-step">
+            <div class="how-num">2</div>
+            <div class="how-info"><strong>Pague com PIX</strong><span>Via Mercado Pago, 100% seguro</span></div>
+          </div>
+          <div class="how-arrow">→</div>
+          <div class="how-step">
+            <div class="how-num">3</div>
+            <div class="how-info"><strong>Receba por e-mail</strong><span>Dados chegam em minutos</span></div>
+          </div>
+          <div class="how-arrow">→</div>
+          <div class="how-step">
+            <div class="how-num">4</div>
+            <div class="how-info"><strong>Troque a senha</strong><span>Conta 100% sua, aproveite!</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SELO MERCADO PAGO + SOBRE + FRUTAS -->
+      <div class="trust-about-grid" style="margin-bottom:36px">
+
+        <div class="about-card trust-mp-card">
+          <div class="trust-mp-header">
+            <svg width="28" height="28" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#009EE3"/><path d="M14 24.5l6 6 14-13" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <strong>Pagamento Protegido</strong>
+          </div>
+          <p>Todas as compras são processadas pelo <strong>Mercado Pago</strong> — a plataforma de pagamentos mais segura da América Latina. Seus dados bancários nunca chegam até nós.</p>
+          <div class="trust-mp-badges">
+            <span>🔒 SSL</span>
+            <span>🏦 Mercado Pago</span>
+            <span>⚡ PIX instantâneo</span>
+          </div>
+        </div>
+
+        <div class="about-two-rows">
+          <div class="about-card">
+            <div style="font-size:22px;margin-bottom:8px">🏪</div>
+            <h3>Sobre a Deal Blox</h3>
+            <p>A Deal Blox é uma loja digital especializada em contas de Blox Fruits, focada em entrega rápida e suporte ao cliente. Você compra com segurança e recebe por e-mail automaticamente.</p>
+          </div>
+          <div class="about-card">
+            <div style="font-size:22px;margin-bottom:8px">🍇</div>
+            <h3>O que são as Frutas?</h3>
+            <p>As contas podem incluir frutas raras como <strong>Dragon, Leopard, Dough, Kitsune</strong> e outras. Cada produto detalha quais frutas estão incluídas antes da compra.</p>
+          </div>
+        </div>
+
+      </div>
+
+            <!-- DISCORD BANNER -->
       <div class="discord-banner" style="margin-top:36px">
         <div class="discord-banner-text">
           <h3>🎮 Entre no Servidor da Deal Blox</h3>
@@ -421,10 +557,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   </div>
 
   <!-- FOOTER -->
-  <div id="footer-root"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script src="/js/config.js"></script>
+  <div id="footer-root"></div>  <script src="/js/config.js"></script>
   <script src="/js/utils.js"></script>
   <script src="/js/layout.js"></script>
   <script>
@@ -434,12 +567,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       MP_PUBLIC_KEY:"",EMAILJS_SERVICE_ID:"service_mzmityx",EMAILJS_TEMPLATE_ID:"template_6ztpr7k",EMAILJS_PUBLIC_KEY:"7SAN7fAAsYLc7e-6W",
       GOOGLE_CLIENT_ID:"",DISCORD_CLIENT_ID:"",DISCORD_REDIRECT_URI:window.location.origin+"/auth-callback.html",
       ADMIN_PASSWORD:"lagteck@admin2026",DISCORD_SERVER:"https://discord.gg/rPFN7BMC5k",
-      SITE_NAME:"Deal Blox",SITE_URL:"https://lagteck.vercel.app",SUPPORT_EMAIL:"lagteck@gmail.com",
+      SITE_NAME:"Deal Blox",SITE_URL:"https://dealblox.com.br",SUPPORT_EMAIL:"dealblox.suporte@gmail.com",
       SITE_DESCRIPTION:"Loja digital de contas e itens de Blox Fruits."
     };
   }
   if (typeof Auth === 'undefined') {
-    window.Auth = { STORAGE_KEY:"lagteck_user", getUser(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||null}catch{return null}}, setUser(u){localStorage.setItem(this.STORAGE_KEY,JSON.stringify(u));window.dispatchEvent(new CustomEvent("lagteck:auth",{detail:u}))}, logout(){localStorage.removeItem(this.STORAGE_KEY);window.location.href="/"}, isLoggedIn(){return!!this.getUser()}, async hashPassword(p){const e=new TextEncoder(),d=e.encode(p+"lagteck_salt_2026"),h=await crypto.subtle.digest("SHA-256",d),a=Array.from(new Uint8Array(h));return a.map(b=>b.toString(16).padStart(2,"0")).join("")}, generateCode(){return Math.floor(100000+Math.random()*900000).toString()}, generateId(){return Date.now().toString(36)+Math.random().toString(36).substr(2)} };
+    window.Auth = { STORAGE_KEY:"lagteck_user", getUser(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||null}catch{return null}}, setUser(u){localStorage.setItem(this.STORAGE_KEY,JSON.stringify(u));window.dispatchEvent(new CustomEvent("lagteck:auth",{detail:u}))}, logout(){localStorage.removeItem(this.STORAGE_KEY);window.location.href="/"}, isLoggedIn(){return!!this.getUser()}, async hashPassword(p){const e=new TextEncoder(),d=e.encode(p+"lagteck_salt_2025"),h=await crypto.subtle.digest("SHA-256",d),a=Array.from(new Uint8Array(h));return a.map(b=>b.toString(16).padStart(2,"0")).join("")}, generateCode(){return Math.floor(100000+Math.random()*900000).toString()}, generateId(){return Date.now().toString(36)+Math.random().toString(36).substr(2)} };
   }
   if (typeof Cart === 'undefined') {
     window.Cart = { STORAGE_KEY:"lagteck_cart", getItems(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||[]}catch{return[]}}, getCount(){return this.getItems().reduce((a,i)=>a+(i.qty||1),0)}, addItem(p){const items=this.getItems();const ex=items.find(i=>i.id===p.id);if(ex)ex.qty=(ex.qty||1)+1;else items.push({...p,qty:1});localStorage.setItem(this.STORAGE_KEY,JSON.stringify(items));return items}, removeItem(id){const items=this.getItems().filter(i=>i.id!==id);localStorage.setItem(this.STORAGE_KEY,JSON.stringify(items));return items}, clear(){localStorage.removeItem(this.STORAGE_KEY)}, getTotal(){return this.getItems().reduce((a,i)=>a+(i.price*(i.qty||1)),0)} };
@@ -473,18 +606,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     window.renderHeader=()=>{const user=Auth.getUser();const cc=Cart.getCount();return`<header class="site-header"><div class="header-inner"><button class="mobile-menu-btn" id="mobile-menu-btn"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:32px;height:32px;border-radius:8px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><nav class="header-nav"><a href="/contas.html">Contas</a><a href="/frutas.html">Frutas</a><a href="/gamepass.html">Gamepass</a><a href="/executor.html">Executor</a><a href="/scripts.html">Scripts</a></nav><div class="header-search"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="header-search-input" placeholder="Buscar produtos..." autocomplete="off"></div><div class="header-actions"><a href="/carrinho.html" class="header-btn" style="position:relative"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span class="cart-badge" style="display:${cc>0?'flex':'none'}">${cc}</span></a>${user?`<a href="/perfil.html" class="header-btn" style="padding:3px"><div class="sidebar-avatar" style="width:28px;height:28px;font-size:12px;border-radius:6px">${(user.full_name?.[0]||'U').toUpperCase()}</div></a>`:`<button class="btn-login" onclick="showAuthModal('login')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Entrar</button>`}</div></div></header>`};
     window.renderSidebar=(active='')=>`<aside class="sidebar"><span class="sidebar-section-label">Loja</span><a href="/" class="sidebar-item ${active==='inicio'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início</a><a href="/contas.html" class="sidebar-item ${active==='contas'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Contas Blox</a><a href="/frutas.html" class="sidebar-item ${active==='frutas'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Frutas</a><a href="/gamepass.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Gamepass<span class="sidebar-badge-em-breve">EM BREVE</span></a><a href="/executor.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Executor</a><a href="/scripts.html" class="sidebar-item"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Scripts</a><span class="sidebar-section-label">Outros</span><a href="/jornalzinho.html" class="sidebar-item ${active==='jornalzinho'?'active':''}"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>Jornalzinho</a></aside>`;
     window.renderMobileNav=(active='')=>`<div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileNav()"></div><div class="mobile-nav" id="mobile-nav"><div class="mobile-nav-header"><a href="/" class="logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text" style="font-size:17px">Deal Blox</span></a><button class="mobile-nav-close" onclick="closeMobileNav()">✕</button></div><span class="mobile-nav-section-label">Loja</span><a href="/" class="mobile-nav-item ${active==='inicio'?'active':''}">🏠 Início</a><a href="/contas.html" class="mobile-nav-item ${active==='contas'?'active':''}">👤 Contas Blox</a><a href="/frutas.html" class="mobile-nav-item ${active==='frutas'?'active':''}">🛡️ Frutas</a><a href="/gamepass.html" class="mobile-nav-item">⭐ Gamepass <span class="sidebar-badge-em-breve">EM BREVE</span></a><a href="/executor.html" class="mobile-nav-item">💻 Executor</a><a href="/scripts.html" class="mobile-nav-item">📄 Scripts</a><span class="mobile-nav-section-label">Outros</span><a href="/jornalzinho.html" class="mobile-nav-item ${active==='jornalzinho'?'active':''}">📰 Jornalzinho</a><div class="mobile-nav-btns"><button onclick="showAuthModal('login');closeMobileNav()" class="btn-mobile-login">🔑 Entrar na conta</button><button onclick="showAuthModal('register');closeMobileNav()" class="btn-mobile-register">✨ Criar conta</button></div></div>`;
-    window.renderFooter=()=>`<footer class="site-footer"><div class="footer-inner"><div class="footer-grid"><div class="footer-brand"><a href="/" class="logo" style="display:inline-flex;margin-bottom:14px"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><p>Loja digital de Blox Fruits com entrega rápida e suporte via Discord.</p><div class="footer-social"><a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="footer-social-btn" title="Discord"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a></div></div><div class="footer-col"><h4>Produtos</h4><ul><li><a href="/contas.html">Contas Blox Fruits</a></li><li><a href="/frutas.html">Frutas</a></li><li><a href="/gamepass.html">Gamepass</a></li><li><a href="/executor.html">Executor</a></li></ul></div><div class="footer-col"><h4>Suporte</h4><ul><li><a href="/faq.html">FAQ</a></li><li><a href="https://discord.gg/rPFN7BMC5k" target="_blank">Discord</a></li><li><a href="mailto:lagteck@gmail.com">Email</a></li></ul></div><div class="footer-col"><h4>Institucional</h4><ul><li><a href="/termos.html">Termos</a></li><li><a href="/privacidade.html">Privacidade</a></li></ul></div></div><div class="footer-bottom"><p class="footer-copy">© ${new Date().getFullYear()} Deal Blox. Não afiliado à Roblox Corporation.</p><div class="footer-payments"><span style="color:var(--text3);font-size:11px">Pagamentos:</span><span class="payment-icon">PIX</span><span class="payment-icon">Crédito</span><span class="payment-icon">Débito</span></div></div></div></footer>`;
-    window.renderAuthModal=()=>`<div class="modal-overlay" id="auth-modal" style="display:none"><div class="modal-box"><button class="modal-close" onclick="closeAuthModal()">✕</button><div class="auth-modal-logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:10px;object-fit:cover"><span>Deal Blox</span></div><p style="font-size:13px;color:var(--text2);margin-bottom:20px">Sua loja de Blox Fruits</p><div class="auth-tabs"><button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Entrar</button><button class="auth-tab" id="auth-tab-register" onclick="switchAuthTab('register')">Criar conta</button></div><div id="auth-panel-login"><form onsubmit="handleLogin(event)"><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="login-password" placeholder="••••••••" required></div><div class="form-forgot"><a href="#" onclick="switchAuthTab('forgot');return false">Esqueci minha senha</a></div><button type="submit" class="btn-auth-submit" id="btn-login-submit">Acessar minha conta</button></form></div><div id="auth-panel-register" style="display:none"><form onsubmit="handleRegister(event)"><div class="form-group"><label class="form-label">Nome Completo</label><input type="text" class="form-input" id="reg-name" placeholder="Seu nome completo" required></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reg-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6"></div><div id="reg-code-group" style="display:none" class="form-group"><label class="form-label">Código</label><input type="text" class="form-input" id="reg-code" placeholder="Código do email" maxlength="6"><span class="form-error" id="reg-code-error"></span></div><button type="submit" class="btn-auth-submit" id="btn-reg-submit">Criar Conta</button></form></div><div id="auth-panel-forgot" style="display:none"><div style="text-align:center;margin-bottom:24px"><div style="font-size:36px">🔑</div><h3 style="color:var(--white);font-weight:800;margin-top:8px">Recuperar Senha</h3><p style="color:var(--text2);font-size:13px;margin-top:6px">Informe seu email para receber o código</p></div><form onsubmit="handleForgotPassword(event)"><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="forgot-email" placeholder="seu@email.com" required></div><div id="forgot-code-group" style="display:none" class="form-group"><label class="form-label">Código</label><input type="text" class="form-input" id="forgot-code" maxlength="6"></div><div id="forgot-newpass-group" style="display:none" class="form-group"><label class="form-label">Nova Senha</label><input type="password" class="form-input" id="forgot-newpass" minlength="6"></div><button type="submit" class="btn-auth-submit" id="btn-forgot-submit">Enviar código</button></form><button onclick="switchAuthTab('login')" style="display:block;margin:12px auto 0;background:none;border:none;color:var(--cyan2);font-size:13px;cursor:pointer;font-weight:600;font-family:var(--font)">← Voltar</button></div></div></div>`;
+    window.renderFooter=()=>`<footer class="site-footer"><div class="footer-inner"><div class="footer-grid"><div class="footer-brand"><a href="/" class="logo" style="display:inline-flex;margin-bottom:14px"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:30px;height:30px;border-radius:7px;object-fit:cover"><span class="logo-text">Deal Blox</span></a><p>Loja digital de Blox Fruits com entrega rápida e suporte via Discord.</p><div class="footer-social"><a href="https://discord.gg/rPFN7BMC5k" target="_blank" class="footer-social-btn" title="Discord"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a></div></div><div class="footer-col"><h4>Produtos</h4><ul><li><a href="/contas.html">Contas Blox Fruits</a></li><li><a href="/frutas.html">Frutas</a></li><li><a href="/gamepass.html">Gamepass</a></li><li><a href="/executor.html">Executor</a></li></ul></div><div class="footer-col"><h4>Suporte</h4><ul><li><a href="/faq.html">FAQ</a></li><li><a href="https://discord.gg/rPFN7BMC5k" target="_blank">Discord</a></li><li><a href="mailto:dealblox.suporte@gmail.com">Email</a></li></ul></div><div class="footer-col"><h4>Institucional</h4><ul><li><a href="/termos.html">Termos</a></li><li><a href="/privacidade.html">Privacidade</a></li></ul></div></div><div class="footer-bottom"><p class="footer-copy">© ${new Date().getFullYear()} Deal Blox. Não afiliado à Roblox Corporation.</p><div class="footer-payments"><span style="color:var(--text3);font-size:11px">Pagamentos:</span><span class="payment-icon">PIX</span><span class="payment-icon">Crédito</span><span class="payment-icon">Débito</span></div></div></div></footer>`;
+    window.renderAuthModal=()=>`<div class="modal-overlay" id="auth-modal" style="display:none"><div class="modal-box"><button class="modal-close" onclick="closeAuthModal()">✕</button><div class="auth-modal-logo"><img src="/images/logo-dealblox.png" alt="Deal Blox" style="width:36px;height:36px;border-radius:10px;object-fit:cover"><span>Deal Blox</span></div><p style="font-size:13px;color:var(--text2);margin-bottom:20px">Sua loja de Blox Fruits</p><div class="auth-tabs"><button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Entrar</button><button class="auth-tab" id="auth-tab-register" onclick="switchAuthTab('register')">Criar conta</button></div><div id="auth-panel-login"><form onsubmit="handleLogin(event)"><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="login-password" placeholder="••••••••" required></div><div class="form-forgot"><a href="#" onclick="switchAuthTab('forgot');return false">Esqueci minha senha</a></div><button type="submit" class="btn-auth-submit" id="btn-login-submit">Acessar minha conta</button></form></div><div id="auth-panel-register" style="display:none"><form onsubmit="handleRegister(event)"><div class="form-group"><label class="form-label">Nome Completo</label><input type="text" class="form-input" id="reg-name" placeholder="Seu nome completo" required></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="reg-email" placeholder="seu@email.com" required></div><div class="form-group"><label class="form-label">Senha</label><input type="password" class="form-input" id="reg-password" placeholder="Mín. 6 chars: letras, números e símbolo" required minlength="6" maxlength="20" oninput="checkPasswordStrength(this.value)"><div class="password-strength-bar"><div class="password-strength-fill" id="pwd-strength-fill"></div></div><div class="password-strength-text" id="pwd-strength-text" style="color:var(--text3)"></div><div class="pwd-hint" id="pwd-hint"></div></div><div id="reg-code-group" style="display:none" class="form-group"><label class="form-label">Código</label><input type="text" class="form-input" id="reg-code" placeholder="Código do email" maxlength="6"><span class="form-error" id="reg-code-error"></span></div><button type="submit" class="btn-auth-submit" id="btn-reg-submit">Criar Conta</button></form></div><div id="auth-panel-forgot" style="display:none"><div style="text-align:center;margin-bottom:24px"><div style="font-size:36px">🔑</div><h3 style="color:var(--white);font-weight:800;margin-top:8px">Recuperar Senha</h3><p style="color:var(--text2);font-size:13px;margin-top:6px">Informe seu email para receber o código</p></div><form onsubmit="handleForgotPassword(event)"><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="forgot-email" placeholder="seu@email.com" required></div><div id="forgot-code-group" style="display:none" class="form-group"><label class="form-label">Código</label><input type="text" class="form-input" id="forgot-code" maxlength="6"></div><div id="forgot-newpass-group" style="display:none" class="form-group"><label class="form-label">Nova Senha</label><input type="password" class="form-input" id="forgot-newpass" minlength="6"></div><button type="submit" class="btn-auth-submit" id="btn-forgot-submit">Enviar código</button></form><button onclick="switchAuthTab('login')" style="display:block;margin:12px auto 0;background:none;border:none;color:var(--cyan2);font-size:13px;cursor:pointer;font-weight:600;font-family:var(--font)">← Voltar</button></div></div></div>`;
     window.initMobileMenu=()=>{document.getElementById('mobile-menu-btn')?.addEventListener('click',()=>{document.getElementById('mobile-nav')?.classList.add('open');document.getElementById('mobile-nav-overlay')?.classList.add('open')})};
     window.closeMobileNav=()=>{document.getElementById('mobile-nav')?.classList.remove('open');document.getElementById('mobile-nav-overlay')?.classList.remove('open')};
     window.initHeaderSearch=()=>{const i=document.getElementById('header-search-input');if(!i)return;i.addEventListener('keydown',e=>{if(e.key==='Enter'&&i.value.trim())window.location.href=`/contas.html?q=${encodeURIComponent(i.value.trim())}` })};
     window.highlightActiveNav=()=>{const path=window.location.pathname;document.querySelectorAll('.header-nav a,.sidebar-item,.mobile-nav-item').forEach(l=>{const href=l.getAttribute('href');if(!href)return;if((path==='/'||path==='/index.html')&&(href==='/'||href==='/index.html'))l.classList.add('active');else if(path.endsWith(href)&&href!=='/')l.classList.add('active')})};
     window.switchAuthTab=(tab)=>{['login','register','forgot'].forEach(t=>{const p=document.getElementById(`auth-panel-${t}`);if(p)p.style.display=t===tab?'':'none';const b=document.getElementById(`auth-tab-${t}`);if(b)b.classList.toggle('active',t===tab)})};
+    window.checkPasswordStrength=(pwd)=>{const fill=document.getElementById('pwd-strength-fill');const text=document.getElementById('pwd-strength-text');const hint=document.getElementById('pwd-hint');if(!fill||!text)return 0;const hasLower=/[a-z]/.test(pwd);const hasUpper=/[A-Z]/.test(pwd);const hasNumber=/[0-9]/.test(pwd);const hasSpecial=/[^a-zA-Z0-9]/.test(pwd);const len=pwd.length;const missing=[];if(!/[a-zA-Z]/.test(pwd))missing.push('letra');if(!hasNumber)missing.push('número');if(!hasSpecial)missing.push('símbolo (!@#...)');if(hint)hint.textContent=(missing.length>0&&len>0)?'Faltando: '+missing.join(', '):'';if(len===0){fill.style.width='0%';fill.style.background='transparent';text.textContent='';return 0;}let score=0;if(len>=6)score++;if(len>=10)score++;if(len>=14)score++;if(hasLower||hasUpper)score++;if(hasNumber)score++;if(hasSpecial)score++;if(hasUpper&&hasLower)score++;let level,width,color,label;if(score<=2){level=1;width='20%';color='#ef4444';label='Muito fraca';}else if(score<=3){level=2;width='45%';color='#f97316';label='Fraca';}else if(score<=5){level=3;width='72%';color='#f59e0b';label='Média';}else{level=4;width='100%';color='#22c55e';label='Forte';}fill.style.width=width;fill.style.background=color;text.textContent=label;text.style.color=color;return level;};
     let _rStep=1,_fStep=1,_pReg=null,_pCode=null;
     window.handleLogin=async(e)=>{e.preventDefault();const btn=document.getElementById('btn-login-submit');btn.disabled=true;btn.textContent='Verificando...';try{const email=document.getElementById('login-email').value.trim();const pwd=document.getElementById('login-password').value;const hash=await Auth.hashPassword(pwd);const user=await API.findUserByEmail(email);if(!user||user.password_hash!==hash){showToast('Email ou senha incorretos','error');return}if(!user.email_verified){showToast('Confirme seu email','warning');return}Auth.setUser({id:user.id,full_name:user.full_name,email:user.email,avatar_url:user.avatar_url||'',is_admin:user.is_admin||false});showToast(`Bem-vindo, ${user.full_name.split(' ')[0]}! 👋`,'success');closeAuthModal();setTimeout(()=>location.reload(),500)}catch(err){showToast('Erro ao fazer login.','error');console.error(err)}finally{btn.disabled=false;btn.textContent='Acessar minha conta'}};
     // Alias para compatibilidade
     window.handleRegister=async(e)=>{if(e)e.preventDefault();await handleRegisterStep1(e);};
-    window.handleRegisterStep1=async(e)=>{if(e)e.preventDefault();const btn=document.getElementById('btn-reg-step1');if(btn){btn.disabled=true;btn.textContent='⏳ Enviando código...';}const name=document.getElementById('reg-name')?.value.trim()||'';const email=document.getElementById('reg-email')?.value.trim()||'';const password=document.getElementById('reg-password')?.value||'';if(name.split(' ').filter(Boolean).length<2){showToast('Informe seu nome completo (nome e sobrenome)','error');if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}return;}if(!email||!email.includes('@')){showToast('Informe um email válido','error');if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}return;}if(password.length<6){showToast('Senha deve ter no mínimo 6 caracteres','error');if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}return;}try{const existing=await API.findUserByEmail(email);if(existing){showToast('Este email já está cadastrado. Faça login.','error');return;}const code=Auth.generateCode();_pCode=code;_pReg={name,email,password};let emailSent=false;try{if(typeof sendVerificationEmail==='function'){await sendVerificationEmail(email,name,code,'verify');emailSent=true;}}catch(ee){console.warn('EmailJS falhou:',ee);}document.getElementById('reg-step-1').style.display='none';document.getElementById('reg-step-2').style.display='';const hint=document.getElementById('reg-email-hint');if(hint)hint.textContent=`Código enviado para: ${email}`;const ci=document.getElementById('reg-code');if(ci){ci.value='';ci.focus();}if(emailSent){showToast('📧 Código enviado! Verifique seu email.','success',8000);}else{showToast(`🔑 Código: ${code}  (copie agora!)`, 'info',60000);if(hint)hint.innerHTML=`⚠️ Email não pôde ser enviado.<br>Use o código exibido no aviso.`;}}catch(err){showToast('Erro ao processar cadastro.','error');console.error(err);}finally{if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}}};
+    window.handleRegisterStep1=async(e)=>{if(e)e.preventDefault();const btn=document.getElementById('btn-reg-step1');if(btn){btn.disabled=true;btn.textContent='⏳ Enviando código...';}const name=document.getElementById('reg-name')?.value.trim()||'';const email=document.getElementById('reg-email')?.value.trim()||'';const password=document.getElementById('reg-password')?.value||'';if(name.split(' ').filter(Boolean).length<2){showToast('Informe seu nome completo (nome e sobrenome)','error');if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}return;}if(!email||!email.includes('@')){showToast('Informe um email válido','error');if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}return;}if(password.length<6||password.length>20){showToast('Senha deve ter entre 6 e 20 caracteres','error');if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}return;}if(!/[a-zA-Z]/.test(password)||!/[0-9]/.test(password)||!/[^a-zA-Z0-9]/.test(password)){showToast('Senha deve conter letras, números e um símbolo (ex: !@#)','error');if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}return;}const pwdLevel=checkPasswordStrength(password);if(pwdLevel<=2){showToast('Senha muito fraca! Adicione mais caracteres variados.','error');if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}return;}try{const existing=await API.findUserByEmail(email);if(existing){showToast('Este email já está cadastrado. Faça login.','error');return;}const code=Auth.generateCode();_pCode=code;_pReg={name,email,password};let emailSent=false;try{if(typeof sendVerificationEmail==='function'){await sendVerificationEmail(email,name,code,'verify');emailSent=true;}}catch(ee){console.warn('EmailJS falhou:',ee);}document.getElementById('reg-step-1').style.display='none';document.getElementById('reg-step-2').style.display='';const hint=document.getElementById('reg-email-hint');if(hint)hint.textContent=`Código enviado para: ${email}`;const ci=document.getElementById('reg-code');if(ci){ci.value='';ci.focus();}if(emailSent){showToast('📧 Código enviado! Verifique seu email.','success',8000);}else{showToast(`🔑 Código: ${code}  (copie agora!)`, 'info',60000);if(hint)hint.innerHTML=`⚠️ Email não pôde ser enviado.<br>Use o código exibido no aviso.`;}}catch(err){showToast('Erro ao processar cadastro.','error');console.error(err);}finally{if(btn){btn.disabled=false;btn.textContent='📧 Enviar código de verificação';}}};
     window.handleRegisterStep2=async(e)=>{if(e)e.preventDefault();const btn=document.getElementById('btn-reg-step2');const errEl=document.getElementById('reg-code-error');const inputCode=document.getElementById('reg-code')?.value.trim()||'';if(!inputCode||inputCode.length!==6){if(errEl){errEl.textContent='Digite o código de 6 dígitos.';errEl.style.display='block';}return;}if(String(inputCode)!==String(_pCode)){if(errEl){errEl.textContent='❌ Código inválido. Tente novamente.';errEl.style.display='block';}showToast('Código incorreto','error');document.getElementById('reg-code')?.select();return;}if(errEl){errEl.textContent='';errEl.style.display='none';}if(btn){btn.disabled=true;btn.textContent='⏳ Criando conta...';}try{const hash=await Auth.hashPassword(_pReg.password);const nu=await API.post('users',{full_name:_pReg.name,email:_pReg.email,password_hash:hash,email_verified:true,provider:'local',is_admin:false,favorites:[],cart:[]});Auth.setUser({id:nu.id,full_name:nu.full_name,email:nu.email,avatar_url:'',is_admin:false,provider:'local'});showToast(`🎉 Conta criada! Bem-vindo, ${nu.full_name.split(' ')[0]}!`,'success',5000);closeAuthModal();setTimeout(()=>location.reload(),700);}catch(err){showToast('Erro ao criar conta. Tente novamente.','error');console.error(err);if(btn){btn.disabled=false;btn.textContent='✅ Verificar e criar conta';}}};
     window.resetRegForm=()=>{_pCode=null;_pReg=null;const s1=document.getElementById('reg-step-1');const s2=document.getElementById('reg-step-2');if(s1)s1.style.display='';if(s2)s2.style.display='none';const errEl=document.getElementById('reg-code-error');if(errEl){errEl.textContent='';errEl.style.display='none';}};
     window.resendRegCode=async()=>{if(!_pReg)return;const btn=document.getElementById('btn-resend-code');if(btn){btn.disabled=true;btn.textContent='Enviando...';}const newCode=Auth.generateCode();_pCode=newCode;try{if(typeof sendVerificationEmail==='function'){await sendVerificationEmail(_pReg.email,_pReg.name,newCode,'verify');showToast('📧 Novo código enviado!','success',6000);}else{showToast(`🔑 Código: ${newCode}  (copie agora!)`,'info',60000);}}catch(err){showToast(`🔑 Código: ${newCode}  (copie agora!)`,'info',60000);}finally{if(btn){btn.disabled=false;btn.textContent='🔁 Reenviar código';}}};
@@ -508,12 +642,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     // Hero particles
     const container = document.getElementById('hero-particles');
     if (container) {
-      const colors = ['#3b82f6','#06b6d4','#22d3ee','#60a5fa','#93c5fd','#ffffff'];
-      for (let i = 0; i < 20; i++) {
+      const colors = ['#ff1a1a','#ff4d4d','#00cfff','#33d9ff','#ff8080','#80eaff'];
+      for (let i = 0; i < 18; i++) {
         const p = document.createElement('div');
         p.className = 'hero-particle';
         const size = Math.random() * 4 + 2;
-        p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${Math.random()*4+4}s;animation-delay:${Math.random()*4}s;opacity:${Math.random()*0.5+0.2}`;
+        p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${Math.random()*4+4}s;animation-delay:${Math.random()*4}s;opacity:${Math.random()*0.5+0.2};box-shadow:0 0 ${size*3}px currentColor`;
         container.appendChild(p);
       }
     }
@@ -588,8 +722,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       } catch(err){ console.warn('Fav sync:',err); }
     }
 
-    const SB_URL="https://piqnqegawcdhykatpflj.supabase.co";
-    const SB_KEY="sb_publishable_mGMkvi5A0S3iVySpI_ek_Q_IFekBWjH";
+    const SB_URL="https://iydpkxgdnhlzwrgjbxfh.supabase.co";
+    const SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZHBreGdkbmhsendyZ2pieGZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMTkxNDgsImV4cCI6MjA5MDg5NTE0OH0.toXImXBRUa57SLPLVeNd49jP8BS0AGmujjE3zOxeGjU";
 
     async function fetchFromSupabase(category) {
       // Tabela: products | Colunas em inglês (criadas pelo ChatGPT)
@@ -648,51 +782,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
     loadFeaturedProducts();
 
-    // ===== REVIEWS CAROUSEL =====
-    const REVIEWS = [
-      {
-        name: "sla069483 - 1302424692564693028",
-        initial: "S",
-        color: "#1d4ed8",
-        stars: 5,
-        text: "antendimento rápido e seguro 100% confiável - podem comprar sem medo",
-      },
-      {
-        name: "manuka_king123_43249 - 1447223595066462219",
-        initial: "M",
-        color: "#8b5cf6",
-        stars: 5,
-        text: "Melhor custo benefício que eu já vi obrigado",
-      },
-      {
-        name: "edmilsonpedro_46626 - 1231606453228539997",
-        initial: "E",
-        color: "#06b6d4",
-        stars: 5,
-        text: "Melhor loja que já comprei, preços honestos e entrega relâmpago. Conta God Human chegou com tudo que foi descrito, sem surpresas negativas.",
-      },
-      {
-        name: "argelys0304_38265 - 1206388734233411687",
-        initial: "A",
-        color: "#10b981",
-        stars: 5,
-        text: "100% confiavel",
-      },
-      {
-        name: "gaaabai_71716 - 1336697955956031488",
-        initial: "P",
-        color: "#f59e0b",
-        stars: 5,
-        text: "100% confiável, cncrtz comprarei aq dnv e ganharam um cliente fiel ❤️🚀",
-      },
-      {
-        name: "dudu7355 - 730113694863851672",
-        initial: "D",
-        color: "#0ea5e9",
-        stars: 5,
-        text: "100% confiável comprarei mais vezes",
-      }
-    ];
+    // ===== REVIEWS CAROUSEL (dinâmico do Supabase) =====
+    const AVATAR_COLORS = ["#1d4ed8","#8b5cf6","#06b6d4","#10b981","#f59e0b","#0ea5e9","#ef4444","#ec4899"];
 
     function renderStarsHTML(count) {
       return Array.from({length: 5}, (_, i) =>
@@ -703,31 +794,243 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     }
 
     function buildReviewCard(r) {
+      const initial = (r.username || r.name || '?')[0].toUpperCase();
+      const color = AVATAR_COLORS[initial.charCodeAt(0) % AVATAR_COLORS.length];
+      const date = r.created_at ? new Date(r.created_at).toLocaleDateString('pt-BR') : '';
       return `
       <div class="review-card">
         <div class="review-card-header">
-          <div class="review-avatar" style="background:${r.color}">${r.initial}</div>
+          <div class="review-avatar" style="background:${color}">${initial}</div>
           <div class="review-user-info">
-            <div class="review-username">${r.name}</div>
-            <div class="review-date">${r.date}</div>
+            <div class="review-username">${r.username || r.name || 'Usuário'}</div>
+            <div class="review-date">${date}</div>
           </div>
           <span class="review-verified">✓ Verificado</span>
         </div>
-        <div class="review-stars">${renderStarsHTML(r.stars)}</div>
-        <div class="review-text">"${r.text}"</div>
-        <div class="review-product">${r.product}</div>
+        <div class="review-stars">${renderStarsHTML(r.stars || 5)}</div>
+        <div class="review-text">"${r.text || ''}"</div>
+        <div class="review-product">${r.product_name || r.product || ''}</div>
       </div>`;
     }
 
-    function initReviewsCarousel() {
+    async function initReviewsCarousel() {
       const track = document.getElementById('reviews-track');
       if (!track) return;
-      // Duplicar para loop infinito
-      const html = REVIEWS.map(buildReviewCard).join('');
-      track.innerHTML = html + html; // duas cópias para loop contínuo
+
+      // Fallback hardcoded caso Supabase falhe
+      const FALLBACK = [
+        { username:"sla069483", stars:5, text:"Antendimento rápido e seguro 100% confiável!", product_name:"Fruta" },
+        { username:"manuka_king123", stars:5, text:"Melhor custo benefício que eu já vi obrigado", product_name:"Conta" },
+        { username:"edmilsonpedro", stars:5, text:"Melhor loja que já comprei, preços honestos e entrega relâmpago.", product_name:"Conta God Human" },
+        { username:"argelys0304", stars:5, text:"100% confiavel", product_name:"Fruta" },
+        { username:"gaaabai_71716", stars:5, text:"100% confiável, comprarei aq dnv e ganharam um cliente fiel ❤️🚀", product_name:"Conta" },
+        { username:"dudu7355", stars:5, text:"100% confiável comprarei mais vezes", product_name:"Fruta" },
+        { username:"gustavo07888", stars:5, text:"Muito bom comprei uma fruta e veio certinho", product_name:"Fruta" },
+        { username:"lelen444", stars:5, text:"Muito bom recomendo entrega certinho", product_name:"Conta" },
+      ];
+
+      let reviews = FALLBACK;
+      try {
+        const SUPABASE_URL = window.SUPABASE_URL || (typeof CONFIG !== 'undefined' ? CONFIG.SUPABASE_URL : null);
+        const SUPABASE_KEY = window.SUPABASE_ANON_KEY || (typeof CONFIG !== 'undefined' ? CONFIG.SUPABASE_ANON_KEY : null);
+        if (SUPABASE_URL && SUPABASE_KEY) {
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?select=*&order=created_at.desc&limit=50`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.length >= 3) reviews = data;
+          }
+        }
+      } catch(e) { console.warn('Reviews fallback:', e); }
+
+      const html = reviews.map(buildReviewCard).join('');
+      track.innerHTML = html + html;
     }
 
     initReviewsCarousel();
+
+    // ===== HERO 3D CUBES CANVAS =====
+    (function initHero3D() {
+      const canvas = document.getElementById('hero-canvas-3d');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width  = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Isometric 3D helpers
+      const ISO = { x: Math.cos(Math.PI / 6), y: Math.sin(Math.PI / 6) };
+      function toIso(x, y, z) {
+        return {
+          sx: (x - y) * ISO.x,
+          sy: (x + y) * ISO.y - z
+        };
+      }
+
+      // Color palette: neon red and cyan flashes
+      const COLORS_RED  = ['#ff1a1a','#cc0000','#ff4d4d','#800000'];
+      const COLORS_CYAN = ['#00cfff','#00aadd','#33d9ff','#0066aa'];
+
+      // Create grid of cubes
+      const GRID = 8; // 8×8 grid
+      const CUBE_SIZE = 38;
+      const cubes = [];
+      for (let gx = 0; gx < GRID; gx++) {
+        for (let gy = 0; gy < GRID; gy++) {
+          const isRed = Math.random() < 0.55;
+          cubes.push({
+            gx, gy,
+            height: Math.random() * 1.2 + 0.4,        // current visual height
+            targetH: Math.random() * 1.5 + 0.4,       // target height (for animation)
+            flashTimer: Math.random() * 200,
+            flashInterval: 60 + Math.random() * 180,
+            flashing: false,
+            flashProgress: 0,
+            baseColor: isRed ? COLORS_RED[Math.floor(Math.random()*COLORS_RED.length)]
+                              : COLORS_CYAN[Math.floor(Math.random()*COLORS_CYAN.length)],
+            glowColor: isRed ? '#ff1a1a' : '#00cfff',
+          });
+        }
+      }
+
+      function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1,3),16);
+        const g = parseInt(hex.slice(3,5),16);
+        const b = parseInt(hex.slice(5,7),16);
+        return `${r},${g},${b}`;
+      }
+
+      function drawCube(cx, cy, size, h, color, glowColor, flashAmt) {
+        const s = size;
+        const hs = h * size;
+
+        // Face top
+        ctx.beginPath();
+        ctx.moveTo(cx,           cy - hs);
+        ctx.lineTo(cx + s*ISO.x, cy - hs + s*ISO.y);
+        ctx.lineTo(cx,           cy - hs + s*ISO.y*2);
+        ctx.lineTo(cx - s*ISO.x, cy - hs + s*ISO.y);
+        ctx.closePath();
+        const topGrad = ctx.createLinearGradient(cx - s, cy - hs, cx + s, cy - hs + s);
+        topGrad.addColorStop(0, color);
+        topGrad.addColorStop(1, 'rgba(0,0,0,.3)');
+        ctx.fillStyle = topGrad;
+        if (flashAmt > 0) {
+          ctx.shadowColor = glowColor;
+          ctx.shadowBlur  = 18 * flashAmt;
+        }
+        ctx.fill();
+
+        // Face left (dark)
+        ctx.beginPath();
+        ctx.moveTo(cx - s*ISO.x, cy - hs + s*ISO.y);
+        ctx.lineTo(cx,           cy - hs + s*ISO.y*2);
+        ctx.lineTo(cx,           cy + s*ISO.y*2);
+        ctx.lineTo(cx - s*ISO.x, cy + s*ISO.y);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0,0,0,.55)';
+        ctx.shadowBlur = 0;
+        ctx.fill();
+
+        // Face right (medium dark)
+        ctx.beginPath();
+        ctx.moveTo(cx + s*ISO.x, cy - hs + s*ISO.y);
+        ctx.lineTo(cx,           cy - hs + s*ISO.y*2);
+        ctx.lineTo(cx,           cy + s*ISO.y*2);
+        ctx.lineTo(cx + s*ISO.x, cy + s*ISO.y);
+        ctx.closePath();
+        ctx.fillStyle = `rgba(${hexToRgb(color)},.25)`;
+        if (flashAmt > 0) {
+          ctx.shadowColor = glowColor;
+          ctx.shadowBlur  = 10 * flashAmt;
+        }
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      let frame = 0;
+      function animate() {
+        frame++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Camera offset so grid is centred on canvas
+        const offX = canvas.width * 0.5;
+        const offY = canvas.height * 0.25;
+        const s    = CUBE_SIZE;
+
+        // Sort back-to-front for proper overlap
+        const sorted = [...cubes].sort((a, b) => (a.gx + a.gy) - (b.gx + b.gy));
+
+        for (const c of sorted) {
+          // Lerp height toward target
+          c.height += (c.targetH - c.height) * 0.025;
+          if (Math.abs(c.height - c.targetH) < 0.02) {
+            c.targetH = Math.random() * 1.5 + 0.4;
+          }
+
+          // Flash timer
+          c.flashTimer++;
+          if (!c.flashing && c.flashTimer >= c.flashInterval) {
+            c.flashing = true;
+            c.flashTimer = 0;
+            c.flashProgress = 0;
+            c.flashInterval = 80 + Math.random() * 200;
+          }
+          if (c.flashing) {
+            c.flashProgress += 0.06;
+            if (c.flashProgress >= 1) { c.flashing = false; c.flashProgress = 0; }
+          }
+
+          const flashAmt = c.flashing ? Math.sin(c.flashProgress * Math.PI) : 0;
+
+          // Iso screen position
+          const iso = toIso(c.gx, c.gy, 0);
+          const cx = offX + iso.sx * s;
+          const cy = offY + iso.sy * s;
+
+          drawCube(cx, cy, s * 0.48, c.height, c.baseColor, c.glowColor, flashAmt);
+        }
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+    // Responsive hero canvas: keep text readable on mobile
+    (function heroResponsive() {
+      const canvas = document.getElementById('hero-canvas-3d');
+      if (!canvas) return;
+      function check() {
+        canvas.style.opacity = window.innerWidth < 700 ? '0.18' : '0.95';
+      }
+      check();
+      window.addEventListener('resize', check);
+    })();
   </script>
+
+  <!-- 🔥 VERCEL ANALYTICS -->
+  <script>
+    window.va = window.va || function () { (window.va.q = window.va.q || []).push(arguments) };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+
+
+  <!-- BOTÃO FLUTUANTE WHATSAPP -->
+  <a href="https://wa.me/5561985154930" target="_blank" class="whatsapp-float" title="Suporte via WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+    <span class="whatsapp-float-label">Suporte</span>
+  </a>
+  <style>
+  .whatsapp-float{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;align-items:center;gap:10px;background:#25D366;color:#fff;border-radius:50px;padding:13px 20px 13px 16px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.5);transition:all .3s ease;animation:wppPulse 2.5s ease-in-out infinite}
+  .whatsapp-float:hover{background:#20ba5a;transform:translateY(-3px) scale(1.04);box-shadow:0 8px 30px rgba(37,211,102,.6);animation:none}
+  .whatsapp-float-label{white-space:nowrap}
+  @keyframes wppPulse{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)}50%{box-shadow:0 4px 30px rgba(37,211,102,.8),0 0 0 8px rgba(37,211,102,.1)}}
+  @media(max-width:600px){.whatsapp-float-label{display:none}.whatsapp-float{padding:14px;border-radius:50%}}
+  </style>
+
 </body>
 </html>

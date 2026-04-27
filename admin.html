@@ -59,10 +59,10 @@
           <label class="form-label">Senha de Acesso</label>
           <input type="password" class="form-input" id="admin-password-input" placeholder="Digite a senha admin" onkeydown="if(event.key==='Enter')checkAdminLogin()">
         </div>
-        <button class="btn-submit" onclick="checkAdminLogin()">Acessar Painel</button>
+        <button type="button" class="btn-submit" onclick="checkAdminLogin()">Acessar Painel</button>
       </div>
       <p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:16px">
-        ⚠️ Defina a senha em <code>js/config.js</code> → <code>ADMIN_PASSWORD</code>
+        ⚠️ VOCÊ CHEGOU LONGE DEMAIS, SAI DAQUI!
       </p>
     </div>
   </div>
@@ -97,16 +97,24 @@
         <button class="admin-tab" onclick="switchTab('orders', this)">🧾 Pedidos</button>
         <button class="admin-tab" onclick="switchTab('users', this)">👥 Usuários</button>
         <button class="admin-tab" onclick="switchTab('new-product', this)">➕ Novo Produto</button>
+        <button class="admin-tab" onclick="switchTab('reviews', this)">⭐ Avaliações</button>
       </div>
 
       <!-- PAINEL: PRODUTOS -->
       <div class="admin-panel active" id="panel-products">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <button class="btn-sm btn-toggle active" id="cat-btn-all" onclick="filterProductCategory('all', this)">📦 Todos</button>
+          <button class="btn-sm btn-toggle" id="cat-btn-contas" onclick="filterProductCategory('contas', this)">👤 Contas</button>
+          <button class="btn-sm btn-toggle" id="cat-btn-frutas" onclick="filterProductCategory('frutas', this)">🛡️ Frutas</button>
+          <button class="btn-sm btn-toggle" id="cat-btn-gamepass" onclick="filterProductCategory('gamepass', this)">⭐ Gamepass</button>
+        </div>
         <div class="table-container">
           <table class="admin-table" id="products-table">
             <thead>
               <tr>
                 <th>Produto</th>
                 <th>Categoria</th>
+                <th>Raridade</th>
                 <th>Preço</th>
                 <th>Estoque</th>
                 <th>Status</th>
@@ -164,6 +172,59 @@
       </div>
 
       <!-- PAINEL: NOVO / EDITAR PRODUTO -->
+      <!-- PAINEL: AVALIAÇÕES -->
+      <div class="admin-panel" id="panel-reviews">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <h3 style="font-size:1rem;font-weight:700">⭐ Avaliações na Roleta</h3>
+          <button onclick="openAddReviewModal()" style="background:var(--cyan2);color:#000;font-weight:700;border:none;border-radius:6px;padding:8px 16px;cursor:pointer;font-size:13px">+ Adicionar Avaliação</button>
+        </div>
+        <div class="table-container">
+          <table class="admin-table">
+            <thead><tr><th>NOME</th><th>ESTRELAS</th><th>DESCRIÇÃO</th><th>DATA</th><th>FONTE</th><th>AÇÕES</th></tr></thead>
+            <tbody id="reviews-tbody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gray-400)">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MODAL: ADICIONAR AVALIAÇÃO -->
+      <div id="review-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:16px">
+        <div style="background:#0f1320;border:1px solid rgba(6,182,212,.3);border-radius:14px;padding:28px;width:100%;max-width:420px">
+          <h3 style="margin:0 0 20px;font-size:1rem;color:var(--cyan2)">Adicionar Avaliação</h3>
+
+          <div style="margin-bottom:12px">
+            <label style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Nome da pessoa</label>
+            <input class="form-input" id="rv-username" placeholder="ex: jogador123">
+          </div>
+
+          <div style="margin-bottom:12px">
+            <label style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Estrelas</label>
+            <div id="rv-star-picker" style="display:flex;gap:8px;font-size:28px;cursor:pointer">
+              <span onclick="setReviewStars(1)">☆</span>
+              <span onclick="setReviewStars(2)">☆</span>
+              <span onclick="setReviewStars(3)">☆</span>
+              <span onclick="setReviewStars(4)">☆</span>
+              <span onclick="setReviewStars(5)">☆</span>
+            </div>
+            <input type="hidden" id="rv-stars" value="5">
+          </div>
+
+          <div style="margin-bottom:12px">
+            <label style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Descrição</label>
+            <textarea class="form-input" id="rv-text" rows="3" placeholder="O que o cliente disse..."></textarea>
+          </div>
+
+          <div style="margin-bottom:20px">
+            <label style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Data</label>
+            <input type="date" class="form-input" id="rv-date">
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button onclick="closeAddReviewModal()" style="background:rgba(255,255,255,.08);color:var(--text);border:none;border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:600">Cancelar</button>
+            <button onclick="saveManualReview()" style="background:var(--cyan2);color:#000;border:none;border-radius:6px;padding:8px 20px;cursor:pointer;font-weight:800">Salvar</button>
+          </div>
+        </div>
+      </div>
+
       <div class="admin-panel" id="panel-new-product">
         <div class="table-container" style="padding:28px">
           <h3 id="product-form-title" style="font-size:1rem;font-weight:700;margin-bottom:20px">Adicionar Novo Produto</h3>
@@ -177,10 +238,10 @@
 
             <div class="form-group">
               <label class="form-label">Categoria *</label>
-              <select class="form-input" id="pf-category" required>
+              <select class="form-input" id="pf-category" required onchange="onCategoryChange(this.value)">
                 <option value="">Selecione...</option>
-                <option value="accounts">Contas Blox Fruits</option>
-                <option value="fruits">Frutas</option>
+                <option value="contas">Contas Blox Fruits</option>
+                <option value="frutas">Frutas</option>
                 <option value="gamepass">Gamepass</option>
               </select>
             </div>
@@ -195,14 +256,28 @@
               <input type="number" class="form-input" id="pf-original-price" placeholder="Ex: 49.90 (para mostrar desconto)" step="0.01" min="0">
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Estoque *</label>
-              <input type="number" class="form-input" id="pf-stock" placeholder="Quantidade disponível" min="0" required>
+            <div class="form-group full" id="pf-accounts-wrap" style="display:none">
+              <label class="form-label">Contas do Estoque (CONTA:SENHA — uma por linha)</label>
+              <textarea class="form-input" id="pf-accounts" rows="6" placeholder="jogador1:senha123&#10;jogador2:senha456&#10;jogador3:senha789" style="resize:vertical;font-family:monospace"></textarea>
+              <span style="font-size:11px;color:var(--gray-400)">Cada linha = uma conta. Formato: <strong>usuario:senha</strong> — Salva automaticamente no Supabase como estoque separado.</span>
+              <div id="pf-accounts-count" style="font-size:12px;margin-top:6px;color:var(--cyan2);font-weight:600"></div>
+            </div>
+            <div class="form-group" id="pf-stock-wrap" style="display:none">
+              <label class="form-label">Estoque (quantidade)</label>
+              <input type="number" class="form-input" id="pf-stock" value="0" min="0" placeholder="Ex: 5" style="max-width:160px">
+              <span style="font-size:11px;color:var(--gray-400);margin-top:4px;display:block">Quantidade disponível. Decrementado automaticamente a cada venda.</span>
             </div>
 
             <div class="form-group">
               <label class="form-label">URL da Imagem</label>
-              <input type="url" class="form-input" id="pf-image" placeholder="https://... (deixe em branco para ícone padrão)">
+              <input type="url" class="form-input" id="pf-image" placeholder="https://... (deixe em branco para ícone padrão)" oninput="previewImage(this.value)">
+              <div id="img-preview-wrap" style="margin-top:10px;display:none;">
+                <img id="img-preview" src="" alt="Preview"
+                  style="width:100%;max-width:180px;height:120px;object-fit:contain;border-radius:10px;background:#1a1f2e;border:1px solid rgba(255,255,255,.08);padding:8px;"
+                  onerror="document.getElementById('img-preview-status').textContent='❌ Imagem não carregou (URL bloqueada ou inválida)';document.getElementById('img-preview-status').style.color='#ef4444';"
+                  onload="document.getElementById('img-preview-status').textContent='✅ Imagem OK';document.getElementById('img-preview-status').style.color='#10b981';">
+                <div id="img-preview-status" style="font-size:12px;margin-top:6px;color:#64748b;font-weight:600;"></div>
+              </div>
             </div>
 
             <div class="form-group full">
@@ -214,6 +289,32 @@
               <label class="form-label">Itens Inclusos (um por linha)</label>
               <textarea class="form-input" id="pf-details" rows="5" placeholder="Nível 2450 (Máximo)&#10;Fruta: Gás (Mítica)&#10;God Human&#10;Entrega automática" style="resize:vertical"></textarea>
               <span style="font-size:11px;color:var(--gray-400)">Um item por linha. Ex: "Nível 2450 (Máximo)"</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Raridade</label>
+              <select class="form-input" id="pf-rarity">
+                <option value="">Sem raridade</option>
+                <option value="comum">Comum</option>
+                <option value="incomum">Incomum</option>
+                <option value="raro">Raro</option>
+                <option value="epico">Épico</option>
+                <option value="lendario">Lendário</option>
+                <option value="mitico">Mítico</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Desconto PIX (%)</label>
+              <input type="number" class="form-input" id="pf-pix-discount" placeholder="Ex: 10 (para 10% de desconto no PIX)" min="0" max="100">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Produto Novo? (badge "Novo")</label>
+              <select class="form-input" id="pf-is-new">
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+              </select>
             </div>
 
             <div class="form-group">
@@ -244,7 +345,7 @@
   </div>
 
   <!-- MODAL EDIÇÃO -->
-  <div class="modal-overlay" id="edit-modal">
+  <div class="modal-overlay" id="edit-modal" style="display:none">
     <div class="modal-box" style="max-width:360px">
       <button class="modal-close" onclick="closeEditModal()">✕</button>
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px" id="edit-modal-title">Editar Produto</h3>
@@ -255,28 +356,112 @@
   <script src="/js/config.js"></script>
   <script src="/js/utils.js"></script>
   <script>
+    // Impede que o modal de login do site sobreponha o painel admin
+    window.showAuthModal = function() {};
+    window.requireLogin = function() { return true; };
+  </script>
+  <script>
     let adminAuthenticated = false;
+    let adminToken = sessionStorage.getItem("dealblox_admin_token") || "";
 
-    function checkAdminLogin() {
-      const pass = document.getElementById("admin-password-input").value;
-      if (pass === LAGTECK_CONFIG.ADMIN_PASSWORD) {
-        adminAuthenticated = true;
-        document.getElementById("admin-login").style.display = "none";
-        document.getElementById("admin-main").style.display = "block";
-        loadAllData();
-        showToast("Bem-vindo ao painel admin! 🎛️", "success");
-      } else {
-        showToast("Senha incorreta", "error");
-        document.getElementById("admin-password-input").value = "";
-        document.getElementById("admin-password-input").classList.add("error");
-        setTimeout(() => document.getElementById("admin-password-input").classList.remove("error"), 2000);
+    const AdminAPI = {
+      getHeaders(extra = {}) {
+        return {
+          ...(adminToken ? { "x-admin-token": adminToken } : {}),
+          ...extra,
+        };
+      },
+
+      async request(path, options = {}) {
+        const res = await fetch(path, {
+          ...options,
+          headers: this.getHeaders(options.headers || {}),
+        });
+
+        if (res.status === 401) {
+          adminLogout(false);
+          showToast("Sessão expirada. Faça login novamente.", "error");
+          throw new Error("Sessão admin expirada.");
+        }
+
+        if (res.status === 204) return null;
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.error || `Erro ${res.status}`);
+        return data;
+      },
+
+      get(table, params = {}) {
+        const qs = new URLSearchParams(params).toString();
+        return this.request(`/api/admin/tables/${table}${qs ? `?${qs}` : ""}`);
+      },
+
+      getOne(table, id) {
+        return this.request(`/api/admin/tables/${table}?id=${id}`);
+      },
+
+      post(table, data) {
+        return this.request(`/api/admin/tables/${table}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      },
+
+      patch(table, id, data) {
+        return this.request(`/api/admin/tables/${table}?id=${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      },
+
+      delete(table, id) {
+        return this.request(`/api/admin/tables/${table}?id=${id}`, { method: "DELETE" });
+      }
+    };
+
+    function showAdminPanel() {
+      adminAuthenticated = true;
+      document.getElementById("admin-login").style.display = "none";
+      document.getElementById("admin-main").style.display = "block";
+    }
+
+    async function checkAdminLogin() {
+      const input = document.getElementById("admin-password-input");
+      const pass = input.value.trim();
+      try {
+        const res = await fetch("/api/auth/admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pass })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data.ok && data.token) {
+          adminToken = data.token;
+          sessionStorage.setItem("dealblox_admin_token", adminToken);
+          showAdminPanel();
+          loadAllData();
+          showToast("Bem-vindo ao painel admin! 🎛️", "success");
+          input.value = "";
+        } else {
+          showToast("Senha incorreta", "error");
+          input.value = "";
+          input.classList.add("error");
+          setTimeout(() => input.classList.remove("error"), 2000);
+        }
+      } catch (err) {
+        showToast(err?.message || "Erro ao verificar senha", "error");
       }
     }
 
-    function adminLogout() {
+    function adminLogout(showMessage = true) {
       adminAuthenticated = false;
+      adminToken = "";
+      sessionStorage.removeItem("dealblox_admin_token");
       document.getElementById("admin-main").style.display = "none";
       document.getElementById("admin-login").style.display = "flex";
+      if (showMessage) showToast("Sessão admin encerrada.", "info");
     }
 
     function switchTab(tab, btn) {
@@ -290,12 +475,26 @@
       else if (tab === "new-product") resetProductForm();
     }
 
+    function previewImage(url) {
+      const wrap = document.getElementById('img-preview-wrap');
+      const img  = document.getElementById('img-preview');
+      const status = document.getElementById('img-preview-status');
+      if (!url || !url.startsWith('http')) {
+        wrap.style.display = 'none';
+        return;
+      }
+      wrap.style.display = 'block';
+      status.textContent = '⏳ Verificando...';
+      status.style.color = '#64748b';
+      img.src = url;
+    }
+
     async function loadAllData() {
       try {
         const [prods, ords, usrs] = await Promise.all([
-          API.get("products", { limit: 200 }),
-          API.get("orders", { limit: 200 }),
-          API.get("users", { limit: 200 })
+          AdminAPI.get("products", { limit: 200 }),
+          AdminAPI.get("orders", { limit: 200 }),
+          AdminAPI.get("users", { limit: 200 })
         ]);
         const activeProducts = (prods.data || []).filter(p => p.active !== false).length;
         const paidOrders = (ords.data || []).filter(o => o.status === "paid" || o.status === "delivered");
@@ -313,7 +512,7 @@
     async function loadProducts(data = null) {
       const tbody = document.getElementById("products-tbody");
       if (!data) {
-        const res = await API.get("products", { limit: 200 });
+        const res = await AdminAPI.get("products", { limit: 200 });
         data = res.data || [];
       }
       if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gray-400)">Nenhum produto cadastrado</td></tr>`; return; }
@@ -331,7 +530,7 @@
             ${p.original_price > p.price ? `<br><small style="text-decoration:line-through;color:var(--gray-400)">${formatPrice(p.original_price)}</small>` : ''}
           </td>
           <td>
-            <span style="font-weight:600;color:${p.stock === 0 ? 'var(--red)' : p.stock <= 3 ? 'var(--yellow)' : 'var(--green)'}">${p.stock}</span>
+            <span style="font-weight:600;color:${p.stock === 0 ? 'var(--red)' : p.stock <= 3 ? 'var(--yellow)' : 'var(--green)'}">${p.category === 'contas' ? (p.stock + ' conta(s)') : p.stock}</span>
           </td>
           <td>
             <span class="status-badge ${p.active !== false ? 'active' : 'inactive'}">${p.active !== false ? '● Ativo' : '● Inativo'}</span>
@@ -349,7 +548,7 @@
     async function loadOrders() {
       const tbody = document.getElementById("orders-tbody");
       try {
-        const res = await API.get("orders", { limit: 200 });
+        const res = await AdminAPI.get("orders", { limit: 200 });
         const orders = res.data || [];
         if (!orders.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--gray-400)">Nenhum pedido ainda</td></tr>`; return; }
 
@@ -362,14 +561,21 @@
             <td><strong style="color:var(--blue-800)">${formatPrice(o.amount || 0)}</strong></td>
             <td><span style="font-size:12px">${o.payment_method?.toUpperCase() || '—'}</span></td>
             <td><span class="status-badge ${o.status}">${statusLabels[o.status] || o.status}</span></td>
+            <td style="font-size:11px;color:var(--gray-400)">
+              ${o.paid_at ? '<div>💳 ' + new Date(o.paid_at).toLocaleString('pt-BR') + '</div>' : ''}
+              ${o.delivered_at ? '<div>📦 ' + new Date(o.delivered_at).toLocaleString('pt-BR') + '</div>' : ''}
+            </td>
             <td>
-              <select style="font-size:11px;padding:4px 6px;border:1px solid var(--gray-200);border-radius:4px;cursor:pointer" onchange="updateOrderStatus('${o.id}', this.value)">
-                <option value="">Alterar...</option>
-                <option value="pending">Pendente</option>
-                <option value="paid">Pago</option>
-                <option value="delivered">Entregue</option>
-                <option value="cancelled">Cancelado</option>
-              </select>
+              ${o.status === 'delivered'
+                ? `<span style="font-size:11px;color:var(--green);font-weight:700;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:4px;padding:4px 10px">✅ Entregue</span>`
+                : `<select style="font-size:11px;padding:4px 6px;border:1px solid var(--gray-200);border-radius:4px;cursor:pointer" onchange="updateOrderStatus('${o.id}', this.value, '${o.user_email}', '${o.buyer_name||''}', '${o.product_name||''}', ${o.review_email_sent||false}, this)">
+                    <option value="">Alterar...</option>
+                    <option value="pending" ${o.status==='pending'?'selected':''}>Pendente</option>
+                    <option value="paid" ${o.status==='paid'?'selected':''}>Pago</option>
+                    <option value="delivered">Entregue</option>
+                    <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelado</option>
+                  </select>`
+              }
             </td>
           </tr>`).join("");
       } catch(err) { console.error(err); }
@@ -378,7 +584,7 @@
     async function loadUsers() {
       const tbody = document.getElementById("users-tbody");
       try {
-        const res = await API.get("users", { limit: 200 });
+        const res = await AdminAPI.get("users", { limit: 200 });
         const users = res.data || [];
         if (!users.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gray-400)">Nenhum usuário cadastrado</td></tr>`; return; }
 
@@ -394,18 +600,123 @@
       } catch(err) { console.error(err); }
     }
 
-    async function updateOrderStatus(orderId, status) {
+    async function updateOrderStatus(orderId, status, userEmail, buyerName, productName, reviewEmailSent, selectEl) {
       if (!status) return;
+
+      // Confirmação obrigatória antes de marcar como entregue
+      if (status === 'delivered') {
+        const ok = confirm(`⚠️ Atenção!\n\nVocê está marcando o pedido como ENTREGUE.\n\nEssa ação é IRREVERSÍVEL — depois não será possível alterar o status novamente.\n\nConfirmar entrega do produto "${productName}"?`);
+        if (!ok) {
+          if (selectEl) selectEl.value = ''; // reseta o select
+          return;
+        }
+      }
+
       try {
-        await API.patch("orders", orderId, { status });
+        const patch = { status };
+        if (status === 'paid') patch.paid_at = new Date().toISOString();
+        if (status === 'delivered') patch.delivered_at = new Date().toISOString();
+        await AdminAPI.patch("orders", orderId, patch);
+
+        // Envia email de avaliação quando marcado como entregue (só uma vez)
+        if (status === 'delivered' && !reviewEmailSent && userEmail) {
+          try {
+            await fetch('/api/email/send', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                type: 'review_request',
+                to_email: userEmail,
+                to_name: buyerName || userEmail.split('@')[0],
+                product_name: productName,
+                order_id: orderId,
+                review_url: `https://dealblox.com.br/?review=${orderId}`
+              })
+            });
+            await AdminAPI.patch("orders", orderId, { review_email_sent: true });
+          } catch(e) { console.warn('Email avaliação falhou:', e); }
+        }
+
         showToast("Status atualizado!", "success");
         loadOrders();
       } catch { showToast("Erro ao atualizar", "error"); }
     }
 
+    // ── REVIEWS ───────────────────────────────────────────────────────────
+    async function loadReviews() {
+      const tbody = document.getElementById("reviews-tbody");
+      if (!tbody) return;
+      try {
+        const res = await AdminAPI.get("reviews", { limit: 200 });
+        const reviews = res.data || [];
+        if (!reviews.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gray-400)">Nenhuma avaliação ainda</td></tr>`; return; }
+        tbody.innerHTML = reviews.sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).map(r => `
+          <tr>
+            <td><strong style="font-size:12px">${r.username || '—'}</strong></td>
+            <td>${'⭐'.repeat(r.stars || 5)}</td>
+            <td><span style="font-size:12px;color:var(--text2)">"${(r.text||'').slice(0,80)}${(r.text||'').length>80?'...':''}"</span></td>
+            <td><span style="font-size:11px;color:var(--gray-400)">${r.created_at ? new Date(r.created_at).toLocaleDateString('pt-BR') : '—'}</span></td>
+            <td><span style="font-size:11px;background:var(--gray-100);padding:2px 8px;border-radius:4px">${r.source || 'site'}</span></td>
+            <td><button onclick="deleteReview('${r.id}')" style="background:rgba(239,68,68,.15);color:#ef4444;border:none;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:700">🗑 Remover</button></td>
+          </tr>`).join("");
+      } catch(err) { console.error(err); }
+    }
+
+    let _rvStars = 5;
+    function setReviewStars(n) {
+      _rvStars = n;
+      document.getElementById("rv-stars").value = n;
+      document.querySelectorAll("#rv-star-picker span").forEach((s, i) => {
+        s.textContent = i < n ? '⭐' : '☆';
+      });
+    }
+    function openAddReviewModal() {
+      // Define data de hoje como padrão
+      document.getElementById("rv-date").value = new Date().toISOString().slice(0,10);
+      setReviewStars(5);
+      document.getElementById("review-modal").style.display = "flex";
+    }
+    function closeAddReviewModal() {
+      document.getElementById("review-modal").style.display = "none";
+      document.getElementById("rv-username").value = "";
+      document.getElementById("rv-text").value = "";
+      document.getElementById("rv-date").value = "";
+      setReviewStars(5);
+    }
+    async function saveManualReview() {
+      const username = document.getElementById("rv-username").value.trim();
+      const text     = document.getElementById("rv-text").value.trim();
+      const stars    = _rvStars || 5;
+      const date     = document.getElementById("rv-date").value;
+      if (!username) { showToast("Informe o nome da pessoa", "error"); return; }
+      if (!text)     { showToast("Informe a descrição", "error"); return; }
+      try {
+        await AdminAPI.post("reviews", {
+          username,
+          text,
+          stars,
+          product_name: '',
+          source: "manual",
+          verified: true,
+          created_at: date ? new Date(date).toISOString() : new Date().toISOString()
+        });
+        showToast("Avaliação adicionada!", "success");
+        closeAddReviewModal();
+        loadReviews();
+      } catch { showToast("Erro ao salvar avaliação", "error"); }
+    }
+    async function deleteReview(id) {
+      if (!confirm("Remover esta avaliação?")) return;
+      try {
+        await AdminAPI.delete("reviews", id);
+        showToast("Removida!", "success");
+        loadReviews();
+      } catch { showToast("Erro ao remover", "error"); }
+    }
+
     async function toggleProductActive(productId, currentActive) {
       try {
-        await API.patch("products", productId, { active: currentActive === false ? true : false });
+        await AdminAPI.patch("products", productId, { active: currentActive === false ? true : false });
         showToast("Status atualizado!", "success");
         loadProducts();
       } catch { showToast("Erro ao atualizar", "error"); }
@@ -414,7 +725,7 @@
     async function deleteProduct(productId, productName) {
       if (!confirm(`Deseja remover o produto "${productName}"?`)) return;
       try {
-        await API.delete("products", productId);
+        await AdminAPI.delete("products", productId);
         showToast("Produto removido!", "success");
         loadAllData();
       } catch { showToast("Erro ao remover", "error"); }
@@ -422,7 +733,7 @@
 
     async function editProduct(productId) {
       try {
-        const p = await API.getOne("products", productId);
+        const p = await AdminAPI.getOne("products", productId);
         if (!p) return;
         // Preenche o formulário e abre aba de edição
         document.getElementById("edit-product-id").value = p.id;
@@ -431,9 +742,21 @@
         document.getElementById("pf-price").value = p.price || "";
         document.getElementById("pf-original-price").value = p.original_price || "";
         document.getElementById("pf-stock").value = p.stock || 0;
+        // Mostrar/ocultar campos conforme categoria
+        onCategoryChange(p.category || '');
+        onCategoryChange(p.category || "");
+        // Se for conta, carrega contas existentes do account_stock
+        if (p.category === "contas") {
+          document.getElementById("pf-accounts").value = "";
+          document.getElementById("pf-accounts-count").textContent = `📦 Estoque atual: ${p.stock || 0} conta(s) disponível(is) — adicione novas abaixo`;
+        }
         document.getElementById("pf-image").value = p.image_url || "";
+        previewImage(p.image_url || "");
         document.getElementById("pf-description").value = p.description || "";
         document.getElementById("pf-details").value = (p.details || []).join("\n");
+        document.getElementById("pf-rarity").value = p.rarity || "";
+        document.getElementById("pf-pix-discount").value = p.pix_discount || 0;
+        document.getElementById("pf-is-new").value = p.is_new === true ? "true" : "false";
         document.getElementById("pf-featured").value = p.featured === false ? "false" : "true";
         document.getElementById("pf-active").value = p.active === false ? "false" : "true";
         document.getElementById("product-form-title").textContent = "Editar Produto";
@@ -453,10 +776,19 @@
         if (el.tagName === "SELECT") el.selectedIndex = 0;
         else el.value = "";
       });
+      previewImage("");
+    }
+
+    let currentCategoryFilter = 'all';
+    function filterProductCategory(cat, btn) {
+      currentCategoryFilter = cat;
+      document.querySelectorAll('[id^="cat-btn-"]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadProducts();
     }
 
     function closeEditModal() {
-      document.getElementById("edit-modal").classList.remove("active");
+      document.getElementById("edit-modal").style.display = "none";
       document.body.style.overflow = "";
     }
 
@@ -470,22 +802,59 @@
         name: document.getElementById("pf-name").value.trim(),
         category: document.getElementById("pf-category").value,
         price: parseFloat(document.getElementById("pf-price").value),
-        original_price: parseFloat(document.getElementById("pf-original-price").value) || 0,
-        stock: parseInt(document.getElementById("pf-stock").value),
-        image_url: document.getElementById("pf-image").value.trim(),
+        original_price: parseFloat(document.getElementById("pf-original-price").value) || null,
+        pix_discount: parseInt(document.getElementById("pf-pix-discount").value) || 0,
+        stock: parseInt(document.getElementById("pf-stock").value) || 0,
+        rarity: document.getElementById("pf-rarity").value || null,
+        image_url: document.getElementById("pf-image").value.trim() || null,
         description: document.getElementById("pf-description").value.trim(),
         details,
+        is_new: document.getElementById("pf-is-new").value === "true",
         featured: document.getElementById("pf-featured").value === "true",
         active: document.getElementById("pf-active").value === "true"
       };
 
       try {
+        let savedProductId = editId;
         if (editId) {
-          await API.put("products", editId, data);
-          showToast("Produto atualizado com sucesso! ✓", "success");
+          await AdminAPI.patch("products", editId, data);
         } else {
-          await API.post("products", data);
-          showToast("Produto criado com sucesso! 🎉", "success");
+          const newProd = await AdminAPI.post("products", data);
+          savedProductId = newProd.id;
+        }
+
+        // Se for categoria contas e tiver contas no textarea, salva no account_stock
+        const category = document.getElementById("pf-category").value;
+        const accountsRaw = document.getElementById("pf-accounts")?.value?.trim() || "";
+        if (category === "contas" && accountsRaw && savedProductId) {
+          const lines = accountsRaw.split("\n").map(l => l.trim()).filter(Boolean);
+          const productName = document.getElementById("pf-name").value.trim();
+          let saved = 0;
+          for (const line of lines) {
+            const colonIdx = line.indexOf(":");
+            if (colonIdx === -1) continue;
+            const username = line.substring(0, colonIdx).trim();
+            const password = line.substring(colonIdx + 1).trim();
+            if (!username || !password) continue;
+            await AdminAPI.post("account_stock", { product_id: savedProductId, product_name: productName, source: "site", username, password, status: "available" });
+            saved++;
+          }
+          if (saved > 0) {
+            // Atualiza stock do produto com total de contas disponíveis
+            const stockJson = await AdminAPI.get("account_stock", {
+              product_id: `eq.${savedProductId}`,
+              source: "eq.site",
+              status: "eq.available",
+              limit: 500,
+            });
+            const totalAvailable = (stockJson.data || []).length;
+            await AdminAPI.patch("products", savedProductId, { stock: totalAvailable });
+            showToast(`✅ Produto salvo + ${saved} conta(s) adicionada(s) ao estoque!`, "success");
+          } else {
+            showToast(editId ? "Produto atualizado com sucesso! ✓" : "Produto criado com sucesso! 🎉", "success");
+          }
+        } else {
+          showToast(editId ? "Produto atualizado com sucesso! ✓" : "Produto criado com sucesso! 🎉", "success");
         }
         resetProductForm();
         // Volta para lista
@@ -495,10 +864,51 @@
         document.querySelectorAll(".admin-tab")[0].classList.add("active");
         loadAllData();
       } catch(err) {
-        showToast("Erro ao salvar produto", "error");
-        console.error(err);
+        const msg = err?.message || String(err);
+        showToast("Erro: " + msg, "error");
+        console.error("saveProduct error:", err);
       }
     }
+
+    function onCategoryChange(category) {
+      const accountsWrap = document.getElementById("pf-accounts-wrap");
+      const stockWrap = document.getElementById("pf-stock-wrap");
+      if (category === "contas") {
+        accountsWrap.style.display = "block";
+        stockWrap.style.display = "none";
+      } else {
+        accountsWrap.style.display = "none";
+        stockWrap.style.display = "block";
+      }
+      // Conta linhas preenchidas e atualiza contador
+      const ta = document.getElementById("pf-accounts");
+      if (ta) {
+        ta.addEventListener("input", function() {
+          const lines = this.value.split("\n").filter(l => l.trim() && l.includes(":"));
+          document.getElementById("pf-accounts-count").textContent = lines.length > 0 ? `✏️ ${lines.length} conta(s) para adicionar` : "";
+        });
+      }
+    }
+
+    async function restoreAdminSession() {
+      if (!adminToken) return;
+      try {
+        const res = await fetch("/api/auth/admin", {
+          headers: { "x-admin-token": adminToken }
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          showAdminPanel();
+          loadAllData();
+        } else {
+          adminLogout(false);
+        }
+      } catch {
+        adminLogout(false);
+      }
+    }
+
+    restoreAdminSession();
   </script>
 </body>
 </html>

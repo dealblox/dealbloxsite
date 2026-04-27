@@ -10,14 +10,14 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:    #0a0d14; --bg2: #0f1320; --bg3: #141826;
-      --cyan:  #06b6d4; --cyan2: #22d3ee;
-      --blue:  #1d4ed8; --blue3: #3b82f6;
-      --white: #f0f6ff; --text2: #8898aa; --text3: #4a5568;
+      --bg:    #0a0a0a; --bg2: #0f0f0f; --bg3: #141414;
+      --cyan:  #00aadd; --cyan2: #00cfff;
+      --blue:  #cc0000; --blue3: #ff1a1a;
+      --white: #f0f0f0; --text2: #888888; --text3: #4a4a4a;
       --green: #10b981; --red: #ef4444; --yellow: #f59e0b;
-      --border2: rgba(99,179,237,.2);
-      --grad-btn: linear-gradient(135deg,#1d4ed8,#06b6d4);
-      --glow-b: 0 0 20px rgba(37,99,235,.5);
+      --border2: rgba(255,26,26,.22);
+      --grad-btn: linear-gradient(135deg,#cc0000,#ff1a1a);
+      --glow-b: 0 0 20px rgba(255,26,26,.5);
       --r2: 12px; --r3: 18px;
       --font: 'Space Grotesk', system-ui, sans-serif;
     }
@@ -53,8 +53,8 @@
     }
     .cb-spinner {
       width: 44px; height: 44px;
-      border: 3px solid rgba(99,179,237,.15);
-      border-top-color: var(--cyan);
+      border: 3px solid rgba(255,26,26,.15);
+      border-top-color: #00cfff;
       border-radius: 50%;
       animation: spin .7s linear infinite;
       margin: 0 auto 20px;
@@ -89,8 +89,8 @@
     .cb-btn:hover { opacity:.85; }
     .cb-btn.outline {
       background:transparent;
-      border:1px solid rgba(99,179,237,.3);
-      color:var(--cyan2); margin-left:8px;
+      border:1px solid rgba(0,207,255,.3);
+      color:#00cfff; margin-left:8px;
     }
     .cb-steps {
       display:flex; flex-direction:column; gap:8px;
@@ -100,13 +100,13 @@
       display:flex; align-items:center; gap:10px;
       font-size:12px; color:var(--text3); transition:color .3s;
     }
-    .cb-step.active { color:var(--cyan2); }
+    .cb-step.active { color:#00cfff; }
     .cb-step.done   { color:var(--green); }
     .cb-step-dot {
       width:8px; height:8px; border-radius:50%;
       background:var(--text3); flex-shrink:0; transition:background .3s;
     }
-    .cb-step.active .cb-step-dot { background:var(--cyan2); animation:blink 1s ease-in-out infinite; }
+    .cb-step.active .cb-step-dot { background:#00cfff; animation:blink 1s ease-in-out infinite; }
     .cb-step.done   .cb-step-dot { background:var(--green); animation:none; }
     @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
     .cb-info-box {
@@ -130,7 +130,7 @@
 <body>
   <div class="cb-card" id="cb-card">
     <!-- Logo LT -->
-    <div class="cb-logo" id="cb-logo">LT</div>
+    <div class="cb-logo" id="cb-logo">DB</div>
 
     <!-- Provider chip -->
     <div id="cb-provider-chip"></div>
@@ -484,8 +484,8 @@
       console.warn("[Discord] Backend indisponível:", err.message);
 
       // Verifica se é ambiente de preview (não é o domínio real publicado)
-      const isPreview = !["lagteck.xyz", "lagteck.vercel.app", "www.lagteck.xyz"]
-        .includes(window.location.hostname);
+const isPreview = !["dealblox.com.br", "www.dealblox.com.br"]
+  .includes(window.location.hostname);
 
       if (isPreview) {
         showWarning(
@@ -508,7 +508,7 @@
 
   // ── Redireciona Google para fluxo implícito ────────────────
   function redirectGoogleImplicit() {
-    const cfg = typeof LAGTECK_CONFIG !== "undefined" ? LAGTECK_CONFIG : {};
+    const cfg = typeof DEALBLOX_CONFIG !== "undefined" ? DEALBLOX_CONFIG : {};
     const clientId = cfg.GOOGLE_CLIENT_ID || "";
 
     if (!clientId || clientId.includes("SEU_") || clientId.trim() === "") {
@@ -608,7 +608,7 @@
     showSuccess((sessionUser.full_name || name || "você").split(" ")[0]);
 
     const redirect = sessionStorage.getItem("lagteck_redirect") || "/";
-    sessionStorage.removeItem("lagteck_redirect");
+sessionStorage.removeItem("lagteck_redirect");
     sessionStorage.removeItem("oauth_state");
     setTimeout(() => { window.location.href = redirect; }, 1400);
   }
@@ -625,13 +625,14 @@
                  /Android/i.test(ua) ? "Android"  : /iPhone|iPad/i.test(ua) ? "iOS" : "Outro";
       let ip = "", city = "", region = "", country = "", isp = "";
       try {
-        const g = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(4000) });
-        if (g.ok) {
-          const geo = await g.json();
-          ip = geo.ip||""; city = geo.city||""; region = geo.region||"";
-          country = geo.country_name||""; isp = geo.org||"";
+        // Geo resolvido no servidor (evita bloqueio CORS/HTTPS do ip-api.com)
+        const geoRes = await fetch("/api/geo", { signal: AbortSignal.timeout(6000) });
+        if (geoRes.ok) {
+          const geo = await geoRes.json();
+          ip = geo.ip || ""; city = geo.city || ""; region = geo.region || "";
+          country = geo.country || ""; isp = geo.isp || "";
         }
-      } catch {}
+      } catch { /* silencia */ }
       await fetch("tables/access_logs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

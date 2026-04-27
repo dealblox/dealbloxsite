@@ -76,7 +76,7 @@
   <script src="/js/layout.js"></script>
   <script>
   if (typeof LAGTECK_CONFIG === 'undefined') {
-    window.LAGTECK_CONFIG = {MP_PUBLIC_KEY:"",EMAILJS_SERVICE_ID:"service_mzmityx",EMAILJS_TEMPLATE_ID:"template_6ztpr7k",EMAILJS_PUBLIC_KEY:"7SAN7fAAsYLc7e-6W",GOOGLE_CLIENT_ID:"",DISCORD_CLIENT_ID:"",DISCORD_REDIRECT_URI:window.location.origin+"/auth-callback.html",ADMIN_PASSWORD:"lagteck@admin2026",DISCORD_SERVER:"https://discord.gg/rPFN7BMC5k",SITE_NAME:"Deal Blox",SITE_URL:"https://lagteck.vercel.app",SUPPORT_EMAIL:"lagteck@gmail.com",SITE_DESCRIPTION:"Loja digital de contas e itens de Blox Fruits."};
+    window.LAGTECK_CONFIG = {MP_PUBLIC_KEY:"",EMAILJS_SERVICE_ID:"service_mzmityx",EMAILJS_TEMPLATE_ID:"template_6ztpr7k",EMAILJS_PUBLIC_KEY:"7SAN7fAAsYLc7e-6W",GOOGLE_CLIENT_ID:"",DISCORD_CLIENT_ID:"",DISCORD_REDIRECT_URI:window.location.origin+"/auth-callback.html",ADMIN_PASSWORD:"lagteck@admin2026",DISCORD_SERVER:"https://discord.gg/rPFN7BMC5k",SITE_NAME:"Deal Blox",SITE_URL:"https://dealblox.com.br",SUPPORT_EMAIL:"dealblox.suporte@gmail.com",SITE_DESCRIPTION:"Loja digital de contas e itens de Blox Fruits."};
   }
   if (typeof Auth === 'undefined') {
     window.Auth = { STORAGE_KEY:"lagteck_user", getUser(){try{return JSON.parse(localStorage.getItem(this.STORAGE_KEY))||null}catch{return null}}, setUser(u){localStorage.setItem(this.STORAGE_KEY,JSON.stringify(u));window.dispatchEvent(new CustomEvent("lagteck:auth",{detail:u}))}, logout(){localStorage.removeItem(this.STORAGE_KEY);window.location.href="/"}, isLoggedIn(){return!!this.getUser()}, async hashPassword(p){const e=new TextEncoder(),d=e.encode(p+"lagteck_salt_2026"),h=await crypto.subtle.digest("SHA-256",d),a=Array.from(new Uint8Array(h));return a.map(b=>b.toString(16).padStart(2,"0")).join("")}, generateCode(){return Math.floor(100000+Math.random()*900000).toString()}, generateId(){return Date.now().toString(36)+Math.random().toString(36).substr(2)} };
@@ -224,9 +224,6 @@
       grid.innerHTML = list.map(createCard).join('');
     }
 
-    const SUPABASE_URL = "https://piqnqegawcdhykatpflj.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_mGMkvi5A0S3iVySpI_ek_Q_IFekBWjH";
-
     async function loadProducts() {
       const grid = document.getElementById('products-grid');
       try {
@@ -236,58 +233,26 @@
 
         grid.innerHTML = '<div class="spinner"></div>';
 
-        let produtos = [];
-
-        // 1ª tentativa: Supabase (fonte principal)
-        // CORRIGIDO: tabela "produtos", coluna "categoria", campos em português
-        try {
-          let res = await fetch(
-            `${SUPABASE_URL}/rest/v1/products?select=*&category=eq.frutas`,
-            {
-              headers: {
-                "apikey": SUPABASE_KEY,
-                "Authorization": `Bearer ${SUPABASE_KEY}`
-              }
-            }
-          );
-          if (res.ok) {
-            const sbData = await res.json();
-            console.log('[frutas] Supabase retornou:', sbData.length, 'produtos');
-            if (Array.isArray(sbData) && sbData.length > 0) {
-              // Normaliza campos do Supabase (português) para o formato interno (inglês)
-              produtos = sbData.map(p => ({
-                ...p,
-                name:           p.nome          ?? p.name,
-                price:          p.preco         ?? p.price,
-                original_price: p.preco_original ?? p.original_price,
-                stock:          p.estoque       ?? p.stock ?? 1,
-                category:       p.categoria     ?? p.category,
-                active:         p.active !== false,
-              }));
-            }
-          } else {
-            console.warn('[frutas] Supabase retornou HTTP', res.status);
-          }
-        } catch(sbErr) {
-          console.warn('[frutas] Supabase indisponível:', sbErr.message);
+        // Carrega via API interna (Vercel → Supabase com service_role)
+        const res = await fetch('tables/products?limit=200&category=frutas');
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${res.status}`);
         }
+        const data = await res.json();
+        let produtos = (data.data || []).map(p => ({
+          ...p,
+          name:           p.nome          ?? p.name          ?? '',
+          price:          p.preco         ?? p.price         ?? 0,
+          original_price: p.preco_original ?? p.original_price ?? null,
+          stock:          p.estoque       ?? p.stock         ?? 1,
+          category:       p.categoria     ?? p.category      ?? '',
+          active:         p.active !== false,
+        }));
 
-        // 2ª tentativa: API interna (fallback)
-        if (produtos.length === 0) {
-          let res = await fetch('tables/products?limit=200&sort=created_at');
-          if (!res.ok) throw new Error(`API interna HTTP ${res.status}`);
-          const data = await res.json();
-          produtos = (data.data || []).filter(p => {
-            const cat = (p.category || p.categoria || '').toLowerCase();
-            return (cat === 'fruits' || cat === 'frutas' || cat === 'fruit');
-          });
-        }
-
-        // Filtra apenas ativos
         allProducts = produtos.filter(p => p.active !== false && p.status !== 'inactive');
         console.log('[frutas] Total após filtro:', allProducts.length, 'frutas');
 
-        // Sincroniza favoritos do banco
         try {
           const user = Auth.getUser();
           if (user && user.id) {

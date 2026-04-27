@@ -155,7 +155,9 @@ const API = {
     const qs = new URLSearchParams(params).toString();
     const url = `tables/${table}${qs ? "?" + qs : ""}`;
     const res = await fetch(url);
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.error || `Erro ${res.status} ao buscar ${table}`);
+    return data;
   },
 
   async getOne(table, id) {
@@ -170,7 +172,9 @@ const API = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     });
-    return res.json();
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || `Erro ${res.status} ao salvar em ${table}`);
+    return json;
   },
 
   async put(table, id, data) {
@@ -179,7 +183,9 @@ const API = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     });
-    return res.json();
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || `Erro ${res.status} ao atualizar ${table}`);
+    return json;
   },
 
   async patch(table, id, data) {
@@ -188,17 +194,27 @@ const API = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
     });
-    return res.json();
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || `Erro ${res.status} ao atualizar ${table}`);
+    return json;
   },
 
   async delete(table, id) {
-    await fetch(`tables/${table}/${id}`, { method: "DELETE" });
+    const res = await fetch(`tables/${table}/${id}`, { method: "DELETE" });
+    if (!res.ok && res.status !== 204) {
+      const json = await res.json().catch(() => ({}));
+      throw new Error(json?.error || `Erro ${res.status} ao deletar de ${table}`);
+    }
   },
 
   /** Busca usuário por email */
   async findUserByEmail(email) {
-    const res = await this.get("users", { search: email, limit: 10 });
-    return res.data?.find(u => u.email === email) || null;
+    try {
+      const res = await this.get("users", { search: email, limit: 10 });
+      return res.data?.find(u => u.email === email) || null;
+    } catch {
+      return null; // Retorna null em caso de erro de rede/API
+    }
   }
 };
 
@@ -319,8 +335,7 @@ function rarityBadge(text) {
  * Google Cloud Console (Authorized redirect URIs).
  *
  * Redirect URI a cadastrar:
- *   https://lagteck.xyz/auth-callback.html
- *   https://lagteck.vercel.app/auth-callback.html
+ *   https://dealblox.com.br/auth-callback.html
  */
 function loginGoogle() {
   const clientId = (typeof LAGTECK_CONFIG !== "undefined")
@@ -359,8 +374,7 @@ function loginGoogle() {
  * Discord Developer Portal → aplicação → OAuth2 → Redirects
  *
  * Redirect URI a cadastrar:
- *   https://lagteck.xyz/auth-callback.html
- *   https://lagteck.vercel.app/auth-callback.html
+ *   https://dealblox.com.br/auth-callback.html
  */
 function loginDiscord() {
   const clientId = (typeof LAGTECK_CONFIG !== "undefined")
