@@ -381,6 +381,10 @@
         if (res.status === 401) {
           adminLogout(false);
           showToast("Sessão expirada. Faça login novamente.", "error");
+          setTimeout(() => {
+            document.getElementById("admin-panel").style.display = "none";
+            document.getElementById("admin-login").style.display = "";
+          }, 1200);
           throw new Error("Sessão admin expirada.");
         }
 
@@ -691,15 +695,9 @@
       if (!username) { showToast("Informe o nome da pessoa", "error"); return; }
       if (!text)     { showToast("Informe a descrição", "error"); return; }
       try {
-        await AdminAPI.post("reviews", {
-          username,
-          text,
-          stars,
-          product_name: '',
-          source: "manual",
-          verified: true,
-          created_at: date ? new Date(date).toISOString() : new Date().toISOString()
-        });
+        const payload = { username, text, stars, product_name: '', source: "manual", verified: true };
+        if (date) payload.created_at = new Date(date + 'T12:00:00').toISOString();
+        await AdminAPI.post("reviews", payload);
         showToast("Avaliação adicionada!", "success");
         closeAddReviewModal();
         loadReviews();
